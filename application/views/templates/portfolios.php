@@ -51,7 +51,7 @@
             <td>Description</td>
             <td>Display Text</td>
             <td>Link</td>
-            <td>action</td>
+            <td>action1</td>
         </tr>
         </thead>
         <tbody>
