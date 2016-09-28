@@ -275,14 +275,14 @@ class App extends CI_Controller
 
     private function _truncate_db()
     {
-        $this->user_model->remove();
-        $this->employee->remove();
-        $this->file->remove();
-        $this->address->remove();
-        $this->gallery->remove();
-        $this->gallery_files->remove();
-        $this->portfolio_files->remove();
-        $this->portfolio->remove();
-        $this->testimonial->remove();
+        $this->user_model->trunc();
+        $this->employee->trunc();
+        $this->file->trunc();
+        $this->address->trunc();
+        $this->gallery->trunc();
+        $this->gallery_files->trunc();
+        $this->portfolio_files->trunc();
+        $this->portfolio->trunc();
+        $this->testimonial->trunc();
     }
 }

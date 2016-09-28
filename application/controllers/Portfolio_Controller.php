@@ -24,25 +24,20 @@ class Portfolio_Controller extends CI_Controller
 
     public function store()
     {
-        $request= json_decode(file_get_contents('php://input'), TRUE);
+        $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('type', 'Type', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            var_dump('error');
+            $this->output->set_status_header(400,'Validation Error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            /*$name = $this->input->post('name');
-            $type = $this->input->post('type');
-
-            $data = [
-                'name' => $name,
-                'type' => $type
-            ];*/
-            if ($this->portfolio->add($request)) {
-                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+            if ($this->portfolio->add($_POST)) {
+                $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
             } else {
-                $error = ['error' => 'Server Down'];
+                $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
+                $this->output->set_status_header(400, 'Server Down.');
                 $this->output->set_content_type('application/json')->set_output(json_encode($error));
             }
         }
@@ -52,5 +47,18 @@ class Portfolio_Controller extends CI_Controller
     {
         $data = $this->portfolio->select();
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
+    }
+
+    public function delete($id)
+    {
+        if(!$this->portfolio->get(['id' => $id])){
+            $data = 'Record not found!';
+            $this->output->set_content_type('application/json')->set_output(json_encode($data));
+        } else {
+            if ($this->portfolio->remove($id)) {
+                $data = 'Record Deleted!';
+                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+            }
+        }
     }
 }

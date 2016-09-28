@@ -22,6 +22,11 @@ class Portfolio_Model extends My_Model{
         return $this->get_all();
     }
 
+    public function select_where($where)
+    {
+        return $this->get($where);
+    }
+
     public function add($data)
     {
         return $this->insert($data);
@@ -32,7 +37,13 @@ class Portfolio_Model extends My_Model{
         return $this->update($data, $id);
     }
 
-    public function remove()
+    public function remove($id)
+    {
+        return $this->drop($id);
+    }
+
+//    Truncate Table
+    public function trunc()
     {
         return $this->truncate();
     }

@@ -45,24 +45,68 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.portfolios = [];
     $scope.message = {};
     $scope.error = {};
+    $scope.showform = false;
 
-    $http.get($rootScope.base_url +'/Portfolio_Controller/get').then(function(response) {
-        $scope.portfolios = response.data;
-        console.log($scope.portfolios);
-    })
+    loadPortfolio();
 
-    $scope.addPortfolio = function () {
-        $http({
-            method: 'post',
-            url: $rootScope.base_url + '/Portfolio_Controller/store',
-            data:$scope.newportfolio,
-            header:{'Content-type':'application/x-www-form-urlencoded'}
-        }).success(function(data) {
-            $scope.message = data;
-            //console.log($scope.message);
-            console.log('success');
-        }).error(function(data) {
-            console.log('failed');
+    function loadPortfolio() {
+        $http.get($rootScope.base_url +'/Portfolio_Controller/get').then(function(response) {
+            $scope.portfolios = response.data;
+            console.log($scope.portfolios);
         })
+    };
+
+    //show the form
+    $scope.showForm = function (item) {
+        $scope.showform = true;
+        $scope.newportfolio = item;
+    };
+
+    //Hide the form
+    $scope.hideForm=function() {
+        $scope.showform = false;
+    };
+
+    $scope.newPortfolio = function() {
+        //$scope.newportfolio = [];
+        $scope.showform = true;
+    };
+
+    //Add
+    $scope.addPortfolio = function () {
+        //if ($scope.newportfolio['id']) {
+        //}else{
+            $http({
+                method: 'post',
+                url: $rootScope.base_url + '/Portfolio_Controller/store',
+                data:$scope.newportfolio,
+                header:{'Content-type':'application/x-www-form-urlencoded'}
+            }).success(function(data,status,headers) {
+                console.log(headers);
+                $scope.portfolios.push(data);
+                loadPortfolio();
+                $scope.newportfolio= {};
+            }).error(function(data,status,header) {
+                console.log(data);
+                console.log('header');
+                if (data['error']) {
+                    alert(data['error']);
+                }
+            })
+        //}
+    };
+
+    $scope.deletePortfolio = function (item) {
+        var conf = confirm('Do you want to delete this Record?');
+        if (conf) {
+            var id = item['id'];
+            $http.delete($rootScope.base_url + '/Portfolio_Controller/delete/' + id)
+                .success(function (data, status, headers) {
+                    console.log(data);
+                    alert(data);
+                    loadPortfolio();
+                });
+        }
+
     };
 });

@@ -242,13 +242,14 @@ class My_Model extends CI_Model
 
     /**
      * delete records
-     * @param array $where
+     * @param id
      * @return boolean
      */
 
-    public function drop(array $where)
+    public function drop($id)
     {
-        $this->db->where($where);
+
+        $this->db->where(['id' => $id]);
 //        var_dump($this->db->get_compiled_delete($this->table));
         if( $this->db->delete($this->table))
             return TRUE;

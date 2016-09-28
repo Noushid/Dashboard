@@ -1,17 +1,17 @@
 <div class="col-md-12">
    <div class="row">
     <div class="box" style="margin-left: 14px;">
-        <button class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
-        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()">
+        <button class="btn btn-primary" ng-click="newPortfolio()"><i class="fa fa-plus"></i> Add</button>
+        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform">
             <h3>New Portfolio</h3>
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Name</label>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name"/>
+                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name" required/>
                 </div>
                 <label for="" class="control-label col-md-1">Type</label>
                 <div class="col-md-4">
-                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type">
+                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type" required>
                         <option value="" selected disabled>Select</option>
                         <option value="portfolio site">portfolio site</option>
                         <option value="web app">Web Application</option>
@@ -26,7 +26,7 @@
                 </div>
                 <label for="" class="control-label col-md-1">link</label>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="link" ng-model="newportfoliolink"/>
+                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-required="newportfolio.type === 'portfolio site'"/>
                 </div>
             </div>
             <div class="form-group">
@@ -36,8 +36,8 @@
                 </div>
             </div>
             <div class="form-group text-center">
-                <button class="btn btn-primary">Save</button>
-                <button class="btn btn-danger">Cancel</button>
+                <button class="btn btn-primary" type="submit">Save</button>
+                <button class="btn btn-danger" type="reset" ng-click="hideForm()">Cancel</button>
             </div>
         </form>
     </div>
@@ -51,7 +51,7 @@
             <td>Description</td>
             <td>Display Text</td>
             <td>Link</td>
-            <td>action1</td>
+            <td>action</td>
         </tr>
         </thead>
         <tbody>
@@ -64,10 +64,10 @@
             <td>{{portfolio.link}}</td>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
-                    <button type="button" class="btn btn-info">
+                    <button type="button" class="btn btn-info" ng-click="showForm(portfolio)">
                         <i class="fa fa-pencil"></i>
                     </button>
-                    <button  type="button" class="btn btn-danger">
+                    <button  type="button" class="btn btn-danger" ng-click="deletePortfolio(portfolio)">
                         <i class="fa fa-trash-o"></i>
                     </button>
                 </div>

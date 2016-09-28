@@ -13,11 +13,8 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
 
-<!--    <script src="--><?php //echo base_url('js/controller/adminController.js')?><!--"></script>-->
-<!--    <script src="--><?php //echo base_url('js/controller/employeeController.js')?><!--"></script>-->
-
-
     <script src="<?php echo base_url('js/angularScript.js')?>"></script>
+
 </head>
 <body ng-app="myApp" ng-controller="adminController">
 <div class="page-wrapper">

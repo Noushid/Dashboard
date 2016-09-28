@@ -33,7 +33,7 @@ class Testimonial_Model extends My_Model{
         return $this->update($data, $id);
     }
 
-    public function remove()
+    public function trunc()
     {
         return $this->truncate();
     }
