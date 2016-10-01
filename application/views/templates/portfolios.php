@@ -2,7 +2,8 @@
    <div class="row">
     <div class="box" style="margin-left: 14px;">
         <button class="btn btn-primary" ng-click="newPortfolio()"><i class="fa fa-plus"></i> Add</button>
-        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform">
+        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform" >
+<!--        <form class="form-horizontal" method="POST" action="--><?php //echo base_url('Portfolio_Controller/edit_record')?><!--" ng-show="showform" >-->
             <h3>New Portfolio</h3>
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Name</label>
@@ -32,12 +33,12 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Display Text</label>
                 <div class="col-md-9">
-                    <textarea name="displaytText" id="displaytText" class="form-control" ng-model="newportfolio.displaytext"></textarea>
+                    <textarea name="displaytext" id="displaytext" class="form-control" ng-model="newportfolio.displaytext"></textarea>
                 </div>
             </div>
             <div class="form-group text-center">
                 <button class="btn btn-primary" type="submit">Save</button>
-                <button class="btn btn-danger" type="reset" ng-click="hideForm()">Cancel</button>
+                <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
             </div>
         </form>
     </div>

@@ -22,6 +22,13 @@ class Portfolio_Controller extends CI_Controller
         $this->load->view('templates/portfolios');
     }
 
+
+    public function get()
+    {
+        $data = $this->portfolio->select();
+        $this->output->set_content_type('application/json')->set_output(json_encode($data));
+    }
+
     public function store()
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
@@ -37,16 +44,32 @@ class Portfolio_Controller extends CI_Controller
                 $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
             } else {
                 $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
-                $this->output->set_status_header(400, 'Server Down.');
+                $this->output->set_status_header(500, 'Server Down.');
                 $this->output->set_content_type('application/json')->set_output(json_encode($error));
             }
         }
     }
 
-    public function get()
+    public function edit_record()
     {
-        $data = $this->portfolio->select();
-        $this->output->set_content_type('application/json')->set_output(json_encode($data));
+        $_POST = json_decode(file_get_contents('php://input'), TRUE);
+
+        $this->form_validation->set_rules('name', 'Name', 'required');
+        $this->form_validation->set_rules('type', 'Type', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->output->set_status_header(400, 'Validation Error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
+        } else {
+
+            if ($this->portfolio->edit($_POST,$_POST['id'])) {
+                $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
+            } else {
+                $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
+                $this->output->set_status_header(500, 'Server Down.');
+                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+            }
+        }
     }
 
     public function delete($id)
