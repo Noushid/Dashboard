@@ -24,6 +24,10 @@ app.controller('adminController', function($scope,$location,$http, $rootScope) {
     $scope.error = {};
     var base_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
     $rootScope.base_url = base_url;
+    //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
+    $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
+
+
 });
 
 
@@ -129,4 +133,12 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         }
 
     };
+
+    $scope.validate_url = function (item) {
+        var regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
+        console.log(item);
+        if (item === regex) {
+            console.log('item');
+        }
+    }
 });
