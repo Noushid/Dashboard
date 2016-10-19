@@ -52,6 +52,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.error = {};
     $scope.showform = false;
 
+    $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
+
     loadPortfolio();
 
     function loadPortfolio() {

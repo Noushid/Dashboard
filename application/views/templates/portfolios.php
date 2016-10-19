@@ -28,7 +28,8 @@
                 <label for="" class="control-label col-md-1">link</label>
                 <div class="col-md-4">
 <!--                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-required="newportfolio.type === 'portfolio site'"/>-->
-                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-change="validate_url(newportfolio.link);" required=""/>
+<!--                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-change="validate_url(newportfolio.link);" required=""/>-->
+                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-pattern="regex" required=""/>
                     <div ng-show="form-control.$valid">invalid url</div>
                 </div>
             </div>
