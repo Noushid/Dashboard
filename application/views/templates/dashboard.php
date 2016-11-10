@@ -9,6 +9,7 @@
     <title>Dashboard- Psybo Technologies</title>
     <link rel="stylesheet" href="<?php echo base_url('css/styleapp.css');?>">
     <script type="text/javascript" src="<?php echo base_url('js/appjs.js');?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('js/custom.js');?>"></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>

@@ -50,7 +50,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.curportfolio = {};
     $scope.message = {};
     $scope.error = {};
-    $scope.showform = false;
+    $scope.showform = true;
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
@@ -82,6 +82,12 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
     //Add
     $scope.addPortfolio = function () {
+        //add protocol to link
+        var string = $scope.newportfolio.link;
+        if (!~string.indexOf("http")) {
+            $scope.newportfolio.link = "http://" + string;
+        }
+
         if ($scope.newportfolio['id']) {
             console.log('edit');
             var id = $scope.newportfolio['id'];
@@ -135,12 +141,19 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         }
 
     };
+/*
+// Not using this method in this controll
+    $scope.validateUrl = function(item){
+         var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+         var regex = new RegExp(expression);
+         var t = 'www.google.com';
 
-    $scope.validate_url = function (item) {
-        var regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
-        console.log(item);
-        if (item === regex) {
-            console.log('item');
-        }
-    }
+         if (item.match(regex)) {
+             alert("Successful match");
+         } else {
+             alert("No match");
+         }
+     }*/
 });
+
+

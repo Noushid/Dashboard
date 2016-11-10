@@ -2,8 +2,7 @@
    <div class="row">
     <div class="box" style="margin-left: 14px;">
         <button class="btn btn-primary" ng-click="newPortfolio()"><i class="fa fa-plus"></i> Add</button>
-        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="true" >
-<!--        <form class="form-horizontal" method="POST" action="--><?php //echo base_url('Portfolio_Controller/edit_record')?><!--" ng-show="showform" >-->
+        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform" name="addform">
             <h3>New Portfolio</h3>
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Name</label>
@@ -27,10 +26,7 @@
                 </div>
                 <label for="" class="control-label col-md-1">link</label>
                 <div class="col-md-4">
-<!--                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-required="newportfolio.type === 'portfolio site'"/>-->
-<!--                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-change="validate_url(newportfolio.link);" required=""/>-->
-                    <input type="text" class="form-control" name="link" ng-model="newportfolio.link" ng-pattern="regex" required=""/>
-                    <div ng-show="form-control.$valid">invalid url</div>
+                        <input type="text" class="form-control" name="link" ng-model="newportfolio.link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);" required/>
                 </div>
             </div>
             <div class="form-group">
