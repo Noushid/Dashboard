@@ -55,7 +55,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="portfolio in portfolios">
+<!--        <tr ng-repeat="portfolio in portfolios">-->
+        <tr ng-repeat="portfolio in filtered = portfolios | pagination:(currentPage-1)*numPerPage">
             <td>{{portfolio.id}}</td>
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>
@@ -75,4 +76,10 @@
         </tr>
         </tbody>
     </table>
+    <pagination
+        ng-model="currentPage"
+        total-items="portfolios.length"
+        max-size="maxSize"
+        boundary-links="true">
+    </pagination>
 </div>

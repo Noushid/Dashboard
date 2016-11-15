@@ -2,7 +2,7 @@
  * Created by noushi on 16/9/16.
  */
 
-var app = angular.module('myApp', ['ngRoute']);
+var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap']);
 app.config(function ($routeProvider) {
     $routeProvider
         //.when('/', {
@@ -17,9 +17,22 @@ app.config(function ($routeProvider) {
             controller: 'portfolioController'
         })
 });
+
+//Pagination filter
+
+app.filter('pagination',function() {
+    return function(input,start) {
+        if (input) {
+            start = +start;
+            return input.slice(start);
+        }
+        return [];
+    };
+})
+
 //AdminController
 
-app.controller('adminController', function($scope,$location,$http, $rootScope) {
+app.controller('adminController', function($scope,$location,$http, $rootScope, $filter) {
     $scope.employees = [];
     $scope.error = {};
     var base_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
@@ -27,6 +40,15 @@ app.controller('adminController', function($scope,$location,$http, $rootScope) {
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
+
+//    Pagination
+    $scope.currentPage = 1;
+    $scope.numPerPage = 5;
+    $scope.maxSize = 5;
+    $scope.$watch('currentPage + numPerPage', function () {
+        var begin = (($scope.currentPage - 1) * $scope.numPerPage), end = begin + $scope.numPerPage;
+
+    });
 
 });
 
@@ -50,7 +72,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.curportfolio = {};
     $scope.message = {};
     $scope.error = {};
-    $scope.showform = true;
+    $scope.showform = false;
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
