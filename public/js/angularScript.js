@@ -1,8 +1,8 @@
 /**
- * Created by noushi on 16/9/16.
+ * Created by noushid on 16/9/16.
  */
 
-var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap']);
+var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap','angularUtils.directives.dirPagination']);
 app.config(function ($routeProvider) {
     $routeProvider
         //.when('/', {
@@ -19,16 +19,14 @@ app.config(function ($routeProvider) {
 });
 
 //Pagination filter
+app.filter('startFrom', function() {
+    return function(input, start) {
+        start = +start; //parse to int
+        return input.slice(start);
+    }
+});
 
-app.filter('pagination',function() {
-    return function(input,start) {
-        if (input) {
-            start = +start;
-            return input.slice(start);
-        }
-        return [];
-    };
-})
+
 
 //AdminController
 
@@ -39,16 +37,6 @@ app.controller('adminController', function($scope,$location,$http, $rootScope, $
     $rootScope.base_url = base_url;
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
-
-
-//    Pagination
-    $scope.currentPage = 1;
-    $scope.numPerPage = 5;
-    $scope.maxSize = 5;
-    $scope.$watch('currentPage + numPerPage', function () {
-        var begin = (($scope.currentPage - 1) * $scope.numPerPage), end = begin + $scope.numPerPage;
-
-    });
 
 });
 
@@ -67,6 +55,9 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
 //Portfolio Controller
 
 app.controller('portfolioController', function ($scope, $location, $http, $rootScope) {
+
+
+
     $scope.newportfolio = {};
     $scope.portfolios = [];
     $scope.curportfolio = {};
