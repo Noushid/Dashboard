@@ -39,7 +39,7 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Desktop</label>
                 <div class="col-md-3">
-                    <input type="file" name="desktop" />
+                    <input type="file" id="file1" name="file" multiple ng-files="getTheFiles($files)" />
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">
@@ -56,6 +56,11 @@
                     <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
+
+            <div class="form-group">
+                <button ng-click="uploadFiles()">upload</button>
+            </div>
+
             <div class="form-group text-center">
                 <button class="btn btn-primary" type="submit">Save</button>
                 <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>

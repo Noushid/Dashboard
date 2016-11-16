@@ -29,8 +29,8 @@ app.filter('startFrom', function() {
 
 //file upload
 
-app.directive('ngFiles',['$parse',function($parse) {
-    function fn_link(scope,element,attrs) {
+app.directive('ngFiles', ['$parse', function ($parse) {
+    function fn_link(scope, element, attrs) {
         var onChange = $parse(attrs.ngFiles);
         element.on('change', function (event) {
             onChange(scope, {$files: event.target.files});
@@ -40,7 +40,7 @@ app.directive('ngFiles',['$parse',function($parse) {
         link: fn_link
     };
 
-}])
+}]);
 
 //AdminController
 
@@ -107,6 +107,33 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         $scope.showform = true;
     };
 
+    //upload image
+    var formdata = new FormData();
+    $scope.getTheFiles = function ($files) {
+        angular.forEach($files, function (value, key) {
+            formdata.append(key, value);
+        });
+    };
+    // NOW UPLOAD THE FILES.
+    $scope.uploadFiles = function () {
+
+        var request = {
+            method: 'POST',
+            url: '/tempupload/',
+            data: formdata,
+            headers: {
+                'Content-Type': undefined
+            }
+        };
+
+        // SEND THE FILES.
+        $http(request)
+            .success(function (d) {
+                alert(d);
+            })
+            .error(function () {
+            });
+    }
     //Add
     $scope.addPortfolio = function () {
         //add protocol to link
