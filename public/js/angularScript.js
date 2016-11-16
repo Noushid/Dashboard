@@ -27,6 +27,20 @@ app.filter('startFrom', function() {
 });
 
 
+//file upload
+
+app.directive('ngFiles',['$parse',function($parse) {
+    function fn_link(scope,element,attrs) {
+        var onChange = $parse(attrs.ngFiles);
+        element.on('change', function (event) {
+            onChange(scope, {$files: event.target.files});
+        });
+    };
+    return {
+        link: fn_link
+    };
+
+}])
 
 //AdminController
 
@@ -63,7 +77,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.curportfolio = {};
     $scope.message = {};
     $scope.error = {};
-    $scope.showform = false;
+    $scope.showform = true;
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
