@@ -1,0 +1,23 @@
+{
+  "name": "dashboard",
+  "version": "2.0.0",
+  "description": "manage your website with dashboard",
+  "main": "index.js",
+  "dependencies": {
+    "angular-ui-bootstrap": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noushid/Dashboard.git"
+  },
+  "author": "Noushid psybotechnologies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Noushid/Dashboard/issues"
+  },
+  "homepage": "https://github.com/Noushid/Dashboard#readme"
+}
