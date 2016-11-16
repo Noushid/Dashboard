@@ -36,6 +36,26 @@
                     <textarea name="displaytext" id="displaytext" class="form-control" ng-model="newportfolio.displaytext"></textarea>
                 </div>
             </div>
+            <div class="form-group">
+                <label for="" class="control-label col-md-1">Desktop</label>
+                <div class="col-md-3">
+                    <input type="file" name="desktop" />
+                </div>
+                <div class="clearfix"></div>
+                <div class=" box">
+                    <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="control-label col-md-1">Mobile</label>
+                <div class="col-md-3">
+                    <input type="file" name="mobile"/>
+                </div>
+                <div class="clearfix"></div>
+                <div class=" box">
+                    <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+                </div>
+            </div>
             <div class="form-group text-center">
                 <button class="btn btn-primary" type="submit">Save</button>
                 <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>

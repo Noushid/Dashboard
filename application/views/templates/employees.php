@@ -1,6 +1,18 @@
-<div class="col-md-8">
-    <div>
-        {{error}}
+<div class="col-md-12">
+    <div class="row">
+       <div class="box">
+           <button class="btn btn-primary">Add</button>
+
+           <form class="form-horizontal" method="POST">
+               <h3>New Employee</h3>
+               <div class="form-group">
+                   <label for="" class="control-label col-md-1">Name</label>
+                   <div class="col-md-4">
+                       <input type="text" class="form-control" name="name"/>
+                   </div>
+               </div>
+           </form>
+       </div>
     </div>
     <table class="table table-bordered">
         <thead>
