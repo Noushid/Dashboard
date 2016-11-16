@@ -11,7 +11,7 @@ if (!defined('BASEPATH')) {
  */
 class App extends CI_Controller
 {
-    protected $limit = 10;
+    protected $limit = 20;
 
     function __construct()
     {
