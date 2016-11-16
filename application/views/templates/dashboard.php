@@ -15,6 +15,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
     <script data-require="ui-bootstrap@*" data-semver="0.12.1" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>
 
+    <script src="<?php echo base_url('js/dirPagination.js');?>"></script>
     <script src="<?php echo base_url('js/angularScript.js')?>"></script>
 
 </head>

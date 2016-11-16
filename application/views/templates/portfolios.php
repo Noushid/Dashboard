@@ -2,6 +2,7 @@
    <div class="row">
     <div class="box" style="margin-left: 14px;">
         <button class="btn btn-primary" ng-click="newPortfolio()"><i class="fa fa-plus"></i> Add</button>
+
         <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform" name="addform">
             <h3>New Portfolio</h3>
             <div class="form-group">
@@ -40,6 +41,12 @@
                 <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
             </div>
         </form>
+        <form class="form-inline">
+            <div class="form-group">
+                <label >Search</label>
+                <input type="text" ng-model="search" class="form-control" placeholder="Search">
+            </div>
+        </form>
     </div>
    </div>
     <table class="table table-bordered">
@@ -56,7 +63,7 @@
         </thead>
         <tbody>
 <!--        <tr ng-repeat="portfolio in portfolios">-->
-        <tr ng-repeat="portfolio in filtered = portfolios | pagination:(currentPage-1)*numPerPage">
+        <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:5">
             <td>{{portfolio.id}}</td>
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>
@@ -76,10 +83,9 @@
         </tr>
         </tbody>
     </table>
-    <pagination
-        ng-model="currentPage"
-        total-items="portfolios.length"
-        max-size="maxSize"
-        boundary-links="true">
-    </pagination>
+    <dir-pagination-controls
+        max-size="2"
+        direction-links="true"
+        boundary-links="true" >
+    </dir-pagination-controls>
 </div>
