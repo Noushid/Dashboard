@@ -42,6 +42,26 @@ app.directive('ngFiles', ['$parse', function ($parse) {
 
 }]);
 
+
+//file reader directive
+app.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                var reader = new FileReader();
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        scope.fileread = loadEvent.target.files[0];
+                    });
+                };
+            });
+        }
+    };
+}]);
+
 //AdminController
 
 app.controller('adminController', function($scope,$location,$http, $rootScope, $filter) {
@@ -107,14 +127,18 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         $scope.showform = true;
     };
 
+
     //upload image
     var formdata = new FormData();
+    console.log(formdata);
     $scope.getTheFiles = function ($files) {
         angular.forEach($files, function (value, key) {
             formdata.append(key, value);
         });
+        console.log(formdata);
     };
-    // NOW UPLOAD THE FILES.
+
+    // NOW PROCESS TO UPLOAD THE FILES.
     $scope.uploadFiles = function () {
 
         var request = {
@@ -125,19 +149,16 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                 'Content-Type': undefined
             }
         };
-
-        // SEND THE FILES.
-        $http(request)
-            .success(function (d) {
-                alert(d);
-            })
-            .error(function () {
-            });
     }
     //Add
     $scope.addPortfolio = function () {
+        var testform = new FormData();
+        console.log($scope.newportfolio);
+
+        console.log(testform);
+
         //add protocol to link
-        var string = $scope.newportfolio.link;
+        /*var string = $scope.newportfolio.link;
         if (!~string.indexOf("http")) {
             $scope.newportfolio.link = "http://" + string;
         }
@@ -179,7 +200,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     alert(data['error']);
                 }
             });
-        }
+        }*/
     };
 
     $scope.deletePortfolio = function (item) {

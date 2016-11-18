@@ -3,16 +3,16 @@
     <div class="box" style="margin-left: 14px;">
         <button class="btn btn-primary" ng-click="newPortfolio()"><i class="fa fa-plus"></i> Add</button>
 
-        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform" name="addform">
+        <form class="form-horizontal" method="POST" ng-submit="addPortfolio()" ng-show="showform" name="addform" enctype="multipart/form-data">
             <h3>New Portfolio</h3>
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Name</label>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name" required/>
+                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name" <!--required-->/>
                 </div>
                 <label for="" class="control-label col-md-1">Type</label>
                 <div class="col-md-4">
-                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type" required>
+                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type" <!--required-->>
                         <option value="" selected disabled>Select</option>
                         <option value="portfolio site">portfolio site</option>
                         <option value="web app">Web Application</option>
@@ -27,7 +27,7 @@
                 </div>
                 <label for="" class="control-label col-md-1">link</label>
                 <div class="col-md-4">
-                        <input type="text" class="form-control" name="link" ng-model="newportfolio.link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);" required/>
+                        <input type="text" class="form-control" name="link" ng-model="newportfolio.link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);" <!--required-->/>
                 </div>
             </div>
             <div class="form-group">
@@ -39,7 +39,8 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Desktop</label>
                 <div class="col-md-3">
-                    <input type="file" id="file1" name="file" multiple ng-files="getTheFiles($files)" />
+<!--                    <input type="file" id="file1" name="file" multiple ng-files="getTheFiles($files)" />-->
+                    <input type="file" id="file1" name="file" multiple />
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">
@@ -56,11 +57,6 @@
                     <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
-
-            <div class="form-group">
-                <button ng-click="uploadFiles()">upload</button>
-            </div>
-
             <div class="form-group text-center">
                 <button class="btn btn-primary" type="submit">Save</button>
                 <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
