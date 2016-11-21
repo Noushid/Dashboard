@@ -26,6 +26,7 @@ app.filter('startFrom', function() {
     }
 });
 
+/*
 
 //file upload
 
@@ -54,9 +55,46 @@ app.directive("fileread", [function () {
                 var reader = new FileReader();
                 reader.onload = function (loadEvent) {
                     scope.$apply(function () {
-                        scope.fileread = loadEvent.target.files[0];
+                        scope.fileread = loadEvent.target.result;
                     });
                 };
+                reader.readAsDataURL(changeEvent.target.files[0]);
+            });
+        }
+    };
+}]);
+*/
+
+//File reader directive new
+app.directive('ngFileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var model = $parse(attrs.ngFileModel);
+            var isMultiple = attrs.multiple;
+            var modelSetter = model.assign;
+            element.bind('change', function () {
+                var values = [];
+                angular.forEach(element[0].files, function (item) {
+                    var value = {
+                        // File Name
+                        name: item.name,
+                        //File Size
+                        size: item.size,
+                        //File URL to view
+                        url: URL.createObjectURL(item),
+                        // File Input Value
+                        _file: item
+                    };
+                    values.push(value);
+                });
+                scope.$apply(function () {
+                    if (isMultiple) {
+                        modelSetter(scope, values);
+                    } else {
+                        modelSetter(scope, values[0]);
+                    }
+                });
             });
         }
     };
@@ -127,35 +165,27 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         $scope.showform = true;
     };
 
-
-    //upload image
-    var formdata = new FormData();
-    console.log(formdata);
-    $scope.getTheFiles = function ($files) {
-        angular.forEach($files, function (value, key) {
-            formdata.append(key, value);
-        });
-        console.log(formdata);
-    };
-
-    // NOW PROCESS TO UPLOAD THE FILES.
-    $scope.uploadFiles = function () {
-
-        var request = {
-            method: 'POST',
-            url: '/tempupload/',
-            data: formdata,
-            headers: {
-                'Content-Type': undefined
-            }
-        };
-    }
     //Add
     $scope.addPortfolio = function () {
-        var testform = new FormData();
         console.log($scope.newportfolio);
-
-        console.log(testform);
+        $http({
+            method: 'post',
+            url: $rootScope.base_url + '/Portfolio_Controller/store',
+            data: $scope.newportfolio,
+            header: {'Content-type': 'application/x-www-form-urlencoded'}
+        }).success(function (data, status, headers) {
+            console.log(headers);
+            //$scope.portfolios.push(data);
+            //loadPortfolio();
+            //$scope.newportfolio = {};
+            //$scope.showform = false;
+        }).error(function (data, status, headers) {
+            console.log(data);
+            /*console.log('header');
+            if (data['error']) {
+                alert(data['error']);
+            }*/
+        });
 
         //add protocol to link
         /*var string = $scope.newportfolio.link;

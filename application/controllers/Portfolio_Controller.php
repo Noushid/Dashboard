@@ -33,7 +33,19 @@ class Portfolio_Controller extends CI_Controller
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
-        $this->form_validation->set_rules('name', 'Name', 'required');
+        var_dump($_POST);
+        $config['upload_path']          = base_url('/uploads');
+        $config['allowed_types']        = 'gif|jpg|png';
+        $this->load->library('upload', $config);
+        if (! $this->upload->do_upload('desktop')) {
+            var_dump($this->upload->display_errors());
+        } else {
+            var_dump('success');
+        }
+
+
+
+        /*$this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('type', 'Type', 'required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -47,7 +59,7 @@ class Portfolio_Controller extends CI_Controller
                 $this->output->set_status_header(500, 'Server Down.');
                 $this->output->set_content_type('application/json')->set_output(json_encode($error));
             }
-        }
+        }*/
     }
 
     public function edit_record()
