@@ -33,14 +33,11 @@ class Portfolio_Controller extends CI_Controller
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
-        var_dump($_POST);
-        $config['upload_path']          = base_url('/uploads');
-        $config['allowed_types']        = 'gif|jpg|png';
-        $this->load->library('upload', $config);
-        if (! $this->upload->do_upload('desktop')) {
-            var_dump($this->upload->display_errors());
-        } else {
+        var_dump($_POST['desktop'][0]['url'].$_POST['desktop'][0]['url']);
+        if (move_uploaded_file($_POST['desktop'][0]['url'],$_POST['desktop'][0]['name'])) {
             var_dump('success');
+        }else{
+            var_dump('errror');
         }
 
 
