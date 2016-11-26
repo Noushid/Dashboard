@@ -167,12 +167,20 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
     //Add
     $scope.addPortfolio = function () {
-        console.log($scope.newportfolio);
+
+        console.log($scope.newportfolio.desktop);
+
+        var formData = new FormData();
+        formData.append('test', $scope.newportfolio.desktop);
+        console.log(formData);
+
         $http({
             method: 'post',
             url: $rootScope.base_url + '/Portfolio_Controller/store',
-            data: $scope.newportfolio,
-            header: {'Content-type': 'application/x-www-form-urlencoded'}
+            //data: $scope.newportfolio,
+            data: formData,
+            //header: {'Content-type': 'application/x-www-form-urlencoded'}
+            header: {'Content-type': 'undefined'}
         }).success(function (data, status, headers) {
             console.log(headers);
             //$scope.portfolios.push(data);

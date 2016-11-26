@@ -33,7 +33,7 @@ class Portfolio_Controller extends CI_Controller
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
-        var_dump($_POST['desktop'][0]['url'].$_POST['desktop'][0]['url']);
+        var_dump($_POST);
         if (move_uploaded_file($_POST['desktop'][0]['url'],$_POST['desktop'][0]['name'])) {
             var_dump('success');
         }else{
