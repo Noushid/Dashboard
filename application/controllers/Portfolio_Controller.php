@@ -14,6 +14,9 @@ class Portfolio_Controller extends CI_Controller
         parent::__construct();
 
         $this->load->model('Portfolio_Model', 'portfolio');
+        $this->load->model('File_Model', 'file');
+        $this->load->model('Portfolio_Files_model', 'portfolio_file');
+        $this->load->library('upload');
 
     }
 
@@ -29,18 +32,50 @@ class Portfolio_Controller extends CI_Controller
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
     }
 
+    public function upload_file()
+    {
+
+        $data = $_FILES;
+        $upload_data = [];
+
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'gif|jpg|png';
+        $config['max_size'] = 2800000;
+
+        foreach ($data as $value) {
+//            random file name
+            $config['file_name'] = 'p_'.rand();
+//            get file extension
+            $ext = substr(strrchr($value['name'],'.'),1);
+
+//          check file size
+            if ($ext == 'jpg' or $ext == 'png' or $ext == 'JPG' or $ext == 'jpeg') {
+                if ($value['size'] < $config['max_size']) {
+                    if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
+                        $temp['name'] = $config['file_name'] . '.' . $ext;
+                        $temp['type'] = $ext;
+//                Add uploaded file information.
+                        array_push($upload_data, $temp);
+                    }
+                }else{
+                    $error = 'File large';
+                }
+            }else{
+                $error = 'unknown type';
+
+            }
+        }
+        return $upload_data;
+
+    }
+
     public function store()
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
+        $upload = $this->upload_file($_FILES);
 
-        var_dump($_POST);
-        if (move_uploaded_file($_POST['desktop'][0]['url'],$_POST['desktop'][0]['name'])) {
-            var_dump('success');
-        }else{
-            var_dump('errror');
+        foreach ($upload as $value) {
         }
-
-
 
         /*$this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('type', 'Type', 'required');

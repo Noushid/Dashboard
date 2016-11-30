@@ -39,8 +39,8 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Desktop</label>
                 <div class="col-md-3">
-<!--                    <input type="file" id="file1" name="file" multiple ng-files="getTheFiles($files)" />-->
-                    <input type="file" id="file1" name="desktop" multiple ng-file-model="newportfolio.desktop" />
+                    <input type="file" id="file1" name="file" multiple file-model="newportfolio.desktop" />
+<!--                    <input type="file" id="file1" name="desktop" multiple ng-file-model="newportfolio.desktop" />-->
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">

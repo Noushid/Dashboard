@@ -4,7 +4,7 @@
 
 //Portfolio Controller
 
-app.controller('portfolioController', function ($scope, $location, $http, $rootScope) {
+app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload) {
 
 
 
@@ -46,76 +46,60 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     //Add
     $scope.addPortfolio = function () {
 
-        console.log($scope.newportfolio.desktop);
+        var file = $scope.newportfolio.desktop;
+        //console.log(file);
 
-        var formData = new FormData();
-        formData.append('test', $scope.newportfolio.desktop);
-        console.log(formData);
+        var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+        fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
 
-        $http({
-            method: 'post',
-            url: $rootScope.base_url + '/Portfolio_Controller/store',
-            //data: $scope.newportfolio,
-            data: formData,
-            //header: {'Content-type': 'application/x-www-form-urlencoded'}
-            header: {'Content-type': 'undefined'}
-        }).success(function (data, status, headers) {
-            console.log(headers);
-            //$scope.portfolios.push(data);
-            //loadPortfolio();
-            //$scope.newportfolio = {};
-            //$scope.showform = false;
-        }).error(function (data, status, headers) {
-            console.log(data);
-            /*console.log('header');
-             if (data['error']) {
-             alert(data['error']);
-             }*/
-        });
 
         //add protocol to link
-        /*var string = $scope.newportfolio.link;
+       /* var string = $scope.newportfolio.link;
          if (!~string.indexOf("http")) {
-         $scope.newportfolio.link = "http://" + string;
+             $scope.newportfolio.link = "http://" + string;
          }
 
          if ($scope.newportfolio['id']) {
-         console.log('edit');
-         var id = $scope.newportfolio['id'];
-         $http({
-         method: 'post',
-         url: $rootScope.base_url + '/Portfolio_Controller/edit_record',
-         data: $scope.newportfolio,
-         header: {'Content-type': 'application/x-www-form-urlencoded'}
-         }).success(function (data, status, headers) {
-         $scope.portfolios.push(data);
-         loadPortfolio();
-         $scope.newportfolio = {};
-         $scope.showform = false;
-         }).error(function (data, status, headers) {
-         if (data['error']) {
-         alert(data['error']);
-         }
-         });
+             console.log('edit');
+             var id = $scope.newportfolio['id'];
+             $http({
+                 method: 'post',
+                 url: $rootScope.base_url + '/Portfolio_Controller/edit_record',
+                 data: $scope.newportfolio,
+                 header: {'Content-type': 'application/x-www-form-urlencoded'}
+                 })
+                 .success(function (data, status, headers) {
+                    $scope.portfolios.push(data);
+                    loadPortfolio();
+                     $scope.newportfolio = {};
+                     $scope.showform = false;
+                 })
+                 .error(function (data, status, headers) {
+                    if (data['error']) {
+                       alert(data['error']);
+                     }
+                });
          }else{
          $http({
-         method: 'post',
-         url: $rootScope.base_url + '/Portfolio_Controller/store',
-         data: $scope.newportfolio,
-         header: {'Content-type': 'application/x-www-form-urlencoded'}
-         }).success(function (data, status, headers) {
-         console.log(headers);
-         $scope.portfolios.push(data);
-         loadPortfolio();
-         $scope.newportfolio = {};
-         $scope.showform = false;
-         }).error(function (data, status, headers) {
-         console.log(data);
-         console.log('header');
-         if (data['error']) {
-         alert(data['error']);
-         }
-         });
+             method: 'post',
+             url: $rootScope.base_url + '/Portfolio_Controller/store',
+             data: $scope.newportfolio,
+             header: {'Content-type': 'application/x-www-form-urlencoded'}
+             })
+             .success(function (data, status, headers) {
+                 console.log(headers);
+                 $scope.portfolios.push(data);
+                 loadPortfolio();
+                 $scope.newportfolio = {};
+                 $scope.showform = false;
+             })
+             .error(function (data, status, headers) {
+                 console.log(data);
+                 console.log('header');
+                 if (data['error']) {
+                 alert(data['error']);
+                 }
+             });
          }*/
     };
 

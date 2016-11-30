@@ -101,8 +101,55 @@ app.directive('ngFileModel', ['$parse', function ($parse) {
     };
 }]);
 
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
 
+            element.bind('change', function(){
+                var values = [];
+                angular.forEach(element[0].files, function (item) {
+                    //file name
+                    values.push(item);
+                });
+                //console.log(values);
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files);
+                    //old
+                    //modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
 
+// We can write our own fileUpload service to reuse it in the controller
+app.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl, name){
+        var fd = new FormData();
+        var i = 0;
+        angular.forEach(file, function (item) {
+            console.log(item);
+            fd.append(i, item);
+            i++;
+        });
+/*        fd.append('file', file);*/
+        fd.append('name', name);
+
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined,'Process-Data': false}
+        })
+            .success(function(){
+                console.log("Success");
+            })
+            .error(function(){
+                console.log("error");
+            });
+    }
+}]);
 
 /**
  * dirPagination - AngularJS module for paginating (almost) anything.
@@ -778,7 +825,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
 
 //Portfolio Controller
 
-app.controller('portfolioController', function ($scope, $location, $http, $rootScope) {
+app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload) {
 
 
 
@@ -820,32 +867,12 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     //Add
     $scope.addPortfolio = function () {
 
-        console.log($scope.newportfolio.desktop);
+        var file = $scope.newportfolio.desktop;
+        //console.log(file);
 
-        var formData = new FormData();
-        formData.append('test', $scope.newportfolio.desktop);
-        console.log(formData);
+        var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/store';
+        fileUpload.uploadFileToUrl(file, uploadUrl, 'text');
 
-        $http({
-            method: 'post',
-            url: $rootScope.base_url + '/Portfolio_Controller/store',
-            //data: $scope.newportfolio,
-            data: formData,
-            //header: {'Content-type': 'application/x-www-form-urlencoded'}
-            header: {'Content-type': 'undefined'}
-        }).success(function (data, status, headers) {
-            console.log(headers);
-            //$scope.portfolios.push(data);
-            //loadPortfolio();
-            //$scope.newportfolio = {};
-            //$scope.showform = false;
-        }).error(function (data, status, headers) {
-            console.log(data);
-            /*console.log('header');
-             if (data['error']) {
-             alert(data['error']);
-             }*/
-        });
 
         //add protocol to link
         /*var string = $scope.newportfolio.link;
