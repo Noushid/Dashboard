@@ -131,22 +131,35 @@ app.service('fileUpload', ['$http', function ($http) {
         var fd = new FormData();
         var i = 0;
         angular.forEach(file, function (item) {
-            console.log(item);
             fd.append(i, item);
             i++;
         });
 /*        fd.append('file', file);*/
         fd.append('name', name);
 
-        $http.post(uploadUrl, fd, {
+        return $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined,'Process-Data': false}
         })
-            .success(function(){
-                console.log("Success");
-            })
-            .error(function(){
-                console.log("error");
-            });
+            //.success(function(data,status,headers){
+            //    console.log(data);
+            //})
+            //.error(function(data,status,headers){
+            //    console.log("error");
+            //});
     }
 }]);
+
+//we can write our own insert service to reuse it in the controller
+app.service('insert', ['$http', function ($http) {
+    this.insertDataToUrl = function (data, url) {
+        return $http({
+            method: 'post',
+            url: url,
+            data: data,
+            header: {'Content-type': 'application/x-www-form-urlencoded'}
+        })
+
+    }
+}]);
+

@@ -131,25 +131,38 @@ app.service('fileUpload', ['$http', function ($http) {
         var fd = new FormData();
         var i = 0;
         angular.forEach(file, function (item) {
-            console.log(item);
             fd.append(i, item);
             i++;
         });
 /*        fd.append('file', file);*/
         fd.append('name', name);
 
-        $http.post(uploadUrl, fd, {
+        return $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined,'Process-Data': false}
         })
-            .success(function(){
-                console.log("Success");
-            })
-            .error(function(){
-                console.log("error");
-            });
+            //.success(function(data,status,headers){
+            //    console.log(data);
+            //})
+            //.error(function(data,status,headers){
+            //    console.log("error");
+            //});
     }
 }]);
+
+//we can write our own insert service to reuse it in the controller
+app.service('insert', ['$http', function ($http) {
+    this.insertDataToUrl = function (data, url) {
+        return $http({
+            method: 'post',
+            url: url,
+            data: data,
+            header: {'Content-type': 'application/x-www-form-urlencoded'}
+        })
+
+    }
+}]);
+
 
 /**
  * dirPagination - AngularJS module for paginating (almost) anything.
@@ -825,7 +838,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
 
 //Portfolio Controller
 
-app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload) {
+app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload,insert) {
 
 
 
@@ -835,6 +848,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.message = {};
     $scope.error = {};
     $scope.showform = true;
+    $scope.files= [];
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
@@ -867,56 +881,141 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     //Add
     $scope.addPortfolio = function () {
 
-        var file = $scope.newportfolio.desktop;
-        //console.log(file);
+        var file = $scope.files.desktop;
+        if (file != undefined) {
+            var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+            //call upload service.
+            var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
+            upload.success(function (data) {
+                var upload_data = data;
 
-        var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/store';
-        fileUpload.uploadFileToUrl(file, uploadUrl, 'text');
+                //Add http to url
+                if ($scope.newportfolio.link != undefined) {
+                    var string = $scope.newportfolio.link;
+                    if (!~string.indexOf("http")) {
+                        $scope.newportfolio.link = "http://" + string;
+                    }
+                }
+
+                if ($scope.newportfolio['id']) {
+                    console.log('edit');
+                    var url =  $rootScope.base_url + '/Portfolio_Controller/edit_record';
+                    var data = $scope.newportfolio;
+                    var header= {'Content-type': 'application/x-www-form-urlencoded'}
+
+                    //call insert service
+                    var update = insert.insertDataToUrl(data, url, header);
+                    update.success(function (data, status, headers) {
+                        $scope.portfolios.push(data);
+                        loadPortfolio();
+                        $scope.newportfolio = {};
+                        $scope.showform = false;
+                    });
+                    update.error(function (data, status, headers) {
+                        if (data['error']) {
+                            alert(data['error']);
+                        }
+                    });
+                }else{
+                    console.log('add');
+                    var url = $rootScope.base_url + '/Portfolio_Controller/store';
+                    var insert_data = $scope.newportfolio;
+                    var header = {'Content-type': 'application/x-www-form-urlencoded'};
+
+                    var addPortfolio = insert.insertDataToUrl(insert_data, url);
+
+                    console.log(addPortfolio);
+                    addPortfolio.success(function (data, status, headers) {
+                        console.log(data);
+
+                        //insert files information
+                        var portfolio_id = data['id'];
+                        var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
+                        var data = upload_data;
+                        var addFiles = insert.insertDataToUrl(data, url);
+                        addFiles.success(function (data, status, headers) {
+                            console.log('add files');
+                            console.log(data);
+                        });
+                        addFiles.error(function (data, status, headers) {
+                            console.log('error');
+                            console.log(data);
+                        });
+
+
+
+                        $scope.portfolios.push(data);
+                        loadPortfolio();
+                        $scope.newportfolio = {};
+                        $scope.showform = false;
+                    });
+                    addPortfolio.error(function (data, status, headers) {
+                        console.log(data);
+                        console.log(headers);
+                        if (data['error']) {
+                            alert(data['error']);
+                        }
+                    });
+
+                }
+
+            });
+            upload.error(function (data) {
+                console.log('error');
+                console.log(data);
+            });
+        }else{
+            alert('Please Select Any image!');
+        }
 
 
         //add protocol to link
-        /*var string = $scope.newportfolio.link;
+       /* var string = $scope.newportfolio.link;
          if (!~string.indexOf("http")) {
-         $scope.newportfolio.link = "http://" + string;
+             $scope.newportfolio.link = "http://" + string;
          }
 
          if ($scope.newportfolio['id']) {
-         console.log('edit');
-         var id = $scope.newportfolio['id'];
-         $http({
-         method: 'post',
-         url: $rootScope.base_url + '/Portfolio_Controller/edit_record',
-         data: $scope.newportfolio,
-         header: {'Content-type': 'application/x-www-form-urlencoded'}
-         }).success(function (data, status, headers) {
-         $scope.portfolios.push(data);
-         loadPortfolio();
-         $scope.newportfolio = {};
-         $scope.showform = false;
-         }).error(function (data, status, headers) {
-         if (data['error']) {
-         alert(data['error']);
-         }
-         });
+             console.log('edit');
+             var id = $scope.newportfolio['id'];
+             $http({
+                 method: 'post',
+                 url: $rootScope.base_url + '/Portfolio_Controller/edit_record',
+                 data: $scope.newportfolio,
+                 header: {'Content-type': 'application/x-www-form-urlencoded'}
+                 })
+                 .success(function (data, status, headers) {
+                    $scope.portfolios.push(data);
+                    loadPortfolio();
+                     $scope.newportfolio = {};
+                     $scope.showform = false;
+                 })
+                 .error(function (data, status, headers) {
+                    if (data['error']) {
+                       alert(data['error']);
+                     }
+                });
          }else{
          $http({
-         method: 'post',
-         url: $rootScope.base_url + '/Portfolio_Controller/store',
-         data: $scope.newportfolio,
-         header: {'Content-type': 'application/x-www-form-urlencoded'}
-         }).success(function (data, status, headers) {
-         console.log(headers);
-         $scope.portfolios.push(data);
-         loadPortfolio();
-         $scope.newportfolio = {};
-         $scope.showform = false;
-         }).error(function (data, status, headers) {
-         console.log(data);
-         console.log('header');
-         if (data['error']) {
-         alert(data['error']);
-         }
-         });
+             method: 'post',
+             url: $rootScope.base_url + '/Portfolio_Controller/store',
+             data: $scope.newportfolio,
+             header: {'Content-type': 'application/x-www-form-urlencoded'}
+             })
+             .success(function (data, status, headers) {
+                 console.log(headers);
+                 $scope.portfolios.push(data);
+                 loadPortfolio();
+                 $scope.newportfolio = {};
+                 $scope.showform = false;
+             })
+             .error(function (data, status, headers) {
+                 console.log(data);
+                 console.log('header');
+                 if (data['error']) {
+                 alert(data['error']);
+                 }
+             });
          }*/
     };
 

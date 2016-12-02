@@ -52,46 +52,80 @@ class Portfolio_Controller extends CI_Controller
             if ($ext == 'jpg' or $ext == 'png' or $ext == 'JPG' or $ext == 'jpeg') {
                 if ($value['size'] < $config['max_size']) {
                     if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
-                        $temp['name'] = $config['file_name'] . '.' . $ext;
-                        $temp['type'] = $ext;
+                        $temp['file_name'] = $config['file_name'] . '.' . $ext;
+                        $temp['file_type'] = $ext;
 //                Add uploaded file information.
                         array_push($upload_data, $temp);
                     }
                 }else{
-                    $error = 'File large';
+                    $error = ['error' => "File large"];
+                    $this->output->set_status_header(500, 'Server Down.');
+                    $this->output->set_content_type('application/json')->set_output(json_encode($error));
                 }
             }else{
-                $error = 'unknown type';
+                $error = ['error' => "Unknown file type"];
+                $this->output->set_status_header(500, 'Server Down.');
+                $this->output->set_content_type('application/json')->set_output(json_encode($error));
 
             }
         }
-        return $upload_data;
+        $this->output->set_content_type('application/json')->set_output(json_encode($upload_data));
+//        return $upload_data;
 
     }
 
     public function store()
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
-        $upload = $this->upload_file($_FILES);
 
-        foreach ($upload as $value) {
-        }
-
-        /*$this->form_validation->set_rules('name', 'Name', 'required');
-        $this->form_validation->set_rules('type', 'Type', 'required');
+        $this->form_validation->set_rules('name', 'Name', 'required');
+//        $this->form_validation->set_rules('type', 'Type', 'required');
 
         if ($this->form_validation->run() == FALSE) {
             $this->output->set_status_header(400,'Validation Error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            if ($this->portfolio->add($_POST)) {
+            $portfolio_id = $this->portfolio->add($_POST);
+            if ($portfolio_id) {
+                $_POST['id'] = $portfolio_id;
                 $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
             } else {
                 $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
                 $this->output->set_status_header(500, 'Server Down.');
                 $this->output->set_content_type('application/json')->set_output(json_encode($error));
             }
-        }*/
+        }
+    }
+
+    public function add_file($id)
+    {
+        $data = json_decode(file_get_contents('php://input'), TRUE);
+
+        $error = [];
+        $success = [];
+        foreach ($data as $value) {
+//            add data to files table
+            $file_id = $this->file->add($value);
+
+//            add data to portfolio_files table
+            if ($file_id) {
+                $temp = [
+                    'portfolios_id' => $id,
+                    'files_id' => $file_id,
+                ];
+                $portfolio_file = $this->portfolio_file->add($temp);
+                if ($portfolio_file) {
+                    array_push($success, $portfolio_file);
+                }else{
+                    $error['error'] = 'portfolio files error';
+                }
+            } else {
+                $error['error'] = 'files error';
+            }
+        }
+        if ($success) {
+            $this->output->set_content_type('application/json')->set_output(json_encode($success));
+        }
     }
 
     public function edit_record()
