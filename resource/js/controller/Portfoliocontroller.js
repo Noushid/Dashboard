@@ -80,44 +80,58 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             });
         }else{
             console.log('add');
-            var url = $rootScope.base_url + '/Portfolio_Controller/store';
-            var insert_data = $scope.newportfolio;
-            var header = {'Content-type': 'application/x-www-form-urlencoded'};
+            if (file != undefined) {
+                var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+                //call upload service.
+                var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
+                upload.success(function (data) {
+                    var upload_data = data;
 
-            var addPortfolio = insert.insertDataToUrl(insert_data, url);
+                    var url = $rootScope.base_url + '/Portfolio_Controller/store';
+                    var insert_data = $scope.newportfolio;
 
-            console.log(addPortfolio);
-            addPortfolio.success(function (data, status, headers) {
-                console.log(data);
+                    var addPortfolio = insert.insertDataToUrl(insert_data, url);
 
-                //insert files information
-                var portfolio_id = data['id'];
-                var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
-                var data = upload_data;
-                var addFiles = insert.insertDataToUrl(data, url);
-                addFiles.success(function (data, status, headers) {
-                    console.log('add files');
-                    console.log(data);
+                    console.log(addPortfolio);
+                    addPortfolio.success(function (data, status, headers) {
+                        console.log(data);
+
+                        //insert files information
+                        var portfolio_id = data['id'];
+                        var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
+                        var data = upload_data;
+                        var addFiles = insert.insertDataToUrl(data, url);
+                        addFiles.success(function (data, status, headers) {
+                            console.log('add files');
+                            console.log(data);
+                        });
+                        addFiles.error(function (data, status, headers) {
+                            console.log('error');
+                            console.log(data);
+                        });
+
+                        $scope.portfolios.push(data);
+                        loadPortfolio();
+                        $scope.newportfolio = {};
+                        $scope.showform = false;
+                    });
+                    addPortfolio.error(function (data, status, headers) {
+                        console.log(data);
+                        console.log(headers);
+                        if (data['error']) {
+                            alert(data['error']);
+                        }
+                    });
                 });
-                addFiles.error(function (data, status, headers) {
+                upload.error(function (data) {
                     console.log('error');
                     console.log(data);
                 });
 
+            }else {
+                alert('Please select any image!');
+            }
 
-
-                $scope.portfolios.push(data);
-                loadPortfolio();
-                $scope.newportfolio = {};
-                $scope.showform = false;
-            });
-            addPortfolio.error(function (data, status, headers) {
-                console.log(data);
-                console.log(headers);
-                if (data['error']) {
-                    alert(data['error']);
-                }
-            });
 
         }
 
@@ -133,16 +147,16 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
 
 
-        var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
-        //call upload service.
-        var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
-        upload.success(function (data) {
-
-        });
-        upload.error(function (data) {
-            console.log('error');
-            console.log(data);
-        });
+        //var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+        ////call upload service.
+        //var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
+        //upload.success(function (data) {
+        //
+        //});
+        //upload.error(function (data) {
+        //    console.log('error');
+        //    console.log(data);
+        //});
 
         //add protocol to link
        /* var string = $scope.newportfolio.link;
