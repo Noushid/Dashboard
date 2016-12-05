@@ -882,42 +882,58 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.addPortfolio = function () {
 
         var file = $scope.files.desktop;
-        if (file != undefined) {
-            var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
-            //call upload service.
-            var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
-            upload.success(function (data) {
-                var upload_data = data;
+        var file_mob = $scope.files.mobile;
 
-                //Add http to url
-                if ($scope.newportfolio.link != undefined) {
-                    var string = $scope.newportfolio.link;
-                    if (!~string.indexOf("http")) {
-                        $scope.newportfolio.link = "http://" + string;
-                    }
+
+        var upload_data = data;
+
+        //Add http to url
+        if ($scope.newportfolio.link != undefined) {
+            var string = $scope.newportfolio.link;
+            if (!~string.indexOf("http")) {
+                $scope.newportfolio.link = "http://" + string;
+            }
+        }
+
+        if ($scope.newportfolio['id']) {
+            console.log('edit');
+            var url =  $rootScope.base_url + '/Portfolio_Controller/edit_record';
+            var data = $scope.newportfolio;
+            var header= {'Content-type': 'application/x-www-form-urlencoded'}
+
+            //call insert service
+            var update = insert.insertDataToUrl(data, url, header);
+            update.success(function (data, status, headers) {
+                $scope.portfolios.push(data);
+                loadPortfolio();
+                $scope.newportfolio = {};
+                $scope.showform = false;
+            });
+            update.error(function (data, status, headers) {
+                if (data['error']) {
+                    alert(data['error']);
                 }
-
-                if ($scope.newportfolio['id']) {
-                    console.log('edit');
-                    var url =  $rootScope.base_url + '/Portfolio_Controller/edit_record';
-                    var data = $scope.newportfolio;
-                    var header= {'Content-type': 'application/x-www-form-urlencoded'}
-
-                    //call insert service
-                    var update = insert.insertDataToUrl(data, url, header);
-                    update.success(function (data, status, headers) {
-                        $scope.portfolios.push(data);
-                        loadPortfolio();
-                        $scope.newportfolio = {};
-                        $scope.showform = false;
+            });
+        }else{
+            console.log('add');
+            if (file != undefined) {
+                var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+                //call upload service for upload desktop images.
+                var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
+                upload.success(function (data_desk) {
+                    var mob_upload_data = '';
+                    //call upload service for upload desktop images.
+                    var upload_mob = fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile');
+                    upload_mob.success(function (data_mob) {
+                        mob_upload_data = data_mob;
                     });
-                    update.error(function (data, status, headers) {
-                        if (data['error']) {
-                            alert(data['error']);
-                        }
+                    upload_mob.error(function (error) {
+                        console.log(error);
+                        return false;
                     });
-                }else{
-                    console.log('add');
+
+                    var upload_data = data_desk;
+                    upload_data['type'] = 'desktop';
                     var url = $rootScope.base_url + '/Portfolio_Controller/store';
                     var insert_data = $scope.newportfolio;
                     var header = {'Content-type': 'application/x-www-form-urlencoded'};
@@ -942,8 +958,20 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                             console.log(data);
                         });
 
-
-
+                        if (mob_upload_data != undefined) {
+                            var data = mob_upload_data;
+                            console.log(mob_upload_data);
+                            var addFiles = insert.insertDataToUrl(data, url);
+                            addFiles.success(function (data, status, headers) {
+                                console.log('add files');
+                                console.log(data);
+                            });
+                            addFiles.error(function (data, status, headers) {
+                                console.log('mobile file error');
+                                console.log(data);
+                                return false;
+                            });
+                        }
                         $scope.portfolios.push(data);
                         loadPortfolio();
                         $scope.newportfolio = {};
@@ -956,17 +984,19 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                             alert(data['error']);
                         }
                     });
+                });
+                upload.error(function (data) {
+                    console.log('error');
+                    console.log(data);
+                });
 
-                }
+            }else{
+                alert('Please select any image!');
+            }
 
-            });
-            upload.error(function (data) {
-                console.log('error');
-                console.log(data);
-            });
-        }else{
-            alert('Please Select Any image!');
         }
+
+
 
 
         //add protocol to link

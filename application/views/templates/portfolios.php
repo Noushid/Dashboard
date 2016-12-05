@@ -40,7 +40,6 @@
                 <label for="" class="control-label col-md-1">Desktop</label>
                 <div class="col-md-3">
                     <input type="file" id="file1" name="file" multiple file-model="files.desktop" />
-<!--                    <input type="file" id="file1" name="desktop" multiple ng-file-model="newportfolio.desktop" />-->
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">
@@ -50,7 +49,7 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Mobile</label>
                 <div class="col-md-3">
-                    <input type="file" name="mobile"/>
+                    <input type="file" id="mobile" name="mobile" multiple file-model="files.mobile"/>
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">

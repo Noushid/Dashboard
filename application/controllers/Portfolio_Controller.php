@@ -54,6 +54,7 @@ class Portfolio_Controller extends CI_Controller
                     if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
                         $temp['file_name'] = $config['file_name'] . '.' . $ext;
                         $temp['file_type'] = $ext;
+
 //                Add uploaded file information.
                         array_push($upload_data, $temp);
                     }
