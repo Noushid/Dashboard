@@ -114,7 +114,6 @@ app.directive('fileModel', ['$parse', function ($parse) {
                     //file name
                     values.push(item);
                 });
-                //console.log(values);
                 scope.$apply(function(){
                     modelSetter(scope, element[0].files);
                     //old
@@ -857,7 +856,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     function loadPortfolio() {
         $http.get($rootScope.base_url +'/Portfolio_Controller/get').then(function(response) {
             $scope.portfolios = response.data;
-            console.log($scope.portfolios);
+            //console.log($scope.portfolios);
         })
     };
 
@@ -919,76 +918,60 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             if (file != undefined) {
                 var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
                 //call upload service for upload desktop images.
-                var upload = fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop');
-                upload.success(function (data_desk) {
-                    var mob_upload_data = '';
-                    //call upload service for upload desktop images.
-                    var upload_mob = fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile');
-                    upload_mob.success(function (data_mob) {
-                        mob_upload_data = data_mob;
-                    });
-                    upload_mob.error(function (error) {
-                        console.log(error);
-                        return false;
-                    });
+                fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop')
+                    .success(function (data_desk) {
+                        var upload_data = [];
 
-                    var upload_data = data_desk;
-                    upload_data['type'] = 'desktop';
-                    var url = $rootScope.base_url + '/Portfolio_Controller/store';
-                    var insert_data = $scope.newportfolio;
-                    var header = {'Content-type': 'application/x-www-form-urlencoded'};
-
-                    var addPortfolio = insert.insertDataToUrl(insert_data, url);
-
-                    console.log(addPortfolio);
-                    addPortfolio.success(function (data, status, headers) {
-                        console.log(data);
-
-                        //insert files information
-                        var portfolio_id = data['id'];
-                        var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
-                        var data = upload_data;
-                        var addFiles = insert.insertDataToUrl(data, url);
-                        addFiles.success(function (data, status, headers) {
-                            console.log('add files');
-                            console.log(data);
-                        });
-                        addFiles.error(function (data, status, headers) {
-                            console.log('error');
-                            console.log(data);
+                        angular.forEach(data_desk, function (item) {
+                            upload_data.push(item);
                         });
 
-                        if (mob_upload_data != undefined) {
-                            var data = mob_upload_data;
-                            console.log(mob_upload_data);
-                            var addFiles = insert.insertDataToUrl(data, url);
-                            addFiles.success(function (data, status, headers) {
-                                console.log('add files');
-                                console.log(data);
-                            });
-                            addFiles.error(function (data, status, headers) {
-                                console.log('mobile file error');
-                                console.log(data);
+                        //call upload service for upload desktop images.
+                        fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile')
+                            .success(function (data_mob) {
+                                angular.forEach(data_mob, function (item) {
+                                    upload_data.push(item);
+                                });
+                            })
+                            .error(function (error) {
+                                console.log(error);
                                 return false;
                             });
-                        }
-                        $scope.portfolios.push(data);
-                        loadPortfolio();
-                        $scope.newportfolio = {};
-                        $scope.showform = false;
-                    });
-                    addPortfolio.error(function (data, status, headers) {
+
+                        var url = $rootScope.base_url + '/Portfolio_Controller/store';
+                        var insert_data = $scope.newportfolio;
+
+                        insert.insertDataToUrl(insert_data, url)
+                            .success(function (data, status, headers) {
+                                console.log(upload_data);
+                                //insert files information
+                                var portfolio_id = data['id'];
+                                var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
+                                var data = upload_data;
+
+                                insert.insertDataToUrl(data, url)
+                                    .error(function (data, status, headers) {
+                                        console.log('error');
+                                        console.log(data);
+                                    });
+
+                                $scope.portfolios.push(data);
+                                loadPortfolio();
+                                $scope.newportfolio = {};
+                                $scope.showform = false;
+                            })
+                            .error(function (data, status, headers) {
+                                console.log(data);
+                                console.log(headers);
+                                if (data['error']) {
+                                    alert(data['error']);
+                                }
+                            });
+                    })
+                    .error(function (data) {
+                        console.log('error');
                         console.log(data);
-                        console.log(headers);
-                        if (data['error']) {
-                            alert(data['error']);
-                        }
                     });
-                });
-                upload.error(function (data) {
-                    console.log('error');
-                    console.log(data);
-                });
 
             }else{
                 alert('Please select any image!');

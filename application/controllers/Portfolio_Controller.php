@@ -36,6 +36,7 @@ class Portfolio_Controller extends CI_Controller
     {
 
         $data = $_FILES;
+        $name = $_POST['name'];
         $upload_data = [];
 
         $config['upload_path'] = './uploads/';
@@ -54,6 +55,7 @@ class Portfolio_Controller extends CI_Controller
                     if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
                         $temp['file_name'] = $config['file_name'] . '.' . $ext;
                         $temp['file_type'] = $ext;
+                        $temp['image_cat'] = $name;
 
 //                Add uploaded file information.
                         array_push($upload_data, $temp);
@@ -104,15 +106,19 @@ class Portfolio_Controller extends CI_Controller
 
         $error = [];
         $success = [];
+
         foreach ($data as $value) {
 //            add data to files table
-            $file_id = $this->file->add($value);
+            $file['file_name'] = $value['file_name'];
+            $file['file_type'] = $value['file_type'];
+            $file_id = $this->file->add($file);
 
 //            add data to portfolio_files table
             if ($file_id) {
                 $temp = [
                     'portfolios_id' => $id,
                     'files_id' => $file_id,
+                    'type' => $value['image_cat']
                 ];
                 $portfolio_file = $this->portfolio_file->add($temp);
                 if ($portfolio_file) {

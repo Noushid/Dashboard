@@ -114,7 +114,6 @@ app.directive('fileModel', ['$parse', function ($parse) {
                     //file name
                     values.push(item);
                 });
-                //console.log(values);
                 scope.$apply(function(){
                     modelSetter(scope, element[0].files);
                     //old
