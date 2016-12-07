@@ -110,6 +110,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
                         insert.insertDataToUrl(insert_data, url)
                             .success(function (data, status, headers) {
+                                console.log('add succes');
                                 console.log(upload_data);
                                 //insert files information
                                 var portfolio_id = data['id'];
