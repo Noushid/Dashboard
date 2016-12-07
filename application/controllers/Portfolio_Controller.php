@@ -73,8 +73,26 @@ class Portfolio_Controller extends CI_Controller
             }
         }
         $this->output->set_content_type('application/json')->set_output(json_encode($upload_data));
-//        return $upload_data;
+    }
 
+    public function delete_file()
+    {
+        $data = json_decode(file_get_contents('php://input'), TRUE);
+        $path = getcwd().'/uploads/';
+
+        if (is_array($data)) {
+            foreach ($data as $value) {
+                if (!unlink($path . $value['file_name'])) {
+                    $this->output->set_status_header(500, 'Server Down.');
+                    $this->output->set_content_type('application/json')->set_output(json_encode('Unable to delete'));
+                    return FALSE;
+                } else {
+                    $this->output->set_content_type('application/json')->set_output(json_encode('Deleted!'));
+                }
+            }
+        } else {
+            unlink($path . $data);
+        }
     }
 
     public function store()

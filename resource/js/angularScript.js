@@ -26,45 +26,6 @@ app.filter('startFrom', function() {
     }
 });
 
-/*
-
-//file upload
-
-app.directive('ngFiles', ['$parse', function ($parse) {
-    function fn_link(scope, element, attrs) {
-        var onChange = $parse(attrs.ngFiles);
-        element.on('change', function (event) {
-            onChange(scope, {$files: event.target.files});
-        });
-    };
-    return {
-        link: fn_link
-    };
-
-}]);
-
-
-//file reader directive
-app.directive("fileread", [function () {
-    return {
-        scope: {
-            fileread: "="
-        },
-        link: function (scope, element, attributes) {
-            element.bind("change", function (changeEvent) {
-                var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                        scope.fileread = loadEvent.target.result;
-                    });
-                };
-                reader.readAsDataURL(changeEvent.target.files[0]);
-            });
-        }
-    };
-}]);
-*/
-
 //File reader directive new
 app.directive('ngFileModel', ['$parse', function ($parse) {
     return {
@@ -107,12 +68,15 @@ app.directive('fileModel', ['$parse', function ($parse) {
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
+            scope.filespre = [];
 
             element.bind('change', function(){
                 var values = [];
                 angular.forEach(element[0].files, function (item) {
-                    //file name
-                    values.push(item);
+                    //url
+                    item.url = URL.createObjectURL(item);
+                    item.model = attrs.fileModel;
+                    scope.filespre.push(item);
                 });
                 scope.$apply(function(){
                     modelSetter(scope, element[0].files);
@@ -123,6 +87,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }]);
+
 
 // We can write our own fileUpload service to reuse it in the controller
 app.service('fileUpload', ['$http', function ($http) {
@@ -150,8 +115,8 @@ app.service('fileUpload', ['$http', function ($http) {
 }]);
 
 //we can write our own insert service to reuse it in the controller
-app.service('insert', ['$http', function ($http) {
-    this.insertDataToUrl = function (data, url) {
+app.service('action', ['$http', function ($http) {
+    this.post = function (data, url) {
         return $http({
             method: 'post',
             url: url,
@@ -159,6 +124,7 @@ app.service('insert', ['$http', function ($http) {
             header: {'Content-type': 'application/x-www-form-urlencoded'}
         })
 
-    }
+    };
+
 }]);
 

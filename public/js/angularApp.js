@@ -26,45 +26,6 @@ app.filter('startFrom', function() {
     }
 });
 
-/*
-
-//file upload
-
-app.directive('ngFiles', ['$parse', function ($parse) {
-    function fn_link(scope, element, attrs) {
-        var onChange = $parse(attrs.ngFiles);
-        element.on('change', function (event) {
-            onChange(scope, {$files: event.target.files});
-        });
-    };
-    return {
-        link: fn_link
-    };
-
-}]);
-
-
-//file reader directive
-app.directive("fileread", [function () {
-    return {
-        scope: {
-            fileread: "="
-        },
-        link: function (scope, element, attributes) {
-            element.bind("change", function (changeEvent) {
-                var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                        scope.fileread = loadEvent.target.result;
-                    });
-                };
-                reader.readAsDataURL(changeEvent.target.files[0]);
-            });
-        }
-    };
-}]);
-*/
-
 //File reader directive new
 app.directive('ngFileModel', ['$parse', function ($parse) {
     return {
@@ -107,12 +68,15 @@ app.directive('fileModel', ['$parse', function ($parse) {
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
+            scope.filespre = [];
 
             element.bind('change', function(){
                 var values = [];
                 angular.forEach(element[0].files, function (item) {
-                    //file name
-                    values.push(item);
+                    //url
+                    item.url = URL.createObjectURL(item);
+                    item.model = attrs.fileModel;
+                    scope.filespre.push(item);
                 });
                 scope.$apply(function(){
                     modelSetter(scope, element[0].files);
@@ -123,6 +87,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }]);
+
 
 // We can write our own fileUpload service to reuse it in the controller
 app.service('fileUpload', ['$http', function ($http) {
@@ -150,8 +115,8 @@ app.service('fileUpload', ['$http', function ($http) {
 }]);
 
 //we can write our own insert service to reuse it in the controller
-app.service('insert', ['$http', function ($http) {
-    this.insertDataToUrl = function (data, url) {
+app.service('action', ['$http', function ($http) {
+    this.post = function (data, url) {
         return $http({
             method: 'post',
             url: url,
@@ -159,7 +124,8 @@ app.service('insert', ['$http', function ($http) {
             header: {'Content-type': 'application/x-www-form-urlencoded'}
         })
 
-    }
+    };
+
 }]);
 
 
@@ -837,7 +803,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
 
 //Portfolio Controller
 
-app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload,insert) {
+app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload,action) {
 
 
 
@@ -846,7 +812,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.curportfolio = {};
     $scope.message = {};
     $scope.error = {};
-    $scope.showform = true;
+    $scope.showform = false;
+    $scope.showtable = true;
     $scope.files= [];
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
@@ -854,9 +821,15 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     loadPortfolio();
 
     function loadPortfolio() {
-        $http.get($rootScope.base_url +'/Portfolio_Controller/get').then(function(response) {
-            $scope.portfolios = response.data;
-            //console.log($scope.portfolios);
+        $http.get($rootScope.base_url +'/portfolio/get-all').then(function(response) {
+            if (response.data) {
+                $scope.showtable = true;
+                $scope.portfolios = response.data;
+            }else{
+                console.log('No data found');
+                $scope.showtable = false;
+                $scope.message = 'No data Found';
+            }
         })
     };
 
@@ -883,9 +856,6 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         var file = $scope.files.desktop;
         var file_mob = $scope.files.mobile;
 
-
-        var upload_data = data;
-
         //Add http to url
         if ($scope.newportfolio.link != undefined) {
             var string = $scope.newportfolio.link;
@@ -900,8 +870,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             var data = $scope.newportfolio;
             var header= {'Content-type': 'application/x-www-form-urlencoded'}
 
-            //call insert service
-            var update = insert.insertDataToUrl(data, url, header);
+            //insert data to table
+            var update = action.post(data, url, header);
             update.success(function (data, status, headers) {
                 $scope.portfolios.push(data);
                 loadPortfolio();
@@ -914,9 +884,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                 }
             });
         }else{
-            console.log('add');
             if (file != undefined) {
-                var uploadUrl = $rootScope.base_url + '/Portfolio_Controller/upload_file';
+                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
                 //call upload service for upload desktop images.
                 fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop')
                     .success(function (data_desk) {
@@ -938,18 +907,18 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                                 return false;
                             });
 
-                        var url = $rootScope.base_url + '/Portfolio_Controller/store';
+                        var url = $rootScope.base_url + '/portfolio/insert';
                         var insert_data = $scope.newportfolio;
 
-                        insert.insertDataToUrl(insert_data, url)
+                        action.post(insert_data, url)
                             .success(function (data, status, headers) {
                                 console.log(upload_data);
                                 //insert files information
                                 var portfolio_id = data['id'];
-                                var url = $rootScope.base_url + '/Portfolio_Controller/add_file/' + portfolio_id;
+                                var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
                                 var data = upload_data;
 
-                                insert.insertDataToUrl(data, url)
+                                action.post(data, url)
                                     .error(function (data, status, headers) {
                                         console.log('error');
                                         console.log(data);
@@ -962,7 +931,15 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                             })
                             .error(function (data, status, headers) {
                                 console.log(data);
-                                console.log(headers);
+                                var url = $rootScope.base_url + '/portfolio/delete-file';
+                                var data = upload_data;
+                                action.post(data, url)
+                                    .success(function (data, status, headers) {
+                                        console.log('deleted');
+                                    })
+                                    .error(function(data,status,headers) {
+                                        console.log('error');
+                                    })
                                 if (data['error']) {
                                     alert(data['error']);
                                 }
@@ -978,58 +955,6 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             }
 
         }
-
-
-
-
-        //add protocol to link
-       /* var string = $scope.newportfolio.link;
-         if (!~string.indexOf("http")) {
-             $scope.newportfolio.link = "http://" + string;
-         }
-
-         if ($scope.newportfolio['id']) {
-             console.log('edit');
-             var id = $scope.newportfolio['id'];
-             $http({
-                 method: 'post',
-                 url: $rootScope.base_url + '/Portfolio_Controller/edit_record',
-                 data: $scope.newportfolio,
-                 header: {'Content-type': 'application/x-www-form-urlencoded'}
-                 })
-                 .success(function (data, status, headers) {
-                    $scope.portfolios.push(data);
-                    loadPortfolio();
-                     $scope.newportfolio = {};
-                     $scope.showform = false;
-                 })
-                 .error(function (data, status, headers) {
-                    if (data['error']) {
-                       alert(data['error']);
-                     }
-                });
-         }else{
-         $http({
-             method: 'post',
-             url: $rootScope.base_url + '/Portfolio_Controller/store',
-             data: $scope.newportfolio,
-             header: {'Content-type': 'application/x-www-form-urlencoded'}
-             })
-             .success(function (data, status, headers) {
-                 console.log(headers);
-                 $scope.portfolios.push(data);
-                 loadPortfolio();
-                 $scope.newportfolio = {};
-                 $scope.showform = false;
-             })
-             .error(function (data, status, headers) {
-                 console.log(data);
-                 console.log('header');
-                 if (data['error']) {
-                 alert(data['error']);
-                 }
-             });
-         }*/
     };
 
     $scope.deletePortfolio = function (item) {
@@ -1058,5 +983,6 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
      alert("No match");
      }
      }*/
+
 });
 

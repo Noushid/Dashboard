@@ -8,11 +8,11 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Name</label>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name" <!--required-->/>
+                    <input type="text" class="form-control" name="name" ng-model="newportfolio.name" required/>
                 </div>
                 <label for="" class="control-label col-md-1">Type</label>
                 <div class="col-md-4">
-                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type" <!--required-->>
+                    <select name="type" id="type" class="form-control" ng-model="newportfolio.type" required>
                         <option value="" selected disabled>Select</option>
                         <option value="portfolio site">portfolio site</option>
                         <option value="web app">Web Application</option>
@@ -39,11 +39,12 @@
             <div class="form-group">
                 <label for="" class="control-label col-md-1">Desktop</label>
                 <div class="col-md-3">
-                    <input type="file" id="file1" name="file" multiple file-model="files.desktop" />
+                    <input type="file" id="file1" name="file" multiple file-model="files.desktop" ng-required="!newportfolio.id" />
                 </div>
                 <div class="clearfix"></div>
-                <div class=" box">
-                    <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+                <div class="box">
+<!--                    <img src="--><?php //echo base_url('img/work-1.jpg')?><!--" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">-->
+                    <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.desktop'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
             <div class="form-group">
@@ -53,7 +54,8 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">
-                    <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+<!--                    <img src="--><?php //echo base_url('img/work-1.jpg')?><!--" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">-->
+                    <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.mobile'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
             <div class="form-group text-center">
@@ -61,7 +63,7 @@
                 <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
             </div>
         </form>
-        <form class="form-inline">
+        <form class="form-inline" ng-show="showtable">
             <div class="form-group">
                 <label >Search</label>
                 <input type="text" ng-model="search" class="form-control" placeholder="Search">
@@ -69,7 +71,8 @@
         </form>
     </div>
    </div>
-    <table class="table table-bordered">
+    <div class="help-block" ng-show="!showtable">{{message}}</div>
+    <table class="table table-bordered" ng-show="showtable">
         <thead>
         <tr>
             <td>id</td>
@@ -82,7 +85,6 @@
         </tr>
         </thead>
         <tbody>
-<!--        <tr ng-repeat="portfolio in portfolios">-->
         <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:5">
             <td>{{portfolio.id}}</td>
             <td>{{portfolio.name}}</td>
