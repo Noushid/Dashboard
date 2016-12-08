@@ -75,13 +75,14 @@
     <table class="table table-bordered" ng-show="showtable">
         <thead>
         <tr>
-            <td>id</td>
-            <td>name</td>
-            <td>type</td>
-            <td>Description</td>
-            <td>Display Text</td>
-            <td>Link</td>
-            <td>action</td>
+            <th>id</th>
+            <th>name</th>
+            <th>type</th>
+            <th>Description</th>
+            <th>Display Text</th>
+            <th>Link</th>
+            <th>Photos</th>
+            <th>action</th>
         </tr>
         </thead>
         <tbody>
@@ -90,8 +91,25 @@
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>
             <td>{{portfolio.description}}</td>
-            <td>{{portfolio.displaytext}}</td>
+            <td>
+                <div class="table-overflow" ng-click="popup=true" >
+                    {{portfolio.displaytext}}
+                </div>
+                <div class="popup">
+                        <span class="popuptext" ng-show="popup" ng-click="popup=false">
+                            {{portfolio.displaytext}}
+                        </span>
+                </div>
+            </td>
             <td>{{portfolio.link}}</td>
+            <td>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
+            </td>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
                     <button type="button" class="btn btn-info" ng-click="showForm(portfolio)">
@@ -105,9 +123,15 @@
         </tr>
         </tbody>
     </table>
+    <div class="popup">dddddddddddd</div>
     <dir-pagination-controls
         max-size="2"
         direction-links="true"
         boundary-links="true" >
     </dir-pagination-controls>
+</div>
+<div class="row" ng-show="loading">
+    <div class="span4">
+        <img class="center-block" src="<?php echo base_url('img/loading.gif') ?>" alt=""/>
+    </div>
 </div>

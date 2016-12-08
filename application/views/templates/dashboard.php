@@ -8,6 +8,7 @@
     <link rel="icon" href="<?php echo base_url('img/ico.png');?>" type="image/png" sizes="47x54">
     <title>Dashboard- Psybo Technologies</title>
     <link rel="stylesheet" href="<?php echo base_url('css/styleapp.css');?>">
+    <link rel="stylesheet" href="<?php echo base_url('css/custom.css');?>">
     <script type="text/javascript" src="<?php echo base_url('js/appjs.js');?>"></script>
     <script type="text/javascript" src="<?php echo base_url('js/custom.js');?>"></script>
 
@@ -17,9 +18,18 @@
 
     <script src="<?php echo base_url('js/angularApp.js')?>"></script>
 
+    <style>
+        .disabled {
+            z-index: 1000;
+            background-color: lightgrey;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+
 </head>
 <body ng-app="myApp" ng-controller="adminController">
-<div class="page-wrapper">
+<div class="page-wrapper" ng-class="{disabled: loading}">
     <div class="left-wrapper" >
         <?php echo dashboard_menu('dashboard');?>
     </div>

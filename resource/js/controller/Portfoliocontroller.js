@@ -16,6 +16,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.showform = false;
     $scope.showtable = true;
     $scope.files= [];
+    $scope.loading = false;
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
@@ -39,6 +40,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         $scope.showform = true;
         $scope.curportfolio = item;
         $scope.newportfolio = angular.copy(item);
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     //Hide the form
@@ -49,11 +52,14 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.newPortfolio = function() {
         $scope.newportfolio = {};
         $scope.showform = true;
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     //Add
     $scope.addPortfolio = function () {
 
+        $scope.loading = true;
         var file = $scope.files.desktop;
         var file_mob = $scope.files.mobile;
 
@@ -67,6 +73,57 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
         if ($scope.newportfolio['id']) {
             console.log('edit');
+            var upload_inform = [];
+            if (file != undefined) {
+                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
+                fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop')
+                    .success(function (desk_data) {
+                        var portfolio_id = $scope.newportfolio['id'];
+                        var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
+                        var data = desk_data;
+
+                        action.post(data, url)
+                         .success(function (data, headers) {
+                         console.log(data);
+                         console.log('new file data inserted');
+                         })
+                         .error(function (data, headers) {
+                         console.log(data);
+                         console.log('error');
+                         });
+                    })
+                    .error(function(data,headers) {
+                        console.log('desktop image upload error');
+                        console.log(data);
+                        return false;
+                    })
+            }
+
+            if (file_mob != undefined) {
+                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
+                fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile')
+                    .success(function (mob_data) {
+                        var portfolio_id = $scope.newportfolio['id'];
+                        var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
+                        var data = mob_data;
+
+                        action.post(data, url)
+                            .success(function (data, headers) {
+                                console.log(data);
+                                console.log('new file data inserted');
+                            })
+                            .error(function (data, headers) {
+                                console.log(data);
+                                console.log('error');
+                            });
+                    })
+                    .error(function(data) {
+                        console.log('mobile image uploaad error');
+                        console.log(data);
+                        return false;
+                    })
+            }
+
             var url =  $rootScope.base_url + '/Portfolio_Controller/edit_record';
             var data = $scope.newportfolio;
             var header= {'Content-type': 'application/x-www-form-urlencoded'}
@@ -84,6 +141,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     alert(data['error']);
                 }
             });
+
+            $scope.loading = false;
         }else{
             if (file != undefined) {
                 var uploadUrl = $rootScope.base_url + '/portfolio/upload';
@@ -140,6 +199,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                                     })
                                     .error(function(data,status,headers) {
                                         console.log('error');
+                                        console.log(data);
                                     })
                                 if (data['error']) {
                                     alert(data['error']);
@@ -154,7 +214,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             }else{
                 alert('Please select any image!');
             }
-
+            $scope.loading = false;
         }
     };
 

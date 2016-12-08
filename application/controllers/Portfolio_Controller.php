@@ -122,34 +122,39 @@ class Portfolio_Controller extends CI_Controller
     {
         $data = json_decode(file_get_contents('php://input'), TRUE);
 
+
         $error = [];
         $success = [];
-
-        foreach ($data as $value) {
+        if (empty($data)) {
+            $this->output->set_status_header(500, 'Server error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
+        } else {
+            foreach ($data as $value) {
 //            add data to files table
-            $file['file_name'] = $value['file_name'];
-            $file['file_type'] = $value['file_type'];
-            $file_id = $this->file->add($file);
+                $file['file_name'] = $value['file_name'];
+                $file['file_type'] = $value['file_type'];
+                $file_id = $this->file->add($file);
 
 //            add data to portfolio_files table
-            if ($file_id) {
-                $temp = [
-                    'portfolios_id' => $id,
-                    'files_id' => $file_id,
-                    'type' => $value['image_cat']
-                ];
-                $portfolio_file = $this->portfolio_file->add($temp);
-                if ($portfolio_file) {
-                    array_push($success, $portfolio_file);
-                }else{
-                    $error['error'] = 'portfolio files error';
+                if ($file_id) {
+                    $temp = [
+                        'portfolios_id' => $id,
+                        'files_id' => $file_id,
+                        'type' => $value['image_cat']
+                    ];
+                    $portfolio_file = $this->portfolio_file->add($temp);
+                    if ($portfolio_file) {
+                        array_push($success, $portfolio_file);
+                    }else{
+                        $error['error'] = 'portfolio files error';
+                    }
+                } else {
+                    $error['error'] = 'files error';
                 }
-            } else {
-                $error['error'] = 'files error';
             }
-        }
-        if ($success) {
-            $this->output->set_content_type('application/json')->set_output(json_encode($success));
+            if ($success) {
+                $this->output->set_content_type('application/json')->set_output(json_encode($success));
+            }
         }
     }
 
