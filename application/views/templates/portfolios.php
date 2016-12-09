@@ -91,16 +91,7 @@
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>
             <td>{{portfolio.description}}</td>
-            <td>
-                <div class="table-overflow" ng-click="popup=true" >
-                    {{portfolio.displaytext}}
-                </div>
-                <div class="popup">
-                        <span class="popuptext" ng-show="popup" ng-click="popup=false">
-                            {{portfolio.displaytext}}
-                        </span>
-                </div>
-            </td>
+            <td><p class="description" popover="{{portfolio.displaytext}}" popover-trigger="mouseenter">{{portfolio.displaytext}}</p></td>
             <td>{{portfolio.link}}</td>
             <td>
                 <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
@@ -123,7 +114,6 @@
         </tr>
         </tbody>
     </table>
-    <div class="popup">dddddddddddd</div>
     <dir-pagination-controls
         max-size="2"
         direction-links="true"

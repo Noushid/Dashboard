@@ -55,9 +55,12 @@
 }
 
 /*overflow*/
-.table-overflow{
+.table-overflow, .description{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 180px;
+}
+.popover {
+    max-width: 100%;
 }
