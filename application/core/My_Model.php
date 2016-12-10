@@ -143,7 +143,9 @@ class My_Model extends CI_Model
     {
 
         $this->db->from($this->table);
-        $this->db->where($where);
+        if ($where != null) {
+            $this->db->where($where);
+        }
         $this->db->limit($limit, $start);
         foreach ($join_table as $key => $value) {
             $cond = implode('=', $condition[$key]);
@@ -153,11 +155,7 @@ class My_Model extends CI_Model
         $query = $this->db->get();
 //        var_dump($this->db->get_compiled_select($this->table));
         if ($query->num_rows() > 0) {
-            $result = [
-                'last' => $query->last_row(),
-                'all' => $query->result()
-            ];
-            return $result;
+            return $query->result();
         } else {
             return FALSE;
         }
@@ -199,11 +197,7 @@ class My_Model extends CI_Model
         $query = $this->db->get();
 //        var_dump( ($this->db->get_compiled_select($this->table)) );
         if ($query->num_rows() > 0) {
-            $result = [
-                'last' => $query->last_row(),
-                'all' => $query->result()
-            ];
-            return $result;
+            return $query->result_array();
         } else {
             return FALSE;
         }

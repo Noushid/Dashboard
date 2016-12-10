@@ -43,7 +43,8 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="box">
-<!--                    <img src="--><?php //echo base_url('img/work-1.jpg')?><!--" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">-->
+                    <img ng-repeat="preview in item_files" src="{{base_url + '/uploads/' + preview.file_name}}"  ng-show="preview.image_type == 'desktop'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px" src="" alt=""/>
+
                     <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.desktop'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
@@ -54,7 +55,7 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class=" box">
-<!--                    <img src="--><?php //echo base_url('img/work-1.jpg')?><!--" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">-->
+                    <img ng-repeat="preview in item_files" src="{{base_url + '/uploads/' + preview.file_name}}"  ng-show="preview.image_type == 'mobile'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px" src="" alt=""/>
                     <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.mobile'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
                 </div>
             </div>
@@ -92,15 +93,9 @@
             <td>{{portfolio.type}}</td>
             <td>{{portfolio.description}}</td>
             <td><p class="description" popover="{{portfolio.displaytext}}" popover-trigger="mouseenter">{{portfolio.displaytext}}</p></td>
-            <td>{{portfolio.link}}</td>
+            <td><p class="description" popover="{{portfolio.link}}" popover-trigger="mouseenter"><a href="{{portfolio.link}}">{{portfolio.link}}</a></p></td>
             <td>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-                <img src="<?php echo base_url('img/work-1.jpg')?>" alt="thumbnail" width="25px" height="25px"/>
-            </td>
+                <a ng-repeat="file in portfolio.files" href="{{base_url + '/uploads/' + file.file_name}}"><img class="img img-thumbnail" src="{{base_url + '/uploads/' + file.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
                     <button type="button" class="btn btn-info" ng-click="showForm(portfolio)">

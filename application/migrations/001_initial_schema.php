@@ -287,7 +287,7 @@ class Migration_Initial_schema extends CI_Migration
                 'constraint' => 5,
                 'null' => FALSE
             ],
-            'type' => [
+            'image_type' => [
                 'type' => 'VARCHAR',
                 'constraint' => 50
             ]

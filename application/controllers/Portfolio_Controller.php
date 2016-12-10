@@ -28,7 +28,8 @@ class Portfolio_Controller extends CI_Controller
 
     public function get()
     {
-        $data = $this->portfolio->select();
+
+        $data = $this->portfolio_file->select();
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
     }
 
@@ -140,7 +141,7 @@ class Portfolio_Controller extends CI_Controller
                     $temp = [
                         'portfolios_id' => $id,
                         'files_id' => $file_id,
-                        'type' => $value['image_cat']
+                        'image_type' => $value['image_cat']
                     ];
                     $portfolio_file = $this->portfolio_file->add($temp);
                     if ($portfolio_file) {

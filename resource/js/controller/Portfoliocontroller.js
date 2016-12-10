@@ -17,6 +17,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.showtable = true;
     $scope.files= [];
     $scope.loading = false;
+    $scope.item_files = [];
 
     $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
@@ -27,6 +28,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             if (response.data) {
                 $scope.showtable = true;
                 $scope.portfolios = response.data;
+                console.log($scope.portfolios);
             }else{
                 console.log('No data found');
                 $scope.showtable = false;
@@ -42,6 +44,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         $scope.newportfolio = angular.copy(item);
         angular.element("input[type='file']").val(null);
         $scope.filespre = [];
+        $scope.item_files = item.files;
+        console.log($scope.item_files);
     };
 
     //Hide the form
