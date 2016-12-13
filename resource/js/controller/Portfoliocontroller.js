@@ -227,7 +227,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         var conf = confirm('Do you want to delete this Record?');
         if (conf) {
             var id = item['id'];
-            $http.delete($rootScope.base_url + '/Portfolio_Controller/delete/' + id)
+            $http.delete($rootScope.base_url + '/portfolio/delete/' + id)
                 .success(function (data, status, headers) {
                     console.log(data);
                     alert(data);
@@ -241,11 +241,12 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         console.log(item);
         console.log(key);
 
-        var url = $rootScope.base_url + '/Portfolio_Controller/delete_image';
+        var url = $rootScope.base_url + '/portfolio/delete-image';
+        //var conf = confirm('Do you want to delete this Image?!');
         var data = item;
         action.post(data, url)
             .success(function (data, headers, status) {
-                delete $scope.item_files[key];
+
                 console.log('portfolio file deleted');
                 console.log(headers);
                 console.log(data);

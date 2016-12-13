@@ -783,20 +783,8 @@ app.controller('adminController', function($scope,$location,$http, $rootScope, $
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
-    $scope.numPerpage = 5;
-    console.log($scope.numPerpage);
-
-});
-
-
-//Employee Controller
-app.controller('employeeController', function ($scope, $location, $http, $rootScope) {
-    $scope.employees = [];
-    $scope.error = {};
-
-    $http.get($rootScope.base_url + '/Employees_Controller/get_employees').then(function (response) {
-        $scope.employees = response.data;
-    });
+    $scope.numPerPage = 5;
+    console.log($scope.numPerPage);
 
 });
 
@@ -1029,7 +1017,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         var conf = confirm('Do you want to delete this Record?');
         if (conf) {
             var id = item['id'];
-            $http.delete($rootScope.base_url + '/Portfolio_Controller/delete/' + id)
+            $http.delete($rootScope.base_url + '/portfolio/delete/' + id)
                 .success(function (data, status, headers) {
                     console.log(data);
                     alert(data);
@@ -1043,11 +1031,12 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         console.log(item);
         console.log(key);
 
-        var url = $rootScope.base_url + '/Portfolio_Controller/delete_image';
+        var url = $rootScope.base_url + '/portfolio/delete-image';
+        //var conf = confirm('Do you want to delete this Image?!');
         var data = item;
         action.post(data, url)
             .success(function (data, headers, status) {
-                delete $scope.item_files[key];
+
                 console.log('portfolio file deleted');
                 console.log(headers);
                 console.log(data);
@@ -1074,3 +1063,42 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
 });
 
+
+/**
+ * Created by psybo-03 on 13/12/16.
+ */
+
+app.controller('employeeController', function ($scope, $location, $http, $rootScope, fileUpload, action) {
+    $scope.newemployee= {};
+    $scope.employees = [];
+    $scope.curemploye = [];
+    $scope.showform = true;
+    $scope.loading = false;
+
+
+    loademployee();
+
+    function loademployee() {
+        $http.get($rootScope.base_url + '/Employees_Controller/get_employees').then(function (response) {
+            $scope.employees = response.data;
+        });
+    }
+
+    $scope.showForm = function (item) {
+
+    };
+
+    $scope.hideForm = function () {
+        $scope.showform = false;
+    };
+
+    $scope.newEmployee = function () {
+        $scope.newemployee = {};
+        $scope.showform = true;
+    };
+
+    $scope.addEmployee = function () {
+        console.log('test');
+        console.log($scope.newemployee);
+    };
+});

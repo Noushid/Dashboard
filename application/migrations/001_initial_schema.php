@@ -119,8 +119,7 @@ class Migration_Initial_schema extends CI_Migration
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table('testimonials');
 
-
-        /*address*/
+        /*employees*/
 
         $this->dbforge->add_field([
             'id' => [
@@ -193,21 +192,6 @@ class Migration_Initial_schema extends CI_Migration
                 'type' => 'VARCHAR',
                 'constraint' => 255,
                 'null' => TRUE
-            ]
-        ]);
-
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table('address');
-
-
-        /*employees*/
-
-        $this->dbforge->add_field([
-            'id' => [
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'auto_increment' => TRUE
             ],
             'designation' => [
                 'type' => 'VARCHAR',
@@ -215,11 +199,6 @@ class Migration_Initial_schema extends CI_Migration
                 'null' => TRUE
             ],
             'files_id' => [
-                'type' => 'INT',
-                'constraint' => 5,
-                'null' => TRUE
-            ],
-            'address_id' => [
                 'type' => 'INT',
                 'constraint' => 5,
                 'null' => TRUE

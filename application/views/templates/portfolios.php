@@ -105,7 +105,7 @@
         <form class="form-inline" ng-show="showtable">
             <div class="form-group">
                 <label for="">Show</label>
-                <select name="numperpage" ng-model="numPerpage" class="form-control">
+                <select name="numperPage" ng-model="numPerPage" class="form-control">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -133,7 +133,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:numPerpage">
+        <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:numPerPage">
             <td>{{portfolio.id}}</td>
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>

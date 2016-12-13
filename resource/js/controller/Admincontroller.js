@@ -12,19 +12,7 @@ app.controller('adminController', function($scope,$location,$http, $rootScope, $
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
-    $scope.numPerpage = 5;
-    console.log($scope.numPerpage);
-
-});
-
-
-//Employee Controller
-app.controller('employeeController', function ($scope, $location, $http, $rootScope) {
-    $scope.employees = [];
-    $scope.error = {};
-
-    $http.get($rootScope.base_url + '/Employees_Controller/get_employees').then(function (response) {
-        $scope.employees = response.data;
-    });
+    $scope.numPerPage = 5;
+    console.log($scope.numPerPage);
 
 });

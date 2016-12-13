@@ -33,7 +33,6 @@ class App extends CI_Controller
 
         // load any required models
         $this->load->model('User_Model', 'user_model');
-        $this->load->model('address_Model', 'address');
         $this->load->model('Employee_Model', 'employee');
         $this->load->model('File_Model', 'file');
         $this->load->model('Gallery_Files_Model', 'gallery_files');
@@ -54,9 +53,6 @@ class App extends CI_Controller
 
         // seed users
         $this->_seed_users($this->limit);
-
-        // seed address
-        $this->_seed_address($this->limit);
 
         // seed employee
         $this->_seed_employee($this->limit);
@@ -128,7 +124,19 @@ class App extends CI_Controller
             $data = [
                 'designation' => $this->faker->jobTitle,
                 'files_id' => $this->faker->randomElement([1,2,3,4,5,6,7,8,9,10]),
-                'address_id' => $this->faker->randomElement([1,2,3,4,5,6,7,8,9,10])
+                'name' => $this->faker->name,
+                'address' => $this->faker->address,
+                'email' => $this->faker->email,
+                'telephone' => $this->faker->phoneNumber,
+                'mobile' => $this->faker->phoneNumber,
+                'website' => $this->faker->url,
+                'linkedin' => $this->faker->url,
+                'facebook' => $this->faker->url,
+                'twitter' => $this->faker->url,
+                'github' => $this->faker->url,
+                'googleplus' => $this->faker->url,
+                'gender' => $this->faker->url,
+                'place' => $this->faker->url
             ];
 
             $this->employee->add($data);
@@ -150,35 +158,6 @@ class App extends CI_Controller
             $this->file->add($data);
         }
         echo PHP_EOL;
-    }
-
-
-    function _seed_address($limit)
-    {
-        echo "seeding $limit address";
-
-        for ($i = 0; $i < $limit; $i++) {
-            echo ".";
-            $data = [
-                'name' => $this->faker->name,
-                'address' => $this->faker->address,
-                'email' => $this->faker->email,
-                'telephone' => $this->faker->phoneNumber,
-                'mobile' => $this->faker->phoneNumber,
-                'website' => $this->faker->url,
-                'linkedin' => $this->faker->url,
-                'facebook' => $this->faker->url,
-                'twitter' => $this->faker->url,
-                'github' => $this->faker->url,
-                'googleplus' => $this->faker->url,
-                'gender' => $this->faker->url,
-                'place' => $this->faker->url
-            ];
-
-            $this->address->add($data);
-        }
-        echo PHP_EOL;
-
     }
 
     function _seed_gallery($limit)
@@ -278,7 +257,6 @@ class App extends CI_Controller
         $this->user_model->trunc();
         $this->employee->trunc();
         $this->file->trunc();
-        $this->address->trunc();
         $this->gallery->trunc();
         $this->gallery_files->trunc();
         $this->portfolio_files->trunc();
