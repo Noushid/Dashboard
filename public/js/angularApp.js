@@ -783,6 +783,9 @@ app.controller('adminController', function($scope,$location,$http, $rootScope, $
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
+    $scope.numPerpage = 5;
+    console.log($scope.numPerpage);
+
 });
 
 
@@ -917,7 +920,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                             })
                             .error(function (data, headers) {
                                 console.log(data);
-                                console.log('error');
+                                console.log(headers);
+                                console.log('file upload error');
                             });
                     })
                     .error(function(data) {
@@ -1033,6 +1037,26 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                 });
         }
 
+    };
+
+    $scope.deleteImage = function(item,key) {
+        console.log(item);
+        console.log(key);
+
+        var url = $rootScope.base_url + '/Portfolio_Controller/delete_image';
+        var data = item;
+        action.post(data, url)
+            .success(function (data, headers, status) {
+                delete $scope.item_files[key];
+                console.log('portfolio file deleted');
+                console.log(headers);
+                console.log(data);
+            })
+            .error(function (data,headers,status) {
+                console.log('portfolio file delete error');
+                console.log(headers);
+                console.log(data);
+            });
     };
     /*
      // Not using this method in this controll

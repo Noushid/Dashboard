@@ -1,3 +1,4 @@
+
 var vid = document.getElementsByClassName("video");
 vid.loop = true;
 vid.autoplay = true;
@@ -11,4 +12,3 @@ function checkURL (item) {
     item.value = string;
     return item
 }
-

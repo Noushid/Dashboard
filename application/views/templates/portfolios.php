@@ -42,10 +42,29 @@
                     <input type="file" id="file1" name="file" multiple file-model="files.desktop" ng-required="!newportfolio.id" />
                 </div>
                 <div class="clearfix"></div>
-                <div class="box">
-                    <img ng-repeat="preview in item_files" src="{{base_url + '/uploads/' + preview.file_name}}"  ng-show="preview.image_type == 'desktop'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px" src="" alt=""/>
 
-                    <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.desktop'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+<!--                for show exist images-->
+                <div class="row">
+                    <div class="col-md-2" ng-repeat="(key,preview) in item_files" ng-show="preview.image_type == 'desktop'">
+                        <div class="thumbnail" ng-mouseover="showcaption=true" ng-mouseleave="showcaption=false">
+                            <div class="caption" ng-show="showcaption">
+                                <div id="content">
+                                    <a href="" class="label label-warning" rel="tooltip" title="Show">Show</a>
+                                    <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(preview,key)">Delete</a>
+                                </div>
+                            </div>
+                            <img src="{{base_url + '/uploads/' + preview.file_name}}" alt="thumbnails">
+                        </div>
+                    </div>
+                </div>
+
+<!--                for selected images-->
+                <div class="row" >
+                    <div class="col-md-2" ng-repeat="image in filespre" ng-show="image.model == 'files.desktop'">
+                        <div class="thumbnail">
+                            <img src="{{image.url}}" alt="preview" />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -54,9 +73,28 @@
                     <input type="file" id="mobile" name="mobile" multiple file-model="files.mobile"/>
                 </div>
                 <div class="clearfix"></div>
-                <div class=" box">
-                    <img ng-repeat="preview in item_files" src="{{base_url + '/uploads/' + preview.file_name}}"  ng-show="preview.image_type == 'mobile'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px" src="" alt=""/>
-                    <img ng-repeat="image in filespre" src="{{image.url}}" ng-show="image.model == 'files.mobile'" alt="thumbnail" class="img-thumbnail" width="140px" height="140px">
+                <!--                for show exist images-->
+                <div class="row">
+                    <div class="col-md-2" ng-repeat="(key,preview) in item_files" ng-show="preview.image_type == 'mobile'">
+                        <div class="thumbnail" ng-mouseover="showcaption=true" ng-mouseleave="showcaption=false">
+                            <div class="caption" ng-show="showcaption">
+                                <div id="content">
+                                    <a href="" class="label label-warning" rel="tooltip" title="Show">Show</a>
+                                    <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(preview,key)">Delete</a>
+                                </div>
+                            </div>
+                            <img src="{{base_url + '/uploads/' + preview.file_name}}" alt="thumbnails">
+                        </div>
+                    </div>
+                </div>
+
+                <!--                for selected images-->
+                <div class="row" >
+                    <div class="col-md-2" ng-repeat="image in filespre" ng-show="image.model == 'files.mobile'">
+                        <div class="thumbnail">
+                            <img src="{{image.url}}" alt="preview" />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group text-center">
@@ -66,6 +104,14 @@
         </form>
         <form class="form-inline" ng-show="showtable">
             <div class="form-group">
+                <label for="">Show</label>
+                <select name="numperpage" ng-model="numPerpage" class="form-control">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
+
                 <label >Search</label>
                 <input type="text" ng-model="search" class="form-control" placeholder="Search">
             </div>
@@ -87,11 +133,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:5">
+        <tr dir-paginate="portfolio in portfolios | filter:search | limitTo:pageSize| itemsPerPage:numPerpage">
             <td>{{portfolio.id}}</td>
             <td>{{portfolio.name}}</td>
             <td>{{portfolio.type}}</td>
-            <td>{{portfolio.description}}</td>
+            <td><p class="description" popover="{{portfolio.displaytext}}" popover-trigger="mouseenter">{{portfolio.description}}</p></td></td>
             <td><p class="description" popover="{{portfolio.displaytext}}" popover-trigger="mouseenter">{{portfolio.displaytext}}</p></td>
             <td><p class="description" popover="{{portfolio.link}}" popover-trigger="mouseenter"><a href="{{portfolio.link}}">{{portfolio.link}}</a></p></td>
             <td>
@@ -110,7 +156,7 @@
         </tbody>
     </table>
     <dir-pagination-controls
-        max-size="2"
+        max-size="10"
         direction-links="true"
         boundary-links="true" >
     </dir-pagination-controls>

@@ -163,6 +163,9 @@ class Portfolio_Controller extends CI_Controller
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
+        if (array_key_exists('files',$_POST)) {
+            unset($_POST['files']);
+        }
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('type', 'Type', 'required');
 
@@ -185,6 +188,7 @@ class Portfolio_Controller extends CI_Controller
     {
         if(!$this->portfolio->get(['id' => $id])){
             $data = 'Record not found!';
+            $this->output->set_status_header(400, 'Record Not found.');
             $this->output->set_content_type('application/json')->set_output(json_encode($data));
         } else {
             if ($this->portfolio->remove($id)) {
@@ -193,4 +197,28 @@ class Portfolio_Controller extends CI_Controller
             }
         }
     }
+
+    public function delete_image()
+    {
+        $data = json_decode(file_get_contents('php://input'), TRUE);
+
+        $portfolio_file_id = $data['id'];
+        $files_id = $data['files_id'];
+
+        if ($this->portfolio_file->remove($portfolio_file_id)) {
+            if ($this->file->remove($files_id)) {
+                $data = 'file Deleted!';
+                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+            } else {
+                $data['error'] = 'files delete error';
+                $this->output->set_status_header(400, 'Record Not found.');
+                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+            }
+        } else {
+            $data['error'] = 'portfolio files delete error';
+            $this->output->set_status_header(400, 'Record Not found.');
+            $this->output->set_content_type('application/json')->set_output(json_encode($data));
+        }
+    }
+
 }

@@ -32,6 +32,11 @@ class File_Model extends My_Model{
         return $this->update($data, $id);
     }
 
+    public function remove($id)
+    {
+        return $this->drop($id);
+    }
+
     public function trunc()
     {
         return $this->truncate();
