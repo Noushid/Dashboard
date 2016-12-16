@@ -7,17 +7,17 @@
                <div class="form-group">
                    <label for="" class="control-label col-md-1">Name</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" name="name" ng-model="newemployee.name"/>
+                       <input type="text" class="form-control" name="name" ng-model="newemployee.name" required=""/>
                    </div>
                    <label for="" class="control-label col-md-1">Designation</label>
                    <div class="col-md-4">
-                       <input class="form-control" type="text" ng-model="newemployee.designation" name="designation"/>
+                       <input class="form-control" type="text" ng-model="newemployee.designation" name="designation" required=""/>
                    </div>
                </div>
                <div class="form-group">
                    <label for="" class="control-label col-md-1">Gender</label>
                    <div class="col-md-4">
-                       <select name="gender" class="form-control">
+                       <select name="gender" class="form-control" ng-model="newemployee.gender" required="">
                            <option value="" selected disabled>select</option>
                            <option value="male">Male</option>
                            <option value="female">Female</option>
@@ -46,27 +46,60 @@
                    </div>
                    <label for="" class="control-label col-md-1">Linkedin</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.linkedin"/>
+                       <input type="text" class="form-control" ng-model="newemployee.linkedin" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" />
                    </div>
                </div>
                <div class="form-group">
                    <label for="" class="control-label col-md-1">Facebook</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.facebook" name="facebook"/>
+                       <input type="text" class="form-control" ng-model="newemployee.facebook" name="facebook"  pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" />
                    </div>
                    <label for="" class="control-label col-md-1">Twitter</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.facebook" name="twitter"/>
+                       <input type="text" class="form-control" ng-model="newemployee.twitter" name="twitter"  pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" />
                    </div>
                </div>
                <div class="form-group">
                    <label for="" class="control-label col-md-1">Google Plus</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.googleplus"/>
+                       <input type="text" class="form-control" ng-model="newemployee.googleplus"  pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" />
                    </div>
                    <label for="" class="control-label col-md-1">GitHub</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.github" name="github"/>
+                       <input type="text" class="form-control" ng-model="newemployee.github" name="github"  pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" />
+                   </div>
+               </div>
+               <div class="form-group">
+                   <label for="" class="control-label col-md-1">Photo</label>
+                   <div class="col-md-4">
+                       <input type="file" name="photo" id="photo" file-model="files.photo" ng-required="!newemployee.id"/>
+                   </div>
+
+<!--                   for existing image-->
+                   <div class="clearfix"></div>
+                   <div class="row" ng-show="newemployee.file_name" style="margin-left: 14px">
+                       <div class="col-md-2">
+                           <div class="thumbnail" ng-mouseover="showcaption=true" ng-mouseleave="showcaption=false">
+                               <div class="caption" ng-show="showcaption">
+                                   <div id="content">
+                                       <a href="" class="label label-warning" rel="tooltip" title="Show">Show</a>
+                                       <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(newemployee)">Delete</a>
+                                   </div>
+                               </div>
+                               <img src="{{base_url + '/uploads/' + newemployee.file_name}}" alt="thumbnails">
+                           </div>
+                       </div>
+                   </div>
+
+<!--                   for selected -->
+                   <div class="clearfix"></div>
+                   <div class="row" style="margin-left: 14px">
+                       <div class="col-md-2" ng-repeat="image in filespre">
+                           <div class="thumbnail">
+                               <img src="{{image.url}}" alt="preview"/>
+                           </div>
+                       </div>
+
                    </div>
                </div>
                <div class="form-group text-center">
@@ -109,13 +142,15 @@
             <td>{{employee.id}}</td>
             <td>{{employee.name}}</td>
             <td>{{employee.designation}}</td>
-            <td>{{employee.photo}}</td>
+            <td>
+                <a href="{{base_url + '/uploads/' + employee.file_name}}"><img class="img img-thumbnail" src="{{base_url + '/uploads/' + employee.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
+            </td>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
-                    <button type="button" class="btn btn-info">
+                    <button type="button" class="btn btn-info" ng-click="showForm(employee)">
                         <i class="fa fa-pencil"></i>
                     </button>
-                    <button  type="button" class="btn btn-danger">
+                    <button  type="button" class="btn btn-danger" ng-click="deleteEmployee(employee)">
                         <i class="fa fa-trash-o"></i>
                     </button>
                 </div>

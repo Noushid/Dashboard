@@ -129,19 +129,19 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     })
             }
 
-            var url =  $rootScope.base_url + '/Portfolio_Controller/edit_record';
+            var url =  $rootScope.base_url + '/portfolio/edit';
             var data = $scope.newportfolio;
             var header= {'Content-type': 'application/x-www-form-urlencoded'}
 
             //insert data to table
-            var update = action.post(data, url, header);
-            update.success(function (data, status, headers) {
+            action.post(data, url)
+            .success(function (data, status, headers) {
                 $scope.portfolios.push(data);
                 loadPortfolio();
                 $scope.newportfolio = {};
                 $scope.showform = false;
-            });
-            update.error(function (data, status, headers) {
+            })
+            .error(function (data, status, headers) {
                 if (data['error']) {
                     alert(data['error']);
                 }
@@ -171,14 +171,14 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                                 console.log(error);
                                 return false;
                             });
-
+                        //insert portfolio data to db
                         var url = $rootScope.base_url + '/portfolio/insert';
                         var insert_data = $scope.newportfolio;
 
                         action.post(insert_data, url)
                             .success(function (data, status, headers) {
                                 console.log(upload_data);
-                                //insert files information
+                                //insert uploaded files information
                                 var portfolio_id = data['id'];
                                 var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
                                 var data = upload_data;

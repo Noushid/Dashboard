@@ -62,6 +62,7 @@ $route['portfolio/insert-file/(:num)'] = 'Portfolio_Controller/add_file/$1';
 $route['portfolio/delete-file'] = 'Portfolio_Controller/delete_file';
 $route['portfolio/delete/(:num)'] = 'Portfolio_Controller/delete/$1';
 $route['portfolio/delete-image'] = 'Portfolio_Controller/delete_image';
+$route['portfolio/edit'] = '/Portfolio_Controller/edit_record';
 
 
 $route['404_override'] = '';

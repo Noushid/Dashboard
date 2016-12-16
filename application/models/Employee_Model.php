@@ -12,6 +12,12 @@ require_once APPPATH . 'core/My_Model.php';
 class Employee_Model extends My_Model
 {
     protected $table = 'employees';
+    protected $fields = [
+        'employees.*',
+        'files.id fileId',
+        'files.file_name',
+        'files.file_type'
+    ];
 
     function __construct()
     {
@@ -20,7 +26,14 @@ class Employee_Model extends My_Model
 
     public function select()
     {
-        return $this->get_all();
+//        return $this->get_all();
+        $condition = [
+            [
+                'employees.files_id',
+                'files.id'
+            ]
+        ];
+        return $this->get_join(['files'], $this->fields, null, $condition, 'INNER');
     }
 
     public function add($data)
@@ -31,6 +44,11 @@ class Employee_Model extends My_Model
     public function edit($data, $id)
     {
         return $this->update($data, $id);
+    }
+
+    public function remove($id)
+    {
+        return $this->drop($id);
     }
 
     public function trunc()

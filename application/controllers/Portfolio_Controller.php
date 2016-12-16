@@ -101,7 +101,7 @@ class Portfolio_Controller extends CI_Controller
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
 
         $this->form_validation->set_rules('name', 'Name', 'required');
-//        $this->form_validation->set_rules('type', 'Type', 'required');
+        $this->form_validation->set_rules('type', 'Type', 'required');
 
         if ($this->form_validation->run() == FALSE) {
             $this->output->set_status_header(400,'Validation Error');
@@ -128,7 +128,7 @@ class Portfolio_Controller extends CI_Controller
         $success = [];
         if (empty($data)) {
             $this->output->set_status_header(500, 'Server error');
-            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
+            $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'can\'t get file information']));
         } else {
             foreach ($data as $value) {
 //            add data to files table
@@ -150,12 +150,19 @@ class Portfolio_Controller extends CI_Controller
                         $error['error'] = 'portfolio files error';
                     }
                 } else {
-                    $error['error'] = 'files error';
+                    $error['error'] = 'ca\'t add files information to db try again';
                 }
             }
             if ($success) {
                 $this->output->set_content_type('application/json')->set_output(json_encode($success));
+                return true;
             }
+            if ($error) {
+                $this->output->set_status_header(500, 'Server error');
+                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                return false;
+            }
+
         }
     }
 
