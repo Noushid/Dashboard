@@ -107,7 +107,7 @@
                    <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
                </div>
            </form>
-           <form class="form-inline">
+           <form class="form-inline" ng-show="showtable">
                <div class="form-group">
                    <label for="" class="control-label col-md-2">Show</label>
                    <div class="col-md-3">
@@ -127,7 +127,7 @@
            </form>
        </div>
     </div>
-    <table class="table table-bordered">
+    <table class="table table-bordered" ng-show="showtable">
         <thead>
         <tr>
             <td>id</td>

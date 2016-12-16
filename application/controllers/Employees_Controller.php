@@ -126,6 +126,10 @@ class Employees_Controller extends CI_Controller
     public function update()
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
+        if ($this->file->remove($_POST['fileId'])) {
+           unlink((getcwd() . '/uploads/' . $_POST['file_name']));
+        }
+
         unset($_POST['fileId']);
         unset($_POST['file_name']);
         unset($_POST['file_type']);
@@ -153,6 +157,7 @@ class Employees_Controller extends CI_Controller
         $data = json_decode(file_get_contents('php://input'), TRUE);
         if ($data['files_id']) {
             $file_id = $data['files_id'];
+
         }
 
         if (!$this->employee->get(['id' => $id])) {
@@ -162,6 +167,7 @@ class Employees_Controller extends CI_Controller
         } else {
             if ($this->employee->remove($id)) {
                 if ($this->file->remove($file_id)) {
+                    unlink(getcwd() . '/uploads/' . $data['file_name']);
                     $data = 'Record Deleted!';
                     $this->output->set_content_type('application/json')->set_output(json_encode($data));
                 } else {
