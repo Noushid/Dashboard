@@ -131,7 +131,6 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
             var url =  $rootScope.base_url + '/portfolio/edit';
             var data = $scope.newportfolio;
-            var header= {'Content-type': 'application/x-www-form-urlencoded'}
 
             //insert data to table
             action.post(data, url)
