@@ -42,7 +42,7 @@
                <div class="form-group">
                    <label for="" class="control-label col-md-1">Email</label>
                    <div class="col-md-4">
-                       <input type="text" class="form-control" ng-model="newemployee.email" name="email"/>
+                       <input type="email" class="form-control" ng-model="newemployee.email" name="email"/>
                    </div>
                    <label for="" class="control-label col-md-1">Linkedin</label>
                    <div class="col-md-4">
@@ -127,7 +127,8 @@
            </form>
        </div>
     </div>
-    <table class="table table-bordered">
+    <div class="help-block" ng-show="!showtable">{{message}}</div>
+    <table class="table table-bordered" ng-show="showtable">
         <thead>
         <tr>
             <td>id</td>
@@ -158,23 +159,9 @@
         </tr>
         </tbody>
     </table>
-    <!--<div class="col-md-3">
-        <div class="row">
-            <div id="widget">
-                <div id="outline">
-                    <div class="date">
-                        <div id="month"></div>
-                        <div id="day"></div>
-                        <div id="week"></div>
-                    </div>
-                    <div class="time">
-                        <div id="hour"></div>
-                        <div id="minut"></div>
-                        <div id="second"></div>
-                        <div id="date"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>-->
+</div>
+<div class="row" ng-show="loading">
+    <div class="span4">
+        <img class="center-block" src="<?php echo base_url('img/loading.gif') ?>" alt=""/>
+    </div>
 </div>

@@ -1075,13 +1075,21 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     $scope.files = [];
     $scope.showform = false;
     $scope.loading = false;
+    $scope.message = {};
 
 
     loademployee();
 
     function loademployee() {
         $http.get($rootScope.base_url + '/Employees_Controller/get_employees').then(function (response) {
-            $scope.employees = response.data;
+            if (response.data) {
+                $scope.employees = response.data;
+                $scope.showtable = true;
+            }else {
+                console.log('No data found!');
+                $scope.showtable = false;
+                $scope.message = 'No Data Found';
+            }
         });
     }
 
@@ -1090,6 +1098,8 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         $scope.showform = true;
         $scope.curemploye = item;
         $scope.newemployee = angular.copy(item);
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     $scope.hideForm = function () {
@@ -1099,6 +1109,8 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     $scope.newEmployee = function () {
         $scope.newemployee = {};
         $scope.showform = true;
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     $scope.addEmployee = function () {
@@ -1109,48 +1121,83 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
             }
         }
        if ($scope.newemployee['id']) {
-           console.log('edit');
+
+           /* dont remove before complete.
            console.log($scope.newemployee);
-           console.log($scope.files.photo);
+
+           var fd = new FormData();
+           var i = 0;
+           angular.forEach($scope.newemployee, function (item,key) {
+               fd.append(key, item);
+           });
+           angular.forEach($scope.files.photo, function (item) {
+               fd.append(i, item);
+               i++;
+           });
+
+
+           $http.post($rootScope.base_url + '/Employees_Controller/update', fd,{
+               transformRequest: angular.identity,
+               headers: {'Content-Type': undefined,'Process-Data': true}
+           });*/
+
            var temp = [];
-           //if ($scope.files.photo) {
-           //    console.log('file seleect');
-           //    //upload file
-           //    var file = $scope.files.photo;
-           //    var uploadUrl = $rootScope.base_url + '/Employees_Controller/upload_file';
-           //    fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
-           //        .success(function (upload_data,status,headers) {
-           //            //add uploaded data to db
-           //            var url = $rootScope.base_url + '/Employees_Controller/add_file';
-           //
-           //            action.post(upload_data, url)
-           //                .success(function (data, status, headers) {
-           //                    console.log('file uploaded');
-           //                    var upload_data = data;
-           //                    console.log(upload_data);
-           //                })
-           //        });
-           //}
-           var url = $rootScope.base_url + '/Employees_Controller/update';
-           var data = $scope.newemployee;
-           action.post(data, url)
-               .success(function (data, status, headers) {
-                   console.log('edit success');
-                   $scope.employees.push(data);
-                   loademployee();
-                   $scope.newemployee = {};
-                   $scope.showform = false;
-               })
-               .error(function (data, status, headers) {
-                   console.log('edit error');
-                   console.log(data);
-                   if (data['error']) {
-                       alert(data['error']);
-                   }
-               });
+           if ($scope.files.photo) {
+               console.log('file seleect');
+               //upload file
+               var file = $scope.files.photo;
+               var uploadUrl = $rootScope.base_url + '/Employees_Controller/upload_file';
+               fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
+                   .success(function (upload_data,status,headers) {
+                       //add uploaded data to db
+                       var url = $rootScope.base_url + '/Employees_Controller/add_file';
+
+                       action.post(upload_data, url)
+                           .success(function (data, status, headers) {
+                               console.log('file uploaded');
+                               console.log($scope.newemployee);
+                               $scope.newemployee.files_id = data['files_id'];
+                               console.log($scope.newemployee);
+                               var url = $rootScope.base_url + '/Employees_Controller/update';
+                               var data = $scope.newemployee;
+
+                               action.post(data, url)
+                                   .success(function (data, status, headers) {
+                                       console.log('edit success');
+                                       $scope.employees.push(data);
+                                       loademployee();
+                                       $scope.newemployee = {};
+                                       $scope.showform = false;
+                                   })
+                                   .error(function (data, status, headers) {
+                                       console.log('edit error');
+                                       console.log(data);
+                                       if (data['error']) {
+                                           alert(data['error']);
+                                       }
+                                   });
+                           })
+                   });
+           }else{
+               var url = $rootScope.base_url + '/Employees_Controller/update';
+               var data = $scope.newemployee;
+               action.post(data, url)
+                   .success(function (data, status, headers) {
+                       console.log('edit success');
+                       $scope.employees.push(data);
+                       loademployee();
+                       $scope.newemployee = {};
+                       $scope.showform = false;
+                   })
+                   .error(function (data, status, headers) {
+                       console.log('edit error');
+                       console.log(data);
+                       if (data['error']) {
+                           alert(data['error']);
+                       }
+                   });
+           }
         }else {
-           console.log('add');
-           console.log($scope.files.photo);
            if ($scope.files.photo) {
                var file = $scope.files.photo;
                var uploadUrl = $rootScope.base_url + '/Employees_Controller/upload_file';
@@ -1160,15 +1207,11 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                        angular.forEach(upload, function (item) {
                            upload_data.push(item);
                        });
-                       console.log('uploaded');
-                       console.log(upload_data);
                        //    insert uploaded files information to db
                        var url = $rootScope.base_url + '/Employees_Controller/add_file';
 
                        action.post(upload_data, url)
                            .success(function (data, status, headers) {
-                               console.log('insert file');
-                               console.log(data['files_id']);
 
                                //    Add employee information to db
                                var url = $rootScope.base_url + '/Employees_Controller/store'
@@ -1178,7 +1221,6 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                                action.post(emp_data, url)
                                    .success(function (data, status, headers) {
                                        console.log('all success');
-                                       console.log(data);
                                        $scope.employees.push(data);
                                        loademployee();
                                        $scope.newemployee = {};
@@ -1213,6 +1255,8 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
             action.post(data,url)
                 .success(function (data, status, headers) {
                     console.log('deleted');
+                    var index = $scope.employees.indexOf(item);
+                    $scope.employees.splice(index, 1);
                     alert(data);
                     loademployee();
                 })

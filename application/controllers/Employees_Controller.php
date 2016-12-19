@@ -32,6 +32,7 @@ class Employees_Controller extends CI_Controller
     public function upload_file()
     {
         $data = $_FILES;
+
         $name = $_POST['name'];
         $upload_data = [];
 
@@ -60,15 +61,17 @@ class Employees_Controller extends CI_Controller
                     $error = ['error' => "File large"];
                     $this->output->set_status_header(500, 'Server Down.');
                     $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                    return false;
                 }
             }else{
                 $error = ['error' => "Unknown file type"];
                 $this->output->set_status_header(500, 'Server Down.');
                 $this->output->set_content_type('application/json')->set_output(json_encode($error));
-
+                return false;
             }
         }
         $this->output->set_content_type('application/json')->set_output(json_encode($upload_data));
+        return true;
     }
 
     public function store()
@@ -126,9 +129,19 @@ class Employees_Controller extends CI_Controller
     public function update()
     {
         $_POST = json_decode(file_get_contents('php://input'), TRUE);
-        unset($_POST['fileId']);
-        unset($_POST['file_name']);
-        unset($_POST['file_type']);
+        if ($_POST['files_id'] == $_POST['fileId']) {
+            unset($_POST['fileId']);
+            unset($_POST['file_name']);
+            unset($_POST['file_type']);
+        }else{
+            if ($this->file->remove($_POST['fileId'])) {
+                unlink(getcwd() . '/uploads/' . $_POST['file_name']);
+
+                unset($_POST['fileId']);
+                unset($_POST['file_name']);
+                unset($_POST['file_type']);
+            }
+        }
 
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('designation', 'Designation', 'required');
@@ -162,6 +175,7 @@ class Employees_Controller extends CI_Controller
         } else {
             if ($this->employee->remove($id)) {
                 if ($this->file->remove($file_id)) {
+                    unlink(getcwd() . '/uploads/' . $data['file_name']);
                     $data = 'Record Deleted!';
                     $this->output->set_content_type('application/json')->set_output(json_encode($data));
                 } else {
