@@ -12,6 +12,12 @@ require_once APPPATH . 'core/My_Model.php';
 class Testimonial_Model extends My_Model{
 
     protected $table = 'testimonials';
+    protected $fields = [
+        'testimonials.*',
+        'files.id fileId',
+        'files.file_name',
+        'files.file_type'
+    ];
 
     function __construct()
     {
@@ -20,8 +26,14 @@ class Testimonial_Model extends My_Model{
 
     public function select()
     {
-        return $this->get_all();
-    }
+        $condition = [
+            [
+                'testimonials.files_id',
+                'files.id'
+            ]
+        ];
+        return $this->get_join(['files'], $this->fields, null, $condition, 'INNER');
+}
 
     public function add($data)
     {

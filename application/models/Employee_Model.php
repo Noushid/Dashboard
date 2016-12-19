@@ -26,7 +26,6 @@ class Employee_Model extends My_Model
 
     public function select()
     {
-//        return $this->get_all();
         $condition = [
             [
                 'employees.files_id',

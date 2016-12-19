@@ -139,7 +139,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr dir-paginate="employee in employees | filter:search | limitTo:pageSize | itemsPerPage:numPerpage">
+        <tr dir-paginate="employee in employees | filter:search | limitTo:pageSize | itemsPerPage:numPerPage">
             <td>{{employee.id}}</td>
             <td>{{employee.name}}</td>
             <td>{{employee.designation}}</td>
@@ -159,6 +159,11 @@
         </tr>
         </tbody>
     </table>
+    <dir-pagination-controls
+        max-size="10"
+        direction-links="true"
+        boundary-links="true" >
+    </dir-pagination-controls>
 </div>
 <div class="row" ng-show="loading">
     <div class="span4">

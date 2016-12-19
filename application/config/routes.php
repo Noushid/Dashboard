@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //$route['default_controller'] = 'welcome';
 $route['default_controller'] = 'Dashboard_Controller';
 
-$route['employees'] = 'Employees_Controller';
+
 
 $route['portfolio'] = 'Portfolio_Controller';//load template
 $route['portfolio/get-all'] = 'Portfolio_Controller/get';
@@ -64,12 +64,18 @@ $route['portfolio/delete/(:num)'] = 'Portfolio_Controller/delete/$1';
 $route['portfolio/delete-image'] = 'Portfolio_Controller/delete_image';
 $route['portfolio/edit'] = 'Portfolio_Controller/edit_record';
 
+$route['employees'] = 'Employees_Controller'; //load template
 $route['employee'] = 'Employees_Controller/get_employees';
 $route['employee/upload'] = 'Employees_Controller/upload_file';
 $route['employee/insert-file'] = 'Employees_Controller/add_file';
 $route['employee/edit'] = 'Employees_Controller/update';
 $route['employee/add'] = 'Employees_Controller/store';
 $route['employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
+
+
+$route['testimonial'] = 'Testimonial_Controller';
+
+
 
 
 $route['404_override'] = '';

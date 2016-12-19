@@ -16,6 +16,11 @@ app.config(function ($routeProvider) {
             templateUrl: 'portfolio',
             controller: 'portfolioController'
         })
+        .when('/testimonial',{
+            templateUrl: 'testimonial',
+            controller: 'testimonialController'
+        })
+
 });
 
 //Pagination filter

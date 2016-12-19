@@ -56,26 +56,6 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         }
        if ($scope.newemployee['id']) {
 
-           /* dont remove before complete.
-           console.log($scope.newemployee);
-
-           var fd = new FormData();
-           var i = 0;
-           angular.forEach($scope.newemployee, function (item,key) {
-               fd.append(key, item);
-           });
-           angular.forEach($scope.files.photo, function (item) {
-               fd.append(i, item);
-               i++;
-           });
-
-
-           $http.post($rootScope.base_url + '/Employees_Controller/update', fd,{
-               transformRequest: angular.identity,
-               headers: {'Content-Type': undefined,'Process-Data': true}
-           });*/
-
-           var temp = [];
            if ($scope.files.photo) {
                console.log('file seleect');
                //upload file
@@ -184,7 +164,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         var conf = confirm('Do you want to delete this record?');
         if (conf) {
             var id = item['id'];
-            var url = $rootScope.base_url + '/employee/edit/' + id;
+            var url = $rootScope.base_url + '/employee/delete/' + id;
             var data = item;
             action.post(data,url)
                 .success(function (data, status, headers) {
