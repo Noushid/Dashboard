@@ -15,7 +15,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     loademployee();
 
     function loademployee() {
-        $http.get($rootScope.base_url + '/Employees_Controller/get_employees').then(function (response) {
+        $http.get($rootScope.base_url + '/employee').then(function (response) {
             if (response.data) {
                 $scope.employees = response.data;
                 $scope.showtable = true;
@@ -80,11 +80,11 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                console.log('file seleect');
                //upload file
                var file = $scope.files.photo;
-               var uploadUrl = $rootScope.base_url + '/Employees_Controller/upload_file';
+               var uploadUrl = $rootScope.base_url + '/employee/upload';
                fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
                    .success(function (upload_data,status,headers) {
                        //add uploaded data to db
-                       var url = $rootScope.base_url + '/Employees_Controller/add_file';
+                       var url = $rootScope.base_url + '/employee/insert-file';
 
                        action.post(upload_data, url)
                            .success(function (data, status, headers) {
@@ -92,7 +92,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                                console.log($scope.newemployee);
                                $scope.newemployee.files_id = data['files_id'];
                                console.log($scope.newemployee);
-                               var url = $rootScope.base_url + '/Employees_Controller/update';
+                               var url = $rootScope.base_url + '/employee/edit';
                                var data = $scope.newemployee;
 
                                action.post(data, url)
@@ -113,7 +113,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                            })
                    });
            }else{
-               var url = $rootScope.base_url + '/Employees_Controller/update';
+               var url = $rootScope.base_url + '/employee/edit';
                var data = $scope.newemployee;
                action.post(data, url)
                    .success(function (data, status, headers) {
@@ -134,7 +134,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         }else {
            if ($scope.files.photo) {
                var file = $scope.files.photo;
-               var uploadUrl = $rootScope.base_url + '/Employees_Controller/upload_file';
+               var uploadUrl = $rootScope.base_url + '/employee/upload';
                fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
                    .success(function (upload, headers) {
                        var upload_data = [];
@@ -142,13 +142,13 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                            upload_data.push(item);
                        });
                        //    insert uploaded files information to db
-                       var url = $rootScope.base_url + '/Employees_Controller/add_file';
+                       var url = $rootScope.base_url + '/employee/insert-file';
 
                        action.post(upload_data, url)
                            .success(function (data, status, headers) {
 
                                //    Add employee information to db
-                               var url = $rootScope.base_url + '/Employees_Controller/store'
+                               var url = $rootScope.base_url + '/add'
                                $scope.newemployee.files_id = data['files_id'];
                                var emp_data = $scope.newemployee;
 
@@ -184,7 +184,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         var conf = confirm('Do you want to delete this record?');
         if (conf) {
             var id = item['id'];
-            var url = $rootScope.base_url + '/Employees_Controller/delete/' + id;
+            var url = $rootScope.base_url + '/employee/edit/' + id;
             var data = item;
             action.post(data,url)
                 .success(function (data, status, headers) {
@@ -200,10 +200,4 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 });
         }
     };
-
-    $scope.deleteImage = function(item) {
-        console.log(item);
-
-    };
-
 });

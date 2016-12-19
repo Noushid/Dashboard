@@ -62,7 +62,14 @@ $route['portfolio/insert-file/(:num)'] = 'Portfolio_Controller/add_file/$1';
 $route['portfolio/delete-file'] = 'Portfolio_Controller/delete_file';
 $route['portfolio/delete/(:num)'] = 'Portfolio_Controller/delete/$1';
 $route['portfolio/delete-image'] = 'Portfolio_Controller/delete_image';
-$route['portfolio/edit'] = '/Portfolio_Controller/edit_record';
+$route['portfolio/edit'] = 'Portfolio_Controller/edit_record';
+
+$route['employee'] = 'Employees_Controller/get_employees';
+$route['employee/upload'] = 'Employees_Controller/upload_file';
+$route['employee/insert-file'] = 'Employees_Controller/add_file';
+$route['employee/edit'] = 'Employees_Controller/update';
+$route['employee/add'] = 'Employees_Controller/store';
+$route['employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
 
 
 $route['404_override'] = '';
