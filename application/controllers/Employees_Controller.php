@@ -19,7 +19,7 @@ class Employees_Controller extends CI_Controller
 
     public function index()
     {
-        $this->load->view('admin/templates/employees');
+        $this->load->view('templates/employees');
 
     }
 

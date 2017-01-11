@@ -53,6 +53,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'Dashboard_Controller';
 $route['admin'] = 'Dashboard_Controller';
 
+$route['login'] = 'Home/login';
+$route['logout'] = 'Dashboard_Controller/logout';
+$route['login/verify'] = 'Dashboard_Controller/verify';
+
 
 $route['admin/portfolio'] = 'Portfolio_Controller';//load template
 $route['admin/portfolio/get-all'] = 'Portfolio_Controller/get';
