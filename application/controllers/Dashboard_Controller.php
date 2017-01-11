@@ -7,7 +7,7 @@
  */
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once(APPPATH.'controllers/Check_Logged.php');
+require_once(APPPATH.'core/Check_Logged.php');
 
 class Dashboard_Controller extends Check_Logged
 {
@@ -18,46 +18,73 @@ class Dashboard_Controller extends Check_Logged
         $this->load->helper(['path']);
         $this->load->helper(['form', 'url', 'captcha', 'string', 'html','menu']);
         $this->load->library(['form_validation', 'encryption', 'table', 'image_lib']);
+        $this->load->model('User_Model', 'user');
 
-//        $this->load->model('User_Model');
-        $this->load->model('Employee_Model', 'team');
-//        $this->load->model('Portfolio_files_Model', 'portfolio_files');
-//        $this->load->model('Portfolio_Model', 'portfolio');
-//        $this->load->model('Testimonial_model');
-//        $this->load->model('Gallery_Model', 'gallery');
-//        $this->load->model('Gallery_Files_Model', 'gallery_files');
-
+        if ( ! $this->logged)
+        {
+            // Allow some methods?
+            $allowed = array(
+                'verify'
+            );
+            if ( ! in_array($this->router->fetch_method(), $allowed))
+            {
+                redirect(base_url('login'));
+            }
+        }
     }
 
 /////////*test*////////////////////////////////////////////
 
-    public function generate_key()
+    public function generate_key($str)
     {
 //        $key = bin2hex($this->encryption->create_key(16));
 //        var_dump($key);
-        var_dump(hash('sha256', 'admin'));
+        var_dump(hash('sha256', $str));
 
     }
-
-    public function test()
-    {
-        $this->load->view('testroute');
-    }
-
-    public function test_key()
-    {
-        echo set_realpath('img.png');
-//        $text = 'admin';
-//        $en_text = $this->encryption->encrypt($text);
-//
-//        var_dump($en_text);
-//        $d_text = $this->encryption->decrypt($en_text);
-//        var_dump($d_text);
-    }
-
 
 ///////////////////////////////////////////////////////////
 
+
+
+
+
+    public function logout()
+    {
+        $this->session->unset_userdata('logged_in');
+        session_destroy();
+        redirect(base_url('login'), 'refresh');
+
+    }
+
+    public function verify()
+    {
+        $this->form_validation->set_rules('username', 'Username', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required');
+        if ($this->form_validation->run()    == FALSE) {
+            $this->output->set_status_header(400, 'Validation error');
+            $this->output->set_content_type('application/json')->set_output(json_decode(validation_errors()));
+        } else {
+            $username = $this->input->post('username');
+            $password = hash('sha256', $this->input->post('password'));
+            $where = [
+                'username' => $username,
+                'password' => $password
+            ];
+            $result = $this->user->get($where);
+            if ($result) {
+                $login_data = [
+                    'username' => $result[0]->username,
+                    'logged' => true,
+                ];
+                $this->session->set_userdata('logged_in', $login_data);
+                $this->output->set_content_type('application/json')->set_output(json_encode($login_data));
+            } else {
+                $this->output->set_status_header(400, 'Unauthorised access');
+                $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'invalid username or password']));
+            }
+        }
+    }
 
     public function index()
     {
@@ -69,13 +96,7 @@ class Dashboard_Controller extends Check_Logged
             $this->load->view('admin/login', $data);
         }*/
 
-
         $this->load->view('templates/dashboard');
     }
 
-    public function get_employees()
-    {
-        $data = $this->team->select();
-        $this->output->set_content_type('application/json')->set_output(json_encode($data));
-    }
 }

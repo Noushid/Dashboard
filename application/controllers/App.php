@@ -11,7 +11,7 @@ if (!defined('BASEPATH')) {
  */
 class App extends CI_Controller
 {
-    protected $limit = 25;
+    protected $limit = 15;
 
     function __construct()
     {
@@ -52,7 +52,7 @@ class App extends CI_Controller
         $this->_truncate_db();
 
         // seed users
-        $this->_seed_users($this->limit);
+//        $this->_seed_users($this->limit);
 
         // seed employee
         $this->_seed_employee($this->limit);
@@ -219,9 +219,12 @@ class App extends CI_Controller
             $data = [
                 'name' => $this->faker->name,
                 'type' => $this->faker->randomElement(['portfolio site', 'web application', 'ERP', 'standalone']),
+                'date' => $this->faker->date(),
                 'link' => $this->faker->url,
+                'clientname' => $this->faker->name(),
                 'description' => $this->faker->sentence(16),
-                'displaytext' => $this->faker->sentence(6)
+                'feedback' => $this->faker->sentence(6),
+                'files_id' => $this->faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
             ];
 
             $this->portfolio->add($data);
@@ -254,7 +257,7 @@ class App extends CI_Controller
 
     private function _truncate_db()
     {
-        $this->user_model->trunc();
+//        $this->user_model->trunc();
         $this->employee->trunc();
         $this->file->trunc();
         $this->gallery->trunc();

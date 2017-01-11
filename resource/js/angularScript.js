@@ -20,6 +20,10 @@ app.config(function ($routeProvider) {
             templateUrl: 'testimonial',
             controller: 'testimonialController'
         })
+        .when('/gallery',{
+            templateUrl: 'gallery',
+            controller: 'GalleryController'
+        })
 
 });
 
@@ -133,3 +137,65 @@ app.service('action', ['$http', function ($http) {
 
 }]);
 
+app.directive('startslider',function() {
+    return {
+        restrict: 'A',
+        replace: false,
+        template: '<ul class="bxslider">' +
+        '<li ng-repeat="picture in portfolioitem.files">' +
+        '<img ng-src="{{picture.src}}" alt="" />' +
+        '</li>' +
+        '</ul>',
+        link: function(scope, elm, attrs) {
+            elm.ready(function() {
+                $("." + $(elm[0]).attr('class')).bxSlider({
+                    mode: 'fade',
+                    auto:true,
+                    autoControls: true,
+                    //slideWidth: 768,
+                    slideHeight:386
+                });
+
+            });
+        }
+    };
+});
+
+
+app.directive('ngConfirmClick', [
+    function () {
+        return {
+            link: function (scope, element, attr) {
+                var msg = attr.ngConfirmClick || "Are you sure?";
+                var clickAction = attr.confirmedClick;
+                element.bind('click', function (event) {
+                    if (window.confirm(msg)) {
+                        scope.$eval(clickAction)
+                    }
+                });
+            }
+        };
+    }
+]);
+
+
+app.controller('MainCtrl', function($scope,$rootScope) {
+    $scope.base = 'http://bxslider.com';
+
+    $scope.images = [
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/1.JPG' },
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/2.JPG' },
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/6.JPG' },
+    ];
+});
+
+
+app.directive('carousel', [function () {
+    return {
+        restrict: 'A',
+        //transclude: true,
+        replace: false,
+        controller: 'HomeBlogController',
+        require: 'carousel'
+    };
+}]);

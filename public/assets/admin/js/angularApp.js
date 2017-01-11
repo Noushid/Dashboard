@@ -20,6 +20,10 @@ app.config(function ($routeProvider) {
             templateUrl: 'testimonial',
             controller: 'testimonialController'
         })
+        .when('/gallery',{
+            templateUrl: 'gallery',
+            controller: 'GalleryController'
+        })
 
 });
 
@@ -133,7 +137,68 @@ app.service('action', ['$http', function ($http) {
 
 }]);
 
+app.directive('startslider',function() {
+    return {
+        restrict: 'A',
+        replace: false,
+        template: '<ul class="bxslider">' +
+        '<li ng-repeat="picture in portfolioitem.files">' +
+        '<img ng-src="{{picture.src}}" alt="" />' +
+        '</li>' +
+        '</ul>',
+        link: function(scope, elm, attrs) {
+            elm.ready(function() {
+                $("." + $(elm[0]).attr('class')).bxSlider({
+                    mode: 'fade',
+                    auto:true,
+                    autoControls: true,
+                    //slideWidth: 768,
+                    slideHeight:386
+                });
 
+            });
+        }
+    };
+});
+
+
+app.directive('ngConfirmClick', [
+    function () {
+        return {
+            link: function (scope, element, attr) {
+                var msg = attr.ngConfirmClick || "Are you sure?";
+                var clickAction = attr.confirmedClick;
+                element.bind('click', function (event) {
+                    if (window.confirm(msg)) {
+                        scope.$eval(clickAction)
+                    }
+                });
+            }
+        };
+    }
+]);
+
+
+app.controller('MainCtrl', function($scope,$rootScope) {
+    $scope.base = 'http://bxslider.com';
+
+    $scope.images = [
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/1.JPG' },
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/2.JPG' },
+        {src: $rootScope.public_url + '/assets/img/portfolio/preview/6.JPG' },
+    ];
+});
+
+
+app.directive('carousel', [function () {
+    return {
+        restrict: 'A',
+        //transclude: true,
+        replace: false,
+        controller: 'HomeBlogController',
+        require: 'carousel'
+    };
+}]);
 /**
  * dirPagination - AngularJS module for paginating (almost) anything.
  *
@@ -780,26 +845,193 @@ app.service('action', ['$http', function ($http) {
 
 //AdminController
 
-app.controller('adminController', function($scope,$location,$http, $rootScope, $filter) {
+app.controller('adminController', function ($scope, $location, $http, $rootScope, $filter) {
     $scope.employees = [];
     $scope.error = {};
     var base_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
     $rootScope.base_url = base_url;
+    $rootScope.public_url = $scope.baseUrl = $location.protocol() + "://" + location.host + "/public";
     //$scope.url_regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
     $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
+    $scope.paginations = [5, 10, 20, 25];
     $scope.numPerPage = 5;
-    console.log($scope.numPerPage);
 
+    $scope.format = 'yyyy/MM/dd';
+    //$scope.date = new Date();
 });
 
+/**
+ * Created by psybo-03 on 23/12/16.
+ */
+
+app.controller('GalleryController', function ($scope, $rootScope, $http, action, fileUpload) {
+    $scope.galleries = [];
+    $scope.newgallery = {};
+    $scope.curgallery = {};
+    $scope.galleryfiles = {};
+    $scope.files = [];
+    $scope.item_files = {};
+    $scope.message = {};
+    $scope.show_error = false;
+    $scope.error = [];
+    $scope.showform = false;
+
+
+    loadGallery();
+    function loadGallery() {
+        $http.get($rootScope.base_url + '/Gallery_Controller/get').then(function (response) {
+            if (response.data) {
+                $scope.galleries = response.data;
+                console.log($scope.galleries);
+            } else {
+                console.log('No data found');
+                $scope.message = 'No data found';
+            }
+        });
+    }
+
+    $scope.showForm = function (item) {
+        $scope.showform = true;
+        $scope.curgallery = item;
+        $scope.newgallery = angular.copy(item);
+        $scope.item_files = item.files;
+    };
+
+    $scope.hideForm= function () {
+        $scope.showform = false;
+    };
+
+    $scope.newGallery = function () {
+        $scope.newgallery = {};
+        $scope.showform = true;
+    };
+
+    $scope.addGallery = function () {
+        if ($scope.newgallery['id']) {
+            console.log('edit');
+
+            var url = $rootScope.base_url + '/Gallery_Controller/update/' + $scope.newgallery['id'];
+            var fd = new FormData();
+            //append posted to form data except files
+            angular.forEach($scope.newgallery, function (item, key) {
+                fd.append(key, item);
+            });
+            //    append posted files data to form data
+            angular.forEach($scope.files.image, function (item,key) {
+                fd.append('files[]', item);
+            });
+
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('edit success');
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadGallery();
+                    console.log($scope.error);
+                    $scope.showform = false;
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+                })
+                .error(function (data, status, hedears) {
+                    console.log('edit error');
+                    console.log(data);
+                });
+
+
+        }else {
+            console.log($scope.newgallery);
+            console.log($scope.files.image);
+            var url = $rootScope.base_url + '/Gallery_Controller/store';
+            var fd = new FormData();
+            //append posted data to form data except files
+            angular.forEach($scope.newgallery, function (item, key) {
+                fd.append(key, item);
+            });
+        //    append posted files data to form data
+            angular.forEach($scope.files.image, function (item,key) {
+                fd.append('files[]', item);
+            });
+
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('add success');
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadGallery();
+                    $scope.showform = false;
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+
+                    console.log($scope.error);
+                })
+                .error(function (data, status, hedears) {
+                    console.log('add error');
+                    console.log(data);
+                });
+        }
+    };
+
+    $scope.showGalleryFiles= function (item) {
+        console.log(item);
+        $scope.galleryfiles = item;
+    };
+
+    $scope.deleteImage= function (item) {
+        console.log(item);
+        var url = $rootScope.base_url + '/Gallery_Controller/delete_image';
+        var data = item;
+        action.post(data, url)
+            .success(function (data, status, headers) {
+                console.log('image deleted');
+                console.log(data);
+                var index = $scope.item_files.indexOf(item);
+                $scope.item_files.splice(index, 1);
+                console.log($scope.item_files);
+            })
+            .error(function (data, status, headers) {
+                console.log('delete image error');
+                console.log(data);
+            });
+    };
+
+    $scope.deleteGallery= function (item) {
+        var conf = confirm('DO you Want to delete this item?');
+        if (conf) {
+            var url = $rootScope.base_url + '/Gallery_Controller/delete';
+            action.post(item, url)
+                .success(function (data, status, headers) {
+                    console.log('gallery deleted');
+                    var index = $scope.galleries.indexOf(item);
+                    $scope.galleries.splice(index, 1);
+                })
+                .error(function (data,status,headers) {
+                    console.log('delete error');
+                    console.log(data);
+                });
+        }
+    };
+
+});
 /**
  * Created by psybo-03 on 29/11/16.
  */
 
 //Portfolio Controller
 
-app.controller('portfolioController', function ($scope, $location, $http, $rootScope,fileUpload,action) {
+app.controller('portfolioController', function ($scope, $location, $http, $rootScope,$filter, fileUpload,action) {
 
 
 
@@ -813,13 +1045,14 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     $scope.files= [];
     $scope.loading = false;
     $scope.item_files = [];
+    $scope.show_error = false;
 
-    $scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
+    //$scope.regex = '^((https?|ftp)://)?([A-Za-z]+\\.)?[A-Za-z0-9-]+(\\.[a-zA-Z]{1,4}){1,2}(/.*\\?.*)?$';
 
     loadPortfolio();
 
     function loadPortfolio() {
-        $http.get($rootScope.base_url +'/portfolio/get-all').then(function(response) {
+        $http.get($rootScope.base_url +'/admin/portfolio/get-all').then(function(response) {
             if (response.data) {
                 $scope.showtable = true;
                 $scope.portfolios = response.data;
@@ -835,6 +1068,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     //show the form
     $scope.showForm = function (item) {
         $scope.showform = true;
+        $scope.show_error=false
         $scope.curportfolio = item;
         $scope.newportfolio = angular.copy(item);
         angular.element("input[type='file']").val(null);
@@ -870,150 +1104,94 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
             }
         }
 
-        if ($scope.newportfolio['id']) {
+        //Change date format
+        $scope.newportfolio.date = $filter("date")(Date.parse($scope.newportfolio.date), 'yyyy-MM-dd');
+
+
+        var fd = new FormData();
+    //    append posted data to formData except file
+        angular.forEach($scope.newportfolio, function (item, key) {
+            fd.append(key, item);
+        });
+
+    //    append posted  files.desktop data to FormData
+        angular.forEach($scope.files.desktop, function (item, key) {
+            fd.append('desktop[]', item);
+        });
+
+    //append posted  files.desktop data to FormData
+        angular.forEach($scope.files.mobile, function (item, key) {
+            fd.append('mobile[]', item);
+        });
+
+
+        if ($scope.newportfolio.id != undefined) {
             console.log('edit');
-            var upload_inform = [];
-            if (file != undefined) {
-                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
-                fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop')
-                    .success(function (desk_data) {
-                        var portfolio_id = $scope.newportfolio['id'];
-                        var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
-                        var data = desk_data;
-
-                        action.post(data, url)
-                         .success(function (data, headers) {
-                         console.log(data);
-                         console.log('new file data inserted');
-                         })
-                         .error(function (data, headers) {
-                         console.log(data);
-                         console.log('error');
-                         });
-                    })
-                    .error(function(data,headers) {
-                        console.log('desktop image upload error');
-                        console.log(data);
-                        return false;
-                    })
-            }
-
-            if (file_mob != undefined) {
-                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
-                fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile')
-                    .success(function (mob_data) {
-                        var portfolio_id = $scope.newportfolio['id'];
-                        var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
-                        var data = mob_data;
-
-                        action.post(data, url)
-                            .success(function (data, headers) {
-                                console.log(data);
-                                console.log('new file data inserted');
-                            })
-                            .error(function (data, headers) {
-                                console.log(data);
-                                console.log(headers);
-                                console.log('file upload error');
-                            });
-                    })
-                    .error(function(data) {
-                        console.log('mobile image uploaad error');
-                        console.log(data);
-                        return false;
-                    })
-            }
-
-            var url =  $rootScope.base_url + '/portfolio/edit';
-            var data = $scope.newportfolio;
-
-            //insert data to table
-            action.post(data, url)
-            .success(function (data, status, headers) {
-                $scope.portfolios.push(data);
-                loadPortfolio();
-                $scope.newportfolio = {};
-                $scope.showform = false;
+            var url = $rootScope.base_url + '/admin/portfolio/edit/' + $scope.newportfolio.id;
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-type': undefined, 'Process-Data': false}
             })
-            .error(function (data, status, headers) {
-                if (data['error']) {
-                    alert(data['error']);
-                }
-            });
+                .success(function (data, status, headers) {
+                    console.log('edit succes');
+                    console.log(data);
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadPortfolio();
+                    $scope.showform = false;
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+                })
+                .error(function (data, status, headers) {
+                    console.log('edit error');
+                    console.log(data);
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadPortfolio();
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+                });
 
-            $scope.loading = false;
-        }else{
-            if (file != undefined) {
-                var uploadUrl = $rootScope.base_url + '/portfolio/upload';
-                //call upload service for upload desktop images.
-                fileUpload.uploadFileToUrl(file, uploadUrl, 'desktop')
-                    .success(function (data_desk) {
-                        var upload_data = [];
+        }else {
+            console.log('add');
 
-                        angular.forEach(data_desk, function (item) {
-                            upload_data.push(item);
-                        });
+            var url = $rootScope.base_url + '/admin/portfolio/add';
 
-                        //call upload service for upload desktop images.
-                        fileUpload.uploadFileToUrl(file_mob, uploadUrl, 'mobile')
-                            .success(function (data_mob) {
-                                angular.forEach(data_mob, function (item) {
-                                    upload_data.push(item);
-                                });
-                            })
-                            .error(function (error) {
-                                console.log(error);
-                                return false;
-                            });
-                        //insert portfolio data to db
-                        var url = $rootScope.base_url + '/portfolio/insert';
-                        var insert_data = $scope.newportfolio;
-
-                        action.post(insert_data, url)
-                            .success(function (data, status, headers) {
-                                console.log(upload_data);
-                                //insert uploaded files information
-                                var portfolio_id = data['id'];
-                                var url = $rootScope.base_url + '/portfolio/insert-file/' + portfolio_id;
-                                var data = upload_data;
-
-                                action.post(data, url)
-                                    .error(function (data, status, headers) {
-                                        console.log('error');
-                                        console.log(data);
-                                    });
-
-                                $scope.portfolios.push(data);
-                                loadPortfolio();
-                                $scope.newportfolio = {};
-                                $scope.showform = false;
-                            })
-                            .error(function (data, status, headers) {
-                                console.log(data);
-                                var url = $rootScope.base_url + '/portfolio/delete-file';
-                                var data = upload_data;
-                                action.post(data, url)
-                                    .success(function (data, status, headers) {
-                                        console.log('deleted');
-                                    })
-                                    .error(function(data,status,headers) {
-                                        console.log('error');
-                                        console.log(data);
-                                    })
-                                if (data['error']) {
-                                    alert(data['error']);
-                                }
-                            });
-                    })
-                    .error(function (data) {
-                        console.log('error');
-                        console.log(data);
-                    });
-
-            }else{
-                alert('Please select any image!');
-            }
-            $scope.loading = false;
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('add succes');
+                    console.log(data);
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadPortfolio();
+                    $scope.showform = false;
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+                })
+                .error(function (data, status, headers) {
+                    console.log('add error');
+                    console.log(data);
+                    if (data['error'] != undefined) {
+                        $scope.show_error = true;
+                        $scope.error = data['error'];
+                    }
+                    loadPortfolio();
+                    angular.element("input[type='file']").val(null);
+                    $scope.item_files = [];
+                    $scope.filespre = [];
+                });
         }
     };
 
@@ -1021,7 +1199,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
         var conf = confirm('Do you want to delete this Record?');
         if (conf) {
             var id = item['id'];
-            $http.delete($rootScope.base_url + '/portfolio/delete/' + id)
+            $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
                 .success(function (data, status, headers) {
                     console.log(data);
                     alert(data);
@@ -1031,25 +1209,18 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
     };
 
-    $scope.deleteImage = function(item,key) {
-        console.log(item);
-        console.log(key);
-
-        var url = $rootScope.base_url + '/portfolio/delete-image';
-        //var conf = confirm('Do you want to delete this Image?!');
-        var data = item;
-        action.post(data, url)
-            .success(function (data, headers, status) {
-
-                console.log('portfolio file deleted');
-                console.log(headers);
-                console.log(data);
-            })
-            .error(function (data,headers,status) {
-                console.log('portfolio file delete error');
-                console.log(headers);
-                console.log(data);
-            });
+    $scope.deleteImage = function(item) {
+            var url = $rootScope.base_url + '/admin/portfolio/delete-image';
+            var data = item;
+            action.post(data, url)
+                .success(function (data, headers, status) {
+                    console.log('portfolio file deleted');
+                    var index = $scope.item_files.indexOf(item);
+                    $scope.item_files.splice(index, 1);
+                })
+                .error(function (data,headers,status) {
+                    console.log('portfolio file delete error');
+                });
     };
     /*
      // Not using this method in this controll
@@ -1082,23 +1253,139 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     $scope.loading = false;
     $scope.message = {};
 
+
     loadTestimonial();
 
     function loadTestimonial() {
-        $http.get($rootScope.base_url + '/Testimonial_Controller/get_all').then(function(response) {
+        $http.get($rootScope.base_url + '/Testimonial_Controller/get_all').then(function (response) {
             if (response.data) {
                 $scope.testimonials = response.data;
                 $scope.showtable = true;
                 console.log($scope.testimonials);
-            }else {
+            } else {
                 console.log('No data Found');
                 $scope.showtable = false;
                 $scope.message = 'No data found';
             }
-        })
+        });
     }
+
+    $scope.newTestimonial = function() {
+        $scope.newtestimonial = {};
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
+        $scope.showform = true;
+    };
+
+    $scope.showForm = function (item) {
+        console.log(item);
+        $scope.showform = true;
+        $scope.curtestimonial = item;
+        angular.element("input[type='file']").val(null);
+        $scope.newtestimonial = angular.copy(item);
+        $scope.filespre = [];
+    };
+
+    $scope.hideForm = function () {
+        $scope.showform = false;
+    };
+
+    $scope.addTestimonial = function () {
+        if ($scope.newtestimonial.link != undefined) {
+            var string = $scope.newtestimonial.link;
+            if (!~string.indexOf("http")) {
+                $scope.newtestimonial.link = "http://" + string;
+            }
+        }
+        if ($scope.newtestimonial['id']) {
+            console.log('edit');
+            console.log($scope.newtestimonial);
+
+            var fd = new FormData();
+            var i = 0;
+            angular.forEach($scope.newtestimonial, function (item, key) {
+                fd.append(key, item);
+            });
+            angular.forEach($scope.files.photo, function (item, key) {
+                fd.append('photo', item);
+                i++;
+            });
+
+            var url = $rootScope.base_url + '/testimonial_Controller/update';
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('test add success');
+                    console.log(data);
+                    $scope.testimonials.push(data);
+                    loadTestimonial();
+                    $scope.newtestimonial = {};
+                    $scope.showform = false;
+                })
+                .error(function (data, status, heders) {
+                    console.log('test add error');
+                    console.log(data);
+                });
+        }else {
+            console.log('add');
+            console.log($scope.newtestimonial);
+            var url = $rootScope.base_url + '/testimonial_Controller/store';
+
+            var fd = new FormData();
+            var i = 0;
+            angular.forEach($scope.newtestimonial, function (item, key) {
+                fd.append(key, item);
+            });
+            angular.forEach($scope.files.photo, function (item, key) {
+                fd.append('photo', item);
+                i++;
+            });
+
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('test add success');
+                    $scope.testimonials.push(data);
+                    loadTestimonial();
+                    $scope.newtestimonial = {};
+                    $scope.showform = false;
+                })
+                .error(function (data, status, heders) {
+                    console.log('test add error');
+                    console.log(data);
+                });
+        }
+    };
+
+    $scope.deleteTestimonial = function (item) {
+        console.log(item);
+        var conf = confirm('Do you want to delete this record?');
+        if (conf) {
+            var id = item['id'];
+            var url = $rootScope.base_url + '/Testimonial_Controller/delete/' + id;
+            var data = item;
+            action.post(data,url)
+                .success(function (data, status, headers) {
+                    console.log('deleted');
+                    var index = $scope.testimonials.indexOf(item);
+                    $scope.testimonials.splice(index, 1);
+                    alert(data);
+                    loadTestimonial()
+                })
+                .error(function (data, status, headers) {
+                    console.log('delete error');
+                    console.log(data);
+                });
+        }
+    };
+
+
 });
-/**
+ /**
  * Created by psybo-03 on 13/12/16.
  */
 
@@ -1115,7 +1402,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     loademployee();
 
     function loademployee() {
-        $http.get($rootScope.base_url + '/employee').then(function (response) {
+        $http.get($rootScope.base_url + '/admin/employee').then(function (response) {
             if (response.data) {
                 $scope.employees = response.data;
                 $scope.showtable = true;
@@ -1154,17 +1441,41 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 $scope.newemployee.linkedin = "http://" + string;
             }
         }
+        if ($scope.newemployee.facebook != undefined) {
+            var string = $scope.newemployee.facebook;
+            if (!~string.indexOf("http")) {
+                $scope.newemployee.facebook = "http://" + string;
+            }
+        }
+        if ($scope.newemployee.twitter != undefined) {
+            var string = $scope.newemployee.twitter;
+            if (!~string.indexOf("http")) {
+                $scope.newemployee.twitter = "http://" + string;
+            }
+        }
+        if ($scope.newemployee.googleplus != undefined) {
+            var string = $scope.newemployee.googleplus;
+            if (!~string.indexOf("http")) {
+                $scope.newemployee.googleplus = "http://" + string;
+            }
+        }
+        if ($scope.newemployee.github != undefined) {
+            var string = $scope.newemployee.github;
+            if (!~string.indexOf("http")) {
+                $scope.newemployee.github = "http://" + string;
+            }
+        }
        if ($scope.newemployee['id']) {
 
            if ($scope.files.photo) {
                console.log('file seleect');
                //upload file
                var file = $scope.files.photo;
-               var uploadUrl = $rootScope.base_url + '/employee/upload';
+               var uploadUrl = $rootScope.base_url + '/admin/employee/upload';
                fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
                    .success(function (upload_data,status,headers) {
                        //add uploaded data to db
-                       var url = $rootScope.base_url + '/employee/insert-file';
+                       var url = $rootScope.base_url + '/admin/employee/insert-file';
 
                        action.post(upload_data, url)
                            .success(function (data, status, headers) {
@@ -1172,7 +1483,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                                console.log($scope.newemployee);
                                $scope.newemployee.files_id = data['files_id'];
                                console.log($scope.newemployee);
-                               var url = $rootScope.base_url + '/employee/edit';
+                               var url = $rootScope.base_url + '/admin/employee/edit';
                                var data = $scope.newemployee;
 
                                action.post(data, url)
@@ -1193,7 +1504,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                            })
                    });
            }else{
-               var url = $rootScope.base_url + '/employee/edit';
+               var url = $rootScope.base_url + '/admin/employee/edit';
                var data = $scope.newemployee;
                action.post(data, url)
                    .success(function (data, status, headers) {
@@ -1214,7 +1525,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         }else {
            if ($scope.files.photo) {
                var file = $scope.files.photo;
-               var uploadUrl = $rootScope.base_url + '/employee/upload';
+               var uploadUrl = $rootScope.base_url + '/admin/employee/upload';
                fileUpload.uploadFileToUrl(file, uploadUrl, 'dp')
                    .success(function (upload, headers) {
                        var upload_data = [];
@@ -1222,13 +1533,13 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                            upload_data.push(item);
                        });
                        //    insert uploaded files information to db
-                       var url = $rootScope.base_url + '/employee/insert-file';
+                       var url = $rootScope.base_url + '/admin/employee/insert-file';
 
                        action.post(upload_data, url)
                            .success(function (data, status, headers) {
 
                                //    Add employee information to db
-                               var url = $rootScope.base_url + '/add'
+                               var url = $rootScope.base_url + '/admin/employee/add'
                                $scope.newemployee.files_id = data['files_id'];
                                var emp_data = $scope.newemployee;
 
@@ -1264,7 +1575,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         var conf = confirm('Do you want to delete this record?');
         if (conf) {
             var id = item['id'];
-            var url = $rootScope.base_url + '/employee/delete/' + id;
+            var url = $rootScope.base_url + '/admin/employee/delete/' + id;
             var data = item;
             action.post(data,url)
                 .success(function (data, status, headers) {
@@ -1281,3 +1592,28 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
         }
     };
 });
+/**
+ * Created by psybo-03 on 21/12/16.
+ */
+app.controller('teamController',function($scope,$rootScope,$http,$location) {
+
+    $scope.teams = [];
+
+    $rootScope.base_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
+
+    loadTeam();
+
+    function loadTeam() {
+        $http.get($rootScope.base_url + '/load_team').then(function(response) {
+            if (response.data) {
+                $scope.teams = response.data;
+                console.log($scope.teams);
+            }else {
+                $scope.message = 'No data Found';
+                console.log('No data Found');
+            }
+        })
+    }
+
+
+})

@@ -5,18 +5,21 @@
     <meta name="keywords" content="web design, web development, web site development, web site design, web design development, e-commerce, ecommerce, interactive, new media, development, Manjeri, hove, Manjeri web design, Manjeri ecommerce, Manjeri e-commerce, Manjeri web development, malappuram, content management, cms, web site, web sites, psybo, psybo technologies, psybotechnologies">
     <meta name="description" content="Psybo technologies is a small web design &amp; development agency based in Manjeri, Malappuram, INDIA. We've made a reputation for building websites that look great and are easy-to-use.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="<?php echo base_url('img/ico.png');?>" type="image/png" sizes="47x54">
+    <link rel="icon" href="<?php echo public_url() . 'img/ico.png';?>" type="image/png" sizes="47x54">
     <title>Dashboard- Psybo Technologies</title>
-    <link rel="stylesheet" href="<?php echo base_url('css/styleapp.css');?>">
-    <link rel="stylesheet" href="<?php echo base_url('css/custom.css');?>">
-    <script type="text/javascript" src="<?php echo base_url('js/appjs.js');?>"></script>
-    <script type="text/javascript" src="<?php echo base_url('js/custom.js');?>"></script>
+    <link rel="stylesheet" href="<?php echo public_url() . 'assets/admin/css/styleapp.css'; ?>">
+    <link rel="stylesheet" href="<?php echo public_url() . 'assets/admin/css/custom.css'; ?>">
+    <script type="text/javascript" src="<?php echo public_url() . 'assets/admin/js/appjs.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo public_url() . 'assets/admin/js/custom.js'; ?>"></script>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
-    <script data-require="ui-bootstrap@*" data-semver="0.12.1" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>
+    <!--    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>-->
+    <!--    <script data-require="ui-bootstrap@*" data-semver="0.12.1" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>-->
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>-->
 
-    <script src="<?php echo base_url('js/angularApp.js')?>"></script>
+    <script src="<?php echo public_url() . 'assets/admin/js/angular-bootstrap.min.js' ?>"></script>
+
+    <script src="<?php echo public_url() . 'assets/admin/js/angularApp.min.js' ?>"></script>
+    <script src="<?php echo public_url() . 'assets/admin/js/angularApp.js' ?>"></script>
 
     <style>
         .disabled {
@@ -56,7 +59,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="<?php echo base_url('dashboard/logout');?>">logout</a>
+                    <a href="<?php echo base_url('logout');?>">logout</a>
                 </li>
             </ul>
         </div>

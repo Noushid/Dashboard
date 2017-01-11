@@ -33,163 +33,316 @@ class Portfolio_Controller extends CI_Controller
         $this->output->set_content_type('application/json')->set_output(json_encode($data));
     }
 
-    public function upload_file()
-    {
 
-        $data = $_FILES;
-        $name = $_POST['name'];
-        $upload_data = [];
-
-        $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 2800000;
-
-        foreach ($data as $value) {
-//            random file name
-            $config['file_name'] = 'p_'.rand();
-//            get file extension
-            $ext = substr(strrchr($value['name'],'.'),1);
-
-//          check file size
-            if ($ext == 'jpg' or $ext == 'png' or $ext == 'JPG' or $ext == 'jpeg') {
-                if ($value['size'] < $config['max_size']) {
-                    if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
-                        $temp['file_name'] = $config['file_name'] . '.' . $ext;
-                        $temp['file_type'] = $ext;
-                        $temp['image_cat'] = $name;
-
-//                Add uploaded file information.
-                        array_push($upload_data, $temp);
-                    }
-                }else{
-                    $error = ['error' => "File large"];
-                    $this->output->set_status_header(500, 'Server Down.');
-                    $this->output->set_content_type('application/json')->set_output(json_encode($error));
-                }
-            }else{
-                $error = ['error' => "Unknown file type"];
-                $this->output->set_status_header(500, 'Server Down.');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
-
-            }
-        }
-        $this->output->set_content_type('application/json')->set_output(json_encode($upload_data));
-    }
-
-    public function delete_file()
-    {
-        $data = json_decode(file_get_contents('php://input'), TRUE);
-        $path = getcwd().'/uploads/';
-
-        if (is_array($data)) {
-            foreach ($data as $value) {
-                if (!unlink($path . $value['file_name'])) {
-                    $this->output->set_status_header(500, 'Server Down.');
-                    $this->output->set_content_type('application/json')->set_output(json_encode('Unable to delete'));
-                    return FALSE;
-                } else {
-                    $this->output->set_content_type('application/json')->set_output(json_encode('Deleted!'));
-                }
-            }
-        } else {
-            unlink($path . $data);
-        }
-    }
 
     public function store()
     {
-        $_POST = json_decode(file_get_contents('php://input'), TRUE);
+        $success = false;
+        $upload_error = [];
+        $error = [];
+        $i = 0;
+
 
         $this->form_validation->set_rules('name', 'Name', 'required');
-        $this->form_validation->set_rules('type', 'Type', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->output->set_status_header(400,'Validation Error');
+            $this->output->set_status_header(400, 'validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            $portfolio_id = $this->portfolio->add($_POST);
+            $portfolio = $this->input->post();
+            $portfolio_id = $this->portfolio->add($portfolio);
             if ($portfolio_id) {
-                $_POST['id'] = $portfolio_id;
-                $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
-            } else {
-                $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
-                $this->output->set_status_header(500, 'Server Down.');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
-            }
-        }
-    }
-
-    public function add_file($id)
-    {
-        $data = json_decode(file_get_contents('php://input'), TRUE);
-
-
-        $error = [];
-        $success = [];
-        if (empty($data)) {
-            $this->output->set_status_header(500, 'Server error');
-            $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'can\'t get file information']));
-        } else {
-            foreach ($data as $value) {
-//            add data to files table
-                $file['file_name'] = $value['file_name'];
-                $file['file_type'] = $value['file_type'];
-                $file_id = $this->file->add($file);
-
-//            add data to portfolio_files table
-                if ($file_id) {
-                    $temp = [
-                        'portfolios_id' => $id,
-                        'files_id' => $file_id,
-                        'image_type' => $value['image_cat']
-                    ];
-                    $portfolio_file = $this->portfolio_file->add($temp);
-                    if ($portfolio_file) {
-                        array_push($success, $portfolio_file);
-                    }else{
-                        $error['error'] = 'portfolio files error';
+                $desktop = $this->upload('desktop');
+                if ($desktop != FALSE) {
+                    $upload_error[] = $this->upload->display_errors();
+                    /*Multiple file upload*/
+                    if (isset($desktop[0])) {
+                        foreach ($desktop as $value) {
+                            $file['file_name'] = $value['file_name'];
+                            $file['file_type'] = $value['file_type'];
+                            $file_id = $this->file->add($file);
+                            if ($file_id != FALSE) {
+                                $portfolio_file['portfolios_id'] = $portfolio_id;
+                                $portfolio_file['files_id'] = $file_id;
+                                $portfolio_file['image_type'] = 'desktop';
+                                if (!$this->portfolio_file->add($portfolio_file)) {
+                                    $i++;
+                                    $error[] = $i . 'files are not uploaded';
+                                    if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                        $this->file->remove($file_id);
+                                    }
+                                }
+                            } else {
+                                if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                }
+                            }
+                        }
+                    } else {
+                        /*Single file upload*/
+                        $file['file_name'] = $desktop['file_name'];
+                        $file['file_type'] = $desktop['file_type'];
+                        $file_id = $this->file->add($file);
+                        if ($file_id != FALSE) {
+                            $portfolio_file['portfolios_id'] = $portfolio_id;
+                            $portfolio_file['files_id'] = $file_id;
+                            $portfolio_file['image_type'] = 'desktop';
+                            if (!$this->portfolio_file->add($portfolio_file)) {
+                                $i++;
+                                $error[] = $i . 'files are not uploaded';
+                                if (file_exists(getwdir() . '/uploads/' . $desktop['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $desktop['file_name']);
+                                    $this->file->remove($file_id);
+                                }
+                            }
+                        } else {
+                            if (file_exists(getwdir() . '/uploads/' . $desktop['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $desktop['file_name']);
+                            }
+                        }
                     }
                 } else {
-                    $error['error'] = 'ca\'t add files information to db try again';
+                    $upload_error[] = $this->upload->display_errors();
+                    $this->output->set_status_header(409, 'File upload error');
                 }
-            }
-            if ($success) {
-                $this->output->set_content_type('application/json')->set_output(json_encode($success));
-                return true;
-            }
-            if ($error) {
-                $this->output->set_status_header(500, 'Server error');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
-                return false;
-            }
+                $mobile = $this->upload('mobile');
+                if ($mobile != false) {
+                    $upload_error[] = $this->upload->display_errors();
+                    if (isset($mobile[0])) {
+                        foreach ($mobile as $value) {
+                            $file['file_name'] = $value['file_name'];
+                            $file['file_type'] = $value['file_type'];
+                            $file_id = $this->file->add($file);
+                            if ($file_id != FALSE) {
+                                $portfolio_file['portfolios_id'] = $portfolio_id;
+                                $portfolio_file['files_id'] = $file_id;
+                                $portfolio_file['image_type'] = 'mobile';
+                                if (!$this->portfolio_file->add($portfolio_file)) {
+                                    $i++;
+                                    $error[] = $i . 'files are not uploaded';
+                                    if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                        $this->file->remove($file_id);
+                                    }
+                                }
+                            } else {
+                                if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                }
+                            }
+                        }
+                    } else {
+                        /*Single file upload*/
+                        $file['file_name'] = $mobile['file_name'];
+                        $file['file_type'] = $mobile['file_type'];
+                        $file_id = $this->file->add($file);
+                        if ($file_id != FALSE) {
+                            $portfolio_file['portfolios_id'] = $portfolio_id;
+                            $portfolio_file['files_id'] = $file_id;
+                            $portfolio_file['image_type'] = 'mobile';
+                            if (!$this->portfolio_file->add($portfolio_file)) {
+                                $i++;
+                                $error[] = $i . 'files are not uploaded';
+                                if (file_exists(getwdir() . '/uploads/' . $mobile['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $mobile['file_name']);
+                                    $this->file->remove($file_id);
+                                }
+                            }
+                        } else {
+                            if (file_exists(getwdir() . '/uploads/' . $mobile['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $mobile['file_name']);
+                            }
+                        }
+                    }
+                } else {
+                    $upload_error[] = $this->upload->display_errors();
+                    $this->output->set_status_header(409, 'File upload error');
+                }
 
+
+                if (!empty($error) and !empty($upload_error)) {
+                    $error_merge['error'] = array_merge($error, $upload_error);
+                } elseif (!empty($error)) {
+                    $error_merge['error'] = $error;
+                } else {
+                    $error_merge['error'] = $upload_error;
+                }
+                $this->output->set_content_type('application/json')->set_output(json_encode($error_merge));
+            } else {
+                $this->output->set_status_header(500, 'Server error');
+                $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'portfolio add error']));
+            }
         }
     }
 
-    public function edit_record()
+    public function update($id)
+
     {
-        $_POST = json_decode(file_get_contents('php://input'), TRUE);
+        $success = false;
+        $upload_error = [];
+        $error = [];
+        $i = 0;
 
-        if (array_key_exists('files',$_POST)) {
-            unset($_POST['files']);
-        }
         $this->form_validation->set_rules('name', 'Name', 'required');
-        $this->form_validation->set_rules('type', 'Type', 'required');
-
         if ($this->form_validation->run() == FALSE) {
-            $this->output->set_status_header(400, 'Validation Error');
+            $this->output->set_status_header(400, 'Validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
+            $data = $this->input->post();
+            unset($data['files_id']);
+            unset($data['files']);
+            foreach ($data as $key => $vale) {
+                if ($vale == 'null') {
+                    $data[$key] = null;
+                }
+            }
 
-            if ($this->portfolio->edit($_POST,$_POST['id'])) {
-                $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
+            if ($this->portfolio->edit($data, $id)) {
+                if (!empty($_FILES['desktop'])) {
+                    $desktop = $this->upload('desktop');
+                    if ($desktop != FALSE) {
+                        $upload_error[] = $this->upload->display_errors();
+                        /*Multiple file upload*/
+                        if (isset($desktop[0])) {
+                            foreach ($desktop as $value) {
+                                $file['file_name'] = $value['file_name'];
+                                $file['file_type'] = $value['file_type'];
+                                $file_id = $this->file->add($file);
+                                if ($file_id != FALSE) {
+                                    $portfolio_file['portfolios_id'] = $id;
+                                    $portfolio_file['files_id'] = $file_id;
+                                    $portfolio_file['image_type'] = 'desktop';
+                                    if (!$this->portfolio_file->add($portfolio_file)) {
+                                        $i++;
+                                        $error[] = $i . 'files are not uploaded';
+                                        if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                            unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                            $this->file->remove($file_id);
+                                        }
+                                    }
+                                } else {
+                                    if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                    }
+                                }
+                            }
+                        } else {
+                            /*Single file upload*/
+                            $file['file_name'] = $desktop['file_name'];
+                            $file['file_type'] = $desktop['file_type'];
+                            $file_id = $this->file->add($file);
+                            if ($file_id != FALSE) {
+                                $portfolio_file['portfolios_id'] = $id;
+                                $portfolio_file['files_id'] = $file_id;
+                                $portfolio_file['image_type'] = 'desktop';
+                                if (!$this->portfolio_file->add($portfolio_file)) {
+                                    $i++;
+                                    $error[] = $i . 'files are not uploaded';
+                                    if (file_exists(getwdir() . '/uploads/' . $desktop['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $desktop['file_name']);
+                                        $this->file->remove($file_id);
+                                    }
+                                }
+                            } else {
+                                if (file_exists(getwdir() . '/uploads/' . $desktop['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $desktop['file_name']);
+                                }
+                            }
+                        }
+                    } else {
+                        $upload_error[] = $this->upload->display_errors();
+                        $this->output->set_status_header(409, 'File upload error');
+                    }
+                }
+                if (!empty($_FILES['mobile'])) {
+                    $mobile = $this->upload('mobile');
+                    if ($mobile != false) {
+                        $upload_error[] = $this->upload->display_errors();
+                        if (isset($mobile[0])) {
+                            foreach ($mobile as $value) {
+                                $file['file_name'] = $value['file_name'];
+                                $file['file_type'] = $value['file_type'];
+                                $file_id = $this->file->add($file);
+                                if ($file_id != FALSE) {
+                                    $portfolio_file['portfolios_id'] = $id;
+                                    $portfolio_file['files_id'] = $file_id;
+                                    $portfolio_file['image_type'] = 'mobile';
+                                    if (!$this->portfolio_file->add($portfolio_file)) {
+                                        $i++;
+                                        $error[] = $i . 'files are not uploaded';
+                                        if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                            unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                            $this->file->remove($file_id);
+                                        }
+                                    }
+                                } else {
+                                    if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                    }
+                                }
+                            }
+                        } else {
+                            /*Single file upload*/
+                            $file['file_name'] = $mobile['file_name'];
+                            $file['file_type'] = $mobile['file_type'];
+                            $file_id = $this->file->add($file);
+                            if ($file_id != FALSE) {
+                                $portfolio_file['portfolios_id'] = $id;
+                                $portfolio_file['files_id'] = $file_id;
+                                $portfolio_file['image_type'] = 'mobile';
+                                if (!$this->portfolio_file->add($portfolio_file)) {
+                                    $i++;
+                                    $error[] = $i . 'files are not uploaded';
+                                    if (file_exists(getwdir() . '/uploads/' . $mobile['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $mobile['file_name']);
+                                        $this->file->remove($file_id);
+                                    }
+                                }
+                            } else {
+                                if (file_exists(getwdir() . '/uploads/' . $mobile['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $mobile['file_name']);
+                                }
+                            }
+                        }
+                    } else {
+                        $upload_error[] = $this->upload->display_errors();
+                        $this->output->set_status_header(409, 'File upload error');
+                    }
+                }
+
+                if (!empty($error) and !empty($upload_error)) {
+                    $error_merge['error'] = array_merge($error, $upload_error);
+                } elseif (!empty($error)) {
+                    $error_merge['error'] = $error;
+                } else {
+                    $error_merge['error'] = $upload_error;
+                }
+                $this->output->set_content_type('application/json')->set_output(json_encode($error_merge));
             } else {
-                $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
-                $this->output->set_status_header(500, 'Server Down.');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                $this->output->set_status_header(500, 'Server error');
+                $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'portfolio edit error']));
             }
         }
     }
+
+    public function upload($field)
+    {
+        $config['upload_path'] = getwdir() . '/uploads';
+        $config['allowed_types'] = 'gif|jpg|png';
+        $config['max_size'] = 2800000;
+        $config['file_name'] = 'P_' . rand();
+        $config['multi'] = 'ignore';
+        $this->upload->initialize($config);
+        if ($this->upload->do_upload($field)) {
+//            var_dump( $this->upload->data());
+            return $this->upload->data();
+
+        } else {
+            return FALSE;
+        }
+    }
+
 
     public function delete($id)
     {
@@ -207,24 +360,34 @@ class Portfolio_Controller extends CI_Controller
 
     public function delete_image()
     {
-        $data = json_decode(file_get_contents('php://input'), TRUE);
-
-        $portfolio_file_id = $data['id'];
-        $files_id = $data['files_id'];
-
-        if ($this->portfolio_file->remove($portfolio_file_id)) {
-            if ($this->file->remove($files_id)) {
-                $data = 'file Deleted!';
-                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+        $data = json_decode($this->input->raw_input_stream, false);
+        if ($this->portfolio_file->remove($data->id)) {
+            if ($this->file->remove($data->files_id)) {
+                if (file_exists(getwdir() . '/uploads/' . $data->file_name)) {
+                    unlink(getwdir() . '/uploads/' . $data->file_name);
+                }
+                $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Image deleted']));
             } else {
-                $data['error'] = 'files delete error';
-                $this->output->set_status_header(400, 'Record Not found.');
-                $this->output->set_content_type('application/json')->set_output(json_encode($data));
+                $portfolio_file_data['id'] = $data->id;
+                $portfolio_file_data['galleries_id'] = $data->portfolios_id;
+                $portfolio_file_data['files_id'] = $data->files_id;
+                if ($this->gallery_file->add(portfolio_file_data)) {
+                    $result = [
+                        'error' => 'Image Can\'t delete at this time.try again',
+                        'code' => 001
+                    ];
+//                    $this->output->set_status_header(500, 'Server Error');
+//                    $this->output->set_content_type('application/json')->set_output(json_encode($result));
+                }
             }
         } else {
-            $data['error'] = 'portfolio files delete error';
-            $this->output->set_status_header(400, 'Record Not found.');
-            $this->output->set_content_type('application/json')->set_output(json_encode($data));
+            $result = [
+                'error' => 'Image Can\'t delete at this time.try again',
+                'code' => 002
+            ];
+//            $this->output->set_status_header(500, 'Server Error');
+//            $this->output->set_content_type('application/json')->set_output(json_encode($result));
+
         }
     }
 

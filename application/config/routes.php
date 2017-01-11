@@ -51,29 +51,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 //$route['default_controller'] = 'welcome';
 $route['default_controller'] = 'Dashboard_Controller';
+$route['admin'] = 'Dashboard_Controller';
 
 
+$route['admin/portfolio'] = 'Portfolio_Controller';//load template
+$route['admin/portfolio/get-all'] = 'Portfolio_Controller/get';
+$route['admin/portfolio/upload'] = 'Portfolio_Controller/upload_file';
+$route['admin/portfolio/add'] = 'Portfolio_Controller/store';
+$route['admin/portfolio/insert-file/(:num)'] = 'Portfolio_Controller/add_file/$1';
+$route['admin/portfolio/delete-file'] = 'Portfolio_Controller/delete_file';
+$route['admin/portfolio/delete/(:num)'] = 'Portfolio_Controller/delete/$1';
+$route['admin/portfolio/delete-image'] = 'Portfolio_Controller/delete_image';
+$route['admin/portfolio/edit/(:num)'] = 'Portfolio_Controller/update/$1';
 
-$route['portfolio'] = 'Portfolio_Controller';//load template
-$route['portfolio/get-all'] = 'Portfolio_Controller/get';
-$route['portfolio/upload'] = 'Portfolio_Controller/upload_file';
-$route['portfolio/insert'] = 'Portfolio_Controller/store';
-$route['portfolio/insert-file/(:num)'] = 'Portfolio_Controller/add_file/$1';
-$route['portfolio/delete-file'] = 'Portfolio_Controller/delete_file';
-$route['portfolio/delete/(:num)'] = 'Portfolio_Controller/delete/$1';
-$route['portfolio/delete-image'] = 'Portfolio_Controller/delete_image';
-$route['portfolio/edit'] = 'Portfolio_Controller/edit_record';
-
-$route['employees'] = 'Employees_Controller'; //load template
-$route['employee'] = 'Employees_Controller/get_employees';
-$route['employee/upload'] = 'Employees_Controller/upload_file';
-$route['employee/insert-file'] = 'Employees_Controller/add_file';
-$route['employee/edit'] = 'Employees_Controller/update';
-$route['employee/add'] = 'Employees_Controller/store';
-$route['employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
+$route['admin/employees'] = 'Employees_Controller'; //load template
+$route['admin/employee'] = 'Employees_Controller/get_employees';
+$route['admin/employee/upload'] = 'Employees_Controller/upload_file';
+$route['admin/employee/insert-file'] = 'Employees_Controller/add_file';
+$route['admin/employee/edit'] = 'Employees_Controller/update';
+$route['admin/employee/add'] = 'Employees_Controller/store';
+$route['admin/employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
 
 
-$route['testimonial'] = 'Testimonial_Controller';
+$route['admin/testimonial'] = 'Testimonial_Controller';
 
 
 

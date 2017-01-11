@@ -74,6 +74,7 @@
                    <div class="col-md-4">
                        <input type="file" name="photo" id="photo" file-model="files.photo" ng-required="!newemployee.id"/>
                    </div>
+                   <span class="alert alert-warning">Image should be 300*300</span>
 
 <!--                   for existing image-->
                    <div class="clearfix"></div>
@@ -86,7 +87,7 @@
                                        <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(newemployee)">Delete</a>
                                    </div>
                                </div>
-                               <img src="{{base_url + '/uploads/' + newemployee.file_name}}" alt="thumbnails">
+                               <img src="{{public_url + '/uploads/' + newemployee.file_name}}" alt="thumbnails">
                            </div>
                        </div>
                    </div>
@@ -144,7 +145,7 @@
             <td>{{employee.name}}</td>
             <td>{{employee.designation}}</td>
             <td>
-                <a href="{{base_url + '/uploads/' + employee.file_name}}"><img class="img img-thumbnail" src="{{base_url + '/uploads/' + employee.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
+                <a href="{{public_url + '/uploads/' + employee.file_name}}"><img class="img img-thumbnail" src="{{public_url + '/uploads/' + employee.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
             </td>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
@@ -167,6 +168,6 @@
 </div>
 <div class="row" ng-show="loading">
     <div class="span4">
-        <img class="center-block" src="<?php echo base_url('img/loading.gif') ?>" alt=""/>
+        <img class="center-block" src="<?php echo public_url() . 'img/loading.gif' ?>" alt=""/>
     </div>
 </div>

@@ -19,7 +19,7 @@ class Employees_Controller extends CI_Controller
 
     public function index()
     {
-        $this->load->view('templates/employees');
+        $this->load->view('admin/templates/employees');
 
     }
 
@@ -36,7 +36,6 @@ class Employees_Controller extends CI_Controller
         $name = $_POST['name'];
         $upload_data = [];
 
-        $config['upload_path'] = './uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 2800000;
 
@@ -49,7 +48,7 @@ class Employees_Controller extends CI_Controller
 //          check file size
             if ($ext == 'jpg' or $ext == 'png' or $ext == 'JPG' or $ext == 'jpeg') {
                 if ($value['size'] < $config['max_size']) {
-                    if (move_uploaded_file($value['tmp_name'],getcwd().'/uploads/'.$config['file_name'].'.'.$ext)) {
+                    if (move_uploaded_file($value['tmp_name'],getcwd().'/public/uploads/'.$config['file_name'].'.'.$ext)) {
                         $temp['file_name'] = $config['file_name'] . '.' . $ext;
                         $temp['file_type'] = $ext;
                         $temp['image_cat'] = $name;
@@ -135,7 +134,7 @@ class Employees_Controller extends CI_Controller
             unset($_POST['file_type']);
         }else{
             if ($this->file->remove($_POST['fileId'])) {
-                unlink(getcwd() . '/uploads/' . $_POST['file_name']);
+                unlink(getcwd() . '/public/uploads/' . $_POST['file_name']);
 
                 unset($_POST['fileId']);
                 unset($_POST['file_name']);
@@ -175,7 +174,7 @@ class Employees_Controller extends CI_Controller
         } else {
             if ($this->employee->remove($id)) {
                 if ($this->file->remove($file_id)) {
-                    unlink(getcwd() . '/uploads/' . $data['file_name']);
+                    unlink(getcwd() . '/public/uploads/' . $data['file_name']);
                     $data = 'Record Deleted!';
                     $this->output->set_content_type('application/json')->set_output(json_encode($data));
                 } else {

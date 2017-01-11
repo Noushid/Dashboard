@@ -1,17 +1,17 @@
 <div class="col-md-12">
     <div class="row">
         <div class="box" style="margin-left: 14px;">
-            <button class="btn btn-primary" ng-click="newEmployee()"><i class="fa fa-plus"></i> Add</button>
-            <form class="form-horizontal" method="POST" ng-show="showform" ng-submit="addEmployee()">
-                <h3>New Employee</h3>
+            <button class="btn btn-primary" ng-click="newTestimonial()"><i class="fa fa-plus"></i> Add</button>
+            <form class="form-horizontal" method="POST" ng-show="showform" ng-submit="addTestimonial()">
+                <h3>New Testimonial</h3>
                 <div class="form-group">
                     <label for="" class="control-label col-md-1">Name</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="name" ng-model="newemployee.name" required=""/>
+                        <input type="text" class="form-control" name="name" ng-model="newtestimonial.name" required=""/>
                     </div>
                     <label for="" class="control-label col-md-1">Link</label>
                     <div class="col-md-4">
-                        <input class="form-control" type="text" ng-model="newemployee.link" name="link" required=""/>
+                        <input class="form-control" type="text" ng-model="newtestimonial.link" name="link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);"  />
                     </div>
                 </div>
                 <div class="form-group">
@@ -23,21 +23,22 @@
                 <div class="form-group">
                     <label for="" class="control-label col-md-1">Photo</label>
                     <div class="col-md-4">
-                        <input type="file" name="photo" id="photo" file-model="files.photo" ng-required="!newemployee.id"/>
+                        <input type="file" name="photo" id="photo" file-model="files.photo" />
                     </div>
+                    <span class="alert alert-warning">Image should be 50*50</span>
 
                     <!--                   for existing image-->
                     <div class="clearfix"></div>
-                    <div class="row" ng-show="newemployee.file_name" style="margin-left: 14px">
+                    <div class="row" ng-show="newtestimonial.file_name" style="margin-left: 14px">
                         <div class="col-md-2">
                             <div class="thumbnail" ng-mouseover="showcaption=true" ng-mouseleave="showcaption=false">
                                 <div class="caption" ng-show="showcaption">
                                     <div id="content">
                                         <a href="" class="label label-warning" rel="tooltip" title="Show">Show</a>
-                                        <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(newemployee)">Delete</a>
+                                        <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(newtestimonial)">Delete</a>
                                     </div>
                                 </div>
-                                <img src="{{base_url + '/uploads/' + newemployee.file_name}}" alt="thumbnails">
+                                <img src="{{public_url + '/uploads/' + newtestimonial.file_name}}" alt="thumbnails">
                             </div>
                         </div>
                     </div>
@@ -58,15 +59,12 @@
                     <button class="btn btn-danger" type="button" ng-click="hideForm()">Cancel</button>
                 </div>
             </form>
-            <form class="form-inline">
+            <form class="form-inline" ng-show="showtable">
                 <div class="form-group">
                     <label for="" class="control-label col-md-2">Show</label>
                     <div class="col-md-3">
-                        <select name="numPerPage" ng-model="numPerPage" class="form-control">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
+                        <select name="numPerPage" ng-model="numPerPage" class="form-control"
+                            ng-options="num for num in paginations">{{num}}
                         </select>
                     </div>
 
@@ -84,7 +82,8 @@
         <tr>
             <th>id</th>
             <th>name</th>
-            <th>Designation</th>
+            <th>link</th>
+            <th>Description</th>
             <th>photo</th>
             <th>action</th>
         </tr>
@@ -93,16 +92,17 @@
         <tr dir-paginate="testimonial in testimonials | filter:search | limitTo:pageSize | itemsPerPage:numPerPage">
             <td>{{testimonial.id}}</td>
             <td>{{testimonial.name}}</td>
-            <td>{{testimonial.designation}}</td>
+            <td><p class="description" popover="{{testimonial.link}}" popover-trigger="mouseenter"><a href="{{testimonial.link}}">{{testimonial.link}}</a></p></td>
+            <td><p class="description" popover="{{testimonial.description}}" popover-trigger="mouseenter">{{testimonial.description}}</p></td></td>
             <td>
-                <a href="{{base_url + '/uploads/' + testimonial.file_name}}"><img class="img img-thumbnail" src="{{base_url + '/uploads/' + testimonial.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
+                <a href="{{public_url + '/uploads/' + testimonial.file_name}}"><img class="img img-thumbnail" src="{{public_url + '/uploads/' + testimonial.file_name}}" alt="thumbnail" width="25px" height="25px"/></a>
             </td>
             <td>
                 <div  class="btn-group btn-group-xs" role="group">
                     <button type="button" class="btn btn-info" ng-click="showForm(testimonial)">
                         <i class="fa fa-pencil"></i>
                     </button>
-                    <button  type="button" class="btn btn-danger" ng-click="deleteEmployee(testimonial)">
+                    <button  type="button" class="btn btn-danger" ng-click="deleteTestimonial(testimonial)">
                         <i class="fa fa-trash-o"></i>
                     </button>
                 </div>
@@ -118,6 +118,6 @@
 </div>
 <div class="row" ng-show="loading">
     <div class="span4">
-        <img class="center-block" src="<?php echo base_url('img/loading.gif') ?>" alt=""/>
+        <img class="center-block" src="<?php echo base_url() . 'img/loading.gif' ?>" alt=""/>
     </div>
 </div>
