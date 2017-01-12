@@ -169,17 +169,13 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     };
 
     $scope.deletePortfolio = function (item) {
-        var conf = confirm('Do you want to delete this Record?');
-        if (conf) {
-            var id = item['id'];
-            $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
-                .success(function (data, status, headers) {
-                    console.log(data);
-                    alert(data);
-                    loadPortfolio();
-                });
-        }
-
+        var id = item['id'];
+        $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
+            .success(function (data, status, headers) {
+                console.log(data);
+                alert(data);
+                loadPortfolio();
+            });
     };
 
     $scope.deleteImage = function(item) {

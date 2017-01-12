@@ -883,7 +883,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
 
     loadGallery();
     function loadGallery() {
-        $http.get($rootScope.base_url + '/Gallery_Controller/get').then(function (response) {
+        $http.get($rootScope.base_url + '/admin/gallery/get-all').then(function (response) {
             if (response.data) {
                 $scope.galleries = response.data;
                 console.log($scope.galleries);
@@ -911,19 +911,20 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.addGallery = function () {
+        var fd = new FormData();
+        //append posted to form data except files
+        angular.forEach($scope.newgallery, function (item, key) {
+            fd.append(key, item);
+        });
+        //    append posted files data to form data
+        angular.forEach($scope.files.image, function (item,key) {
+            fd.append('files[]', item);
+        });
+
         if ($scope.newgallery['id']) {
             console.log('edit');
 
             var url = $rootScope.base_url + '/Gallery_Controller/update/' + $scope.newgallery['id'];
-            var fd = new FormData();
-            //append posted to form data except files
-            angular.forEach($scope.newgallery, function (item, key) {
-                fd.append(key, item);
-            });
-            //    append posted files data to form data
-            angular.forEach($scope.files.image, function (item,key) {
-                fd.append('files[]', item);
-            });
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,
@@ -952,15 +953,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
             console.log($scope.newgallery);
             console.log($scope.files.image);
             var url = $rootScope.base_url + '/Gallery_Controller/store';
-            var fd = new FormData();
-            //append posted data to form data except files
-            angular.forEach($scope.newgallery, function (item, key) {
-                fd.append(key, item);
-            });
-        //    append posted files data to form data
-            angular.forEach($scope.files.image, function (item,key) {
-                fd.append('files[]', item);
-            });
+
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,
@@ -1011,20 +1004,17 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.deleteGallery= function (item) {
-        var conf = confirm('DO you Want to delete this item?');
-        if (conf) {
-            var url = $rootScope.base_url + '/Gallery_Controller/delete';
-            action.post(item, url)
-                .success(function (data, status, headers) {
-                    console.log('gallery deleted');
-                    var index = $scope.galleries.indexOf(item);
-                    $scope.galleries.splice(index, 1);
-                })
-                .error(function (data,status,headers) {
-                    console.log('delete error');
-                    console.log(data);
-                });
-        }
+        var url = $rootScope.base_url + '/Gallery_Controller/delete';
+        action.post(item, url)
+            .success(function (data, status, headers) {
+                console.log('gallery deleted');
+                var index = $scope.galleries.indexOf(item);
+                $scope.galleries.splice(index, 1);
+            })
+            .error(function (data,status,headers) {
+                console.log('delete error');
+                console.log(data);
+            });
     };
 
 });
@@ -1199,17 +1189,13 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
     };
 
     $scope.deletePortfolio = function (item) {
-        var conf = confirm('Do you want to delete this Record?');
-        if (conf) {
-            var id = item['id'];
-            $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
-                .success(function (data, status, headers) {
-                    console.log(data);
-                    alert(data);
-                    loadPortfolio();
-                });
-        }
-
+        var id = item['id'];
+        $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
+            .success(function (data, status, headers) {
+                console.log(data);
+                alert(data);
+                loadPortfolio();
+            });
     };
 
     $scope.deleteImage = function(item) {
@@ -1357,7 +1343,6 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     };
 
     $scope.deleteTestimonial = function (item) {
-        console.log(item);
         var id = item['id'];
         var url = $rootScope.base_url + '/admin/testimonial/delete/' + id;
         var data = item;

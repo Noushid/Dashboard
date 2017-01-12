@@ -46,14 +46,14 @@ class Gallery_Controller extends CI_Controller
             $this->output->set_status_header(400, 'validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
+            $post_data = $this->input->post();
             /*Upload files*/
             if ($this->upload->do_upload('files')) {
                 /*Check upload error*/
                 $upload_error = $this->upload->display_errors();
                 $uploaded = $this->upload->data();
-                var_dump($uploaded);
                 /*Add gallery to db*/
-                $gallery_id = $this->gallery->add($_POST);
+                $gallery_id = $this->gallery->add($post_data);
                 if (isset($uploaded[0])) {
                     if ($gallery_id != FALSE) {
                         foreach ($uploaded as $value) {
@@ -69,18 +69,24 @@ class Gallery_Controller extends CI_Controller
                                 } else {
                                 //TODO gallery files insert error .delete their image and remove file data form db
                                     if ($this->files->remove($file_id)) {
-                                        unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                                        if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                            unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                        }
                                     }
                                 }
                             } else {
                                 //TODO image insert error.delete the image
-                                unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                                if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                }
                             }
                         }
                     } else {
                         //TODO delete uploaded image
                         foreach ($uploaded as $value) {
-                            unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                            if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $value['file_name']);
+                            }
                         }
                         $this->output->set_status_header(500, 'Server Down');
                         $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'gallery add error']));
@@ -97,13 +103,17 @@ class Gallery_Controller extends CI_Controller
                             $success = true;
                         } else {
                             if ($this->files->remove($file_id)) {
-                                unlink(getcwd() . 'public/uploads/' . $uploaded['file_name']);
+                                if (file_exists(getwdir() . '/uploads/' . $uploaded['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $uploaded['file_name']);
+                                }
                                 $this->output->set_status_header(500, 'Server Down');
                                 $this->output->set_content_type('application/json')->set_output(json_encode(['msg'=>'gallery files insert error']));
                             }
                         }
                     } else {
-                        unlink(getcwd() . 'public/uploads/' . $uploaded['file_name']);
+                        if (file_exists(getwdir() . '/uploads/' . $uploaded['file_name'])) {
+                            unlink(getwdir() . '/uploads/' . $uploaded['file_name']);
+                        }
                         $this->output->set_status_header(500, 'Server Down');
                         $this->output->set_content_type('application/json')->set_output(json_encode(['msg'=>'files insert error']));
                     }
@@ -129,7 +139,7 @@ class Gallery_Controller extends CI_Controller
     {
         unset($_POST['files']);
         $success = FALSE;
-        $config['upload_path'] = './public/uploads/';
+        $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 2800000;
         $config['file_name'] = 'G_' . rand();
@@ -164,13 +174,17 @@ class Gallery_Controller extends CI_Controller
                                     //TODO gallery files insert error .delete their image and remove file data form db
                                     $success = FALSE;
                                     if ($this->files->remove($file_id)) {
-                                        unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                                        if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                            unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                        }
                                     }
                                 }
                             } else {
                                 //TODO file insert error delete the uploded image
                                 $success = FALSE;
-                                unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                                if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $value['file_name']);
+                                }
                             }
                         }
                     } else {
@@ -186,14 +200,18 @@ class Gallery_Controller extends CI_Controller
                             } else {
                                 $success = FALSE;
                                 if ($this->files->remove($file_id)) {
-                                    unlink(getcwd() . 'public/uploads/' . $uploaded['file_name']);
+                                    if (file_exists(getwdir() . '/uploads/' . $uploaded['file_name'])) {
+                                        unlink(getwdir() . '/uploads/' . $uploaded['file_name']);
+                                    }
                                     $this->output->set_status_header(500, 'Server Down');
                                     $this->output->set_content_type('application/json')->set_output(json_encode(['msg'=>'gallery files insert error']));
                                 }
                             }
                         } else {
                             $success = FALSE;
-                            unlink(getcwd() . 'public/uploads/' . $uploaded['file_name']);
+                            if (file_exists(getwdir() . '/uploads/' . $uploaded['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $uploaded['file_name']);
+                            }
                             $this->output->set_status_header(500, 'Server Down');
                             $this->output->set_content_type('application/json')->set_output(json_encode(['msg'=>'files insert error']));
                         }
@@ -224,7 +242,9 @@ class Gallery_Controller extends CI_Controller
     {
         $data = json_decode(file_get_contents('php://input'), TRUE);
         if ($this->files->remove($data['files_id'])) {
-            unlink(getcwd() . 'public/uploads/' . $data['file_name']);
+            if (file_exists(getwdir() . '/uploads/' . $data['file_name'])) {
+                unlink(getwdir() . '/uploads/' . $data['file_name']);
+            }
             if ($this->gallery_files->remove($data['gallery_files_id'])) {
                 $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'image deleted']));
             } else {
@@ -246,7 +266,9 @@ class Gallery_Controller extends CI_Controller
         if (!empty($files)) {
             foreach ($files as $value) {
                 if ($this->files->remove($value['files_id'])) {
-                    unlink(getcwd() . 'public/uploads/' . $value['file_name']);
+                    if (file_exists(getwdir() . '/uploads/' . $value['file_name'])) {
+                        unlink(getwdir() . '/uploads/' . $value['file_name']);
+                    }
                     if ($this->gallery_files->remove($value['gallery_files_id'])) {
                         $success = TRUE;
                     } else {

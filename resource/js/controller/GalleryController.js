@@ -138,20 +138,17 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.deleteGallery= function (item) {
-        var conf = confirm('DO you Want to delete this item?');
-        if (conf) {
-            var url = $rootScope.base_url + '/Gallery_Controller/delete';
-            action.post(item, url)
-                .success(function (data, status, headers) {
-                    console.log('gallery deleted');
-                    var index = $scope.galleries.indexOf(item);
-                    $scope.galleries.splice(index, 1);
-                })
-                .error(function (data,status,headers) {
-                    console.log('delete error');
-                    console.log(data);
-                });
-        }
+        var url = $rootScope.base_url + '/Gallery_Controller/delete';
+        action.post(item, url)
+            .success(function (data, status, headers) {
+                console.log('gallery deleted');
+                var index = $scope.galleries.indexOf(item);
+                $scope.galleries.splice(index, 1);
+            })
+            .error(function (data,status,headers) {
+                console.log('delete error');
+                console.log(data);
+            });
     };
 
 });
