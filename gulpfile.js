@@ -4,8 +4,10 @@ var gulp = require('gulp'),
     rename = require('gulp-rename');
 
 var config = {
-    nodeDir: 'node_modules'
+    nodeDir: 'node_modules',
+    publicDir:'public/'
 };
+
 
 gulp.task('scripts', function () {
     return gulp.src([
@@ -14,10 +16,10 @@ gulp.task('scripts', function () {
         'resource/js/controller/*.js'
     ])
         .pipe(concat('angularApp.js'))
-        .pipe(gulp.dest('public/assets/admin/js/'))
+        .pipe(gulp.dest(config.publicDir + 'assets/admin/js/'))
         .pipe(rename('angularApp.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('public/assets/admin/js/'));
+        .pipe(gulp.dest(config.publicDir + 'assets/admin/js/'));
 });
 
 gulp.task('mix', function () {
@@ -27,7 +29,7 @@ gulp.task('mix', function () {
         'resource/js/dist/ui-bootstrap-tpls-0.12.1.min.js'
     ])
         .pipe(concat('angular-bootstrap.min.js'))
-        .pipe(gulp.dest('public/assets/admin/js/'))
+        .pipe(gulp.dest(config.publicDir + 'assets/admin/js/'))
 });
 
 

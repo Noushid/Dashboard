@@ -853,7 +853,7 @@ app.controller('adminController', function ($scope, $location, $http, $rootScope
             headers: {'Content-Type': undefined, 'Process-Data': false}
         })
             .success(function (data, status, headers) {
-                $window.location.href = '/admin';
+                $window.location.href = '/admin/#';
             })
             .error(function (data, status, header) {
                 console.log('login error');
