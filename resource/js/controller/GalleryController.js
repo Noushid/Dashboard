@@ -58,7 +58,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
         if ($scope.newgallery['id']) {
             console.log('edit');
 
-            var url = $rootScope.base_url + '/Gallery_Controller/update/' + $scope.newgallery['id'];
+            var url = $rootScope.base_url + '/admin/gallery/edit/' + $scope.newgallery['id'];
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,
@@ -86,7 +86,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
         }else {
             console.log($scope.newgallery);
             console.log($scope.files.image);
-            var url = $rootScope.base_url + '/Gallery_Controller/store';
+            var url = $rootScope.base_url + '/admin/gallery/add';
 
 
             $http.post(url, fd, {
@@ -121,7 +121,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
 
     $scope.deleteImage= function (item) {
         console.log(item);
-        var url = $rootScope.base_url + '/Gallery_Controller/delete_image';
+        var url = $rootScope.base_url + '/admin/gallery/delete-image';
         var data = item;
         action.post(data, url)
             .success(function (data, status, headers) {
@@ -138,7 +138,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.deleteGallery= function (item) {
-        var url = $rootScope.base_url + '/Gallery_Controller/delete';
+        var url = $rootScope.base_url + '/admin/gallery/delete';
         action.post(item, url)
             .success(function (data, status, headers) {
                 console.log('gallery deleted');

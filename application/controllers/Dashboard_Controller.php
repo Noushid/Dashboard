@@ -43,6 +43,12 @@ class Dashboard_Controller extends Check_Logged
 
     }
 
+    public function version()
+    {
+        echo CI_VERSION;
+    }
+
+
 ///////////////////////////////////////////////////////////
 
 
