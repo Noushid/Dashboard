@@ -38,7 +38,7 @@ class Testimonial_Controller extends CI_Controller
             $this->output->set_status_header(400, 'Validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            $config['upload_path'] = './uploads/';
+            $config['upload_path'] = getwdir() . '/uploads/';
             $config['allowed_types'] = 'gif|jpg|png';
             $config['max_size'] = 2800000;
             $config['file_name'] = 'T_' . rand();
@@ -91,7 +91,7 @@ class Testimonial_Controller extends CI_Controller
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
             if (isset($_FILES['photo'])) {
-                $config['upload_path'] = './uploads/';
+                $config['upload_path'] = getwdir() . '/uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 $config['max_size'] = 2800000;
                 $config['file_name'] = 'T_' . rand();

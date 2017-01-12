@@ -33,7 +33,7 @@ class Employees_Controller extends CI_Controller
 
     public function store()
     {
-        $config['upload_path'] = './uploads/';
+        $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 2800000;
         $config['file_name'] = 'E_' . rand();
@@ -86,7 +86,7 @@ class Employees_Controller extends CI_Controller
 
     public function update($id)
     {
-        $config['upload_path'] = './uploads/';
+        $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 2800000;
         $config['file_name'] = 'E_' . rand();

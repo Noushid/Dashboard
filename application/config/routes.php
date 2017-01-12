@@ -80,6 +80,8 @@ $route['admin/testimonial/add'] = 'Testimonial_Controller/store';
 $route['admin/testimonial/edit/(:num)'] = 'Testimonial_Controller/update/$1';
 $route['admin/testimonial/delete/(:num)'] = 'Testimonial_Controller/delete/$1';
 
+$route['admin/gallery'] = 'Gallery_Controller';/*Load template*/
+$route['admin/gallery/get-all'] = 'Gallery_Controller/get';/*Load template*/
 
 
 

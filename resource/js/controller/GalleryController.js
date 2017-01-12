@@ -17,7 +17,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
 
     loadGallery();
     function loadGallery() {
-        $http.get($rootScope.base_url + '/Gallery_Controller/get').then(function (response) {
+        $http.get($rootScope.base_url + '/admin/gallery/get-all').then(function (response) {
             if (response.data) {
                 $scope.galleries = response.data;
                 console.log($scope.galleries);
@@ -45,19 +45,20 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.addGallery = function () {
+        var fd = new FormData();
+        //append posted to form data except files
+        angular.forEach($scope.newgallery, function (item, key) {
+            fd.append(key, item);
+        });
+        //    append posted files data to form data
+        angular.forEach($scope.files.image, function (item,key) {
+            fd.append('files[]', item);
+        });
+
         if ($scope.newgallery['id']) {
             console.log('edit');
 
             var url = $rootScope.base_url + '/Gallery_Controller/update/' + $scope.newgallery['id'];
-            var fd = new FormData();
-            //append posted to form data except files
-            angular.forEach($scope.newgallery, function (item, key) {
-                fd.append(key, item);
-            });
-            //    append posted files data to form data
-            angular.forEach($scope.files.image, function (item,key) {
-                fd.append('files[]', item);
-            });
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,
@@ -86,15 +87,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
             console.log($scope.newgallery);
             console.log($scope.files.image);
             var url = $rootScope.base_url + '/Gallery_Controller/store';
-            var fd = new FormData();
-            //append posted data to form data except files
-            angular.forEach($scope.newgallery, function (item, key) {
-                fd.append(key, item);
-            });
-        //    append posted files data to form data
-            angular.forEach($scope.files.image, function (item,key) {
-                fd.append('files[]', item);
-            });
+
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,

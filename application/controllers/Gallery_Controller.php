@@ -33,7 +33,7 @@ class Gallery_Controller extends CI_Controller
     public function store()
     {
         $success = false;
-        $config['upload_path'] = './public/uploads/';
+        $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 2800000;
         $config['file_name'] = 'G_' . rand();
@@ -51,6 +51,7 @@ class Gallery_Controller extends CI_Controller
                 /*Check upload error*/
                 $upload_error = $this->upload->display_errors();
                 $uploaded = $this->upload->data();
+                var_dump($uploaded);
                 /*Add gallery to db*/
                 $gallery_id = $this->gallery->add($_POST);
                 if (isset($uploaded[0])) {
@@ -66,7 +67,7 @@ class Gallery_Controller extends CI_Controller
                                 if ($this->gallery_files->add($galleryfile_data)) {
                                     $success = true;
                                 } else {
-//                            TODO gallery files insert error .delete their image and remove file data form db
+                                //TODO gallery files insert error .delete their image and remove file data form db
                                     if ($this->files->remove($file_id)) {
                                         unlink(getcwd() . 'public/uploads/' . $value['file_name']);
                                     }
