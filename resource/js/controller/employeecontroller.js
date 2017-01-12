@@ -78,20 +78,40 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 $scope.newemployee.github = "http://" + string;
             }
         }
+
+        //Add data to form data
+        var fd = new FormData();
+        var i = 0;
+        angular.forEach($scope.newemployee, function (item, key) {
+            fd.append(key, item);
+        });
+        angular.forEach($scope.files.photo, function (item, key) {
+            fd.append('photo', item);
+            i++;
+        });
+
         if ($scope.newemployee.id) {
             console.log('edit');
+            var url = $rootScope.base_url + '/admin/employee/edit/' + $scope.newemployee.id;
+
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined, 'Process-Data': false}
+            })
+                .success(function (data, status, headers) {
+                    console.log('test edit success');
+                    console.log(data);
+                    //$scope.newemployee = {};
+                    //$scope.showform = false;
+                })
+                .error(function (data, status, heders) {
+                    console.log('test add error');
+                    console.log(data);
+                });
         }else {
             console.log($scope.newemployee);
             var url = $rootScope.base_url + '/admin/employee/add';
-            var fd = new FormData();
-            var i = 0;
-            angular.forEach($scope.newemployee, function (item, key) {
-                fd.append(key, item);
-            });
-            angular.forEach($scope.files.photo, function (item, key) {
-                fd.append('photo', item);
-                i++;
-            });
+
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,

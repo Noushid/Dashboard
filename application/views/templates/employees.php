@@ -84,7 +84,6 @@
                                <div class="caption" ng-show="showcaption">
                                    <div id="content">
                                        <a href="" class="label label-warning" rel="tooltip" title="Show">Show</a>
-                                       <a href="" class="label label-danger" rel="tooltip" title="Delete" ng-click="deleteImage(newemployee)">Delete</a>
                                    </div>
                                </div>
                                <img src="{{public_url + '/uploads/' + newemployee.file_name}}" alt="thumbnails">

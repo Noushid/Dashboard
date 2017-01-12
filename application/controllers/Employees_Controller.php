@@ -40,7 +40,7 @@ class Employees_Controller extends CI_Controller
         $this->upload->initialize($config);
 
         $this->form_validation->set_rules('name', 'Name', 'required');
-//        $this->form_validation->set_rules('designation', 'Designation', 'required');
+        $this->form_validation->set_rules('designation', 'Designation', 'required');
         if ($this->form_validation->run() == FALSE) {
             $this->output->set_status_header(400, 'validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
@@ -84,40 +84,80 @@ class Employees_Controller extends CI_Controller
     }
 
 
-    public function update()
+    public function update($id)
     {
-        $_POST = json_decode(file_get_contents('php://input'), TRUE);
-        if ($_POST['files_id'] == $_POST['fileId']) {
-            unset($_POST['fileId']);
-            unset($_POST['file_name']);
-            unset($_POST['file_type']);
-        }else{
-            if ($this->file->remove($_POST['fileId'])) {
-                unlink(getcwd() . '/public/uploads/' . $_POST['file_name']);
-
-                unset($_POST['fileId']);
-                unset($_POST['file_name']);
-                unset($_POST['file_type']);
-            }
-        }
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'gif|jpg|png';
+        $config['max_size'] = 2800000;
+        $config['file_name'] = 'E_' . rand();
+        $this->upload->initialize($config);
 
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('designation', 'Designation', 'required');
-        $this->form_validation->set_rules('gender', 'Gender', 'required');
-
         if ($this->form_validation->run() == FALSE) {
-            $this->output->set_status_header(400,'Validation Error');
+            $this->output->set_status_header(400, 'validation error');
             $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            if ($this->employee->edit($_POST,$_POST['id'])) {
-                $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
-            }else {
-                $error = ['error' => "Sorry, Can't Process your Request \n Try again later"];
-                $this->output->set_status_header(500, 'Server Down.');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+            $post_data = $this->input->post();
+            $old_file_name = $post_data['file_name'];
+            $old_file_id = $post_data['fileId'];
+
+            unset($post_data['fileId']);
+            unset($post_data['file_name']);
+            unset($post_data['file_type']);
+            foreach ($post_data as $key => $vale) {
+                if ($vale == 'null') {
+                    $post_data[$key] = null;
+                }
+            }
+            /*New photo*/
+            if (isset($_FILES['photo'])) {
+                if ($this->upload->do_upload('photo')) {
+                    $upload_data = $this->upload->data();
+                    $file_data['file_name'] = $upload_data['file_name'];
+                    $file_data['file_type'] = $upload_data['file_type'];
+                    $file_id = $this->file->add($file_data);
+                    if ($file_id) {
+                        $post_data['files_id'] = $file_id;
+                        if ($this->employee->edit($post_data, $id)) {
+                            $this->file->remove($old_file_id);
+                            if (getwdir() . '/uploads/' . $old_file_name) {
+                                unlink(getwdir() . '/uploads/' . $old_file_name);
+                            }
+                            $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data updated']));
+                        } else {
+                            if ($this->file->remove($file_id)) {
+                                if (file_exists(getwdir() . '/uploads/' . $upload_data['file_name'])) {
+                                    unlink(getwdir() . '/uploads/' . $upload_data['file_name']);
+                                }
+
+                                $this->output->set_status_header(500, 'Server Down');
+                                $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'employee update add error']));
+                            }
+                        }
+                    } else {
+                        if (file_exists(getwdir() . '/uploads' . $upload_data['file_name'])) {
+                            unlink(getwdir() . '/uploads' . $upload_data['file_name']);
+                        }
+
+                        $this->output->set_status_header(500, 'Server Down');
+                        $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'file data add error']));
+                    }
+                } else {
+                    $error = $this->upload->display_errors();
+                    $this->output->set_status_header(409, 'File upload error');
+                    $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                }
+            } else {
+                /*Without new photo*/
+                if ($this->employee->edit($post_data,$id)) {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data updated']));
+                } else {
+                    $this->output->set_status_header(500, 'Server Down');
+                    $this->output->set_content_type('application/json')->set_output(json_encode(['error' => 'employee update add error']));
+                }
             }
         }
-
     }
     public function delete($id)
     {
