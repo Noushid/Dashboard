@@ -70,10 +70,8 @@ $route['admin/portfolio/edit/(:num)'] = 'Portfolio_Controller/update/$1';
 
 $route['admin/employees'] = 'Employees_Controller'; //load template
 $route['admin/employee'] = 'Employees_Controller/get_employees';
-$route['admin/employee/upload'] = 'Employees_Controller/upload_file';
-$route['admin/employee/insert-file'] = 'Employees_Controller/add_file';
-$route['admin/employee/edit'] = 'Employees_Controller/update';
 $route['admin/employee/add'] = 'Employees_Controller/store';
+$route['admin/employee/edit'] = 'Employees_Controller/update';
 $route['admin/employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
 
 
