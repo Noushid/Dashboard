@@ -1300,21 +1300,23 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                 $scope.newtestimonial.link = "http://" + string;
             }
         }
+
+        var fd = new FormData();
+        var i = 0;
+        angular.forEach($scope.newtestimonial, function (item, key) {
+            fd.append(key, item);
+        });
+        angular.forEach($scope.files.photo, function (item, key) {
+            fd.append('photo', item);
+            i++;
+        });
+
         if ($scope.newtestimonial['id']) {
             console.log('edit');
             console.log($scope.newtestimonial);
 
-            var fd = new FormData();
-            var i = 0;
-            angular.forEach($scope.newtestimonial, function (item, key) {
-                fd.append(key, item);
-            });
-            angular.forEach($scope.files.photo, function (item, key) {
-                fd.append('photo', item);
-                i++;
-            });
 
-            var url = $rootScope.base_url + '/testimonial_Controller/update';
+            var url = $rootScope.base_url + '/admin/testimonial/edit/' + $scope.newtestimonial.id;
             $http.post(url, fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined, 'Process-Data': false}
@@ -1334,17 +1336,7 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
         }else {
             console.log('add');
             console.log($scope.newtestimonial);
-            var url = $rootScope.base_url + '/testimonial_Controller/store';
-
-            var fd = new FormData();
-            var i = 0;
-            angular.forEach($scope.newtestimonial, function (item, key) {
-                fd.append(key, item);
-            });
-            angular.forEach($scope.files.photo, function (item, key) {
-                fd.append('photo', item);
-                i++;
-            });
+            var url = $rootScope.base_url + '/admin/testimonial/add';
 
             $http.post(url, fd, {
                 transformRequest: angular.identity,

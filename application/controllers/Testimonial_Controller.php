@@ -33,100 +33,131 @@ class Testimonial_Controller extends CI_Controller
 
     public function store()
     {
-        $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 2800000;
-        $config['file_name'] = 'T_' . rand();
-        $this->upload->initialize($config);
-
-        if ($this->upload->do_upload('photo')) {
-            $upload_data = $this->upload->data();
-            $data['file_name'] = $upload_data[0]['file_name'];
-            $data['file_type'] = $upload_data[0]['file_type'];
-
-            $file_id = $this->file->add($data);
-            if ($file_id) {
-                $_POST['files_id'] = $file_id;
-                if ($this->testimonial->add($_POST)) {
-                    $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
-                } else {
-                    if ($this->file->remove($file_id)) {
-                        unlink(getcwd() . '/uploads/' . $upload_data['file_name']);
-                    }
-                    $error['error'] = 'testimonial error';
-                    $this->output->set_status_header(500, 'Server Down');
-                    $this->output->set_content_type('application/json')->set_output(json_encode($error));
-                }
-            } else {
-                unlink(getcwd() . '/uploads/' . $upload_data['file_name']);
-                $error['error'] = 'file insert error';
-                $this->output->set_status_header(500, 'Server Down');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
-            }
+        $this->form_validation->set_rules('name', 'Name', 'required');
+        if ($this->form_validation->run() == FALSE) {
+            $this->output->set_status_header(400, 'Validation error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
         } else {
-            $this->output->set_status_header(500, 'Server down');
-            $this->output->set_content_type('application/json')->set_output(json_encode($this->upload->display_errors()));
-        }
-    }
-
-    public function update()
-    {
-        $id = $_POST['id'];
-        if ($_FILES != null) {
             $config['upload_path'] = './uploads/';
             $config['allowed_types'] = 'gif|jpg|png';
             $config['max_size'] = 2800000;
             $config['file_name'] = 'T_' . rand();
             $this->upload->initialize($config);
+            $post_data = $this->input->post();
 
             if ($this->upload->do_upload('photo')) {
                 $upload_data = $this->upload->data();
-                $data['file_name'] = $upload_data[0]['file_name'];
-                $data['file_type'] = $upload_data[0]['file_type'];
+                $data['file_name'] = $upload_data['file_name'];
+                $data['file_type'] = $upload_data['file_type'];
 
                 $file_id = $this->file->add($data);
                 if ($file_id) {
-                    $old_file_id = $_POST['fileId'];
-                    $old_file_name = $_POST['file_name'];
-
-                    unset($_POST['fileId']);
-                    unset($_POST['file_name']);
-                    unset($_POST['file_type']);
-                    $_POST['files_id'] = $file_id;
-
-                    if ($this->testimonial->edit($_POST, $id)) {
-                        /*remove file information from db*/
-                        if ($this->file->remove($old_file_id)) {
-                            /*delete image from folder*/
-                            unlink(getcwd() . '/uploads/' . $old_file_name);
-                        }
+                    $post_data['files_id'] = $file_id;
+                    if ($this->testimonial->add($post_data)) {
                         $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
                     } else {
-                        $error['error'] = 'testimonial edit error';
-
-                        $this->output->set_status_header(500, 'Server Down.');
+                        if ($this->file->remove($file_id)) {
+                            if (file_exists(getwdir() . '/uploads/' . $upload_data['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $upload_data['file_name']);
+                            }
+                        }
+                        $error['error'] = 'testimonial error';
+                        $this->output->set_status_header(500, 'Server Down');
                         $this->output->set_content_type('application/json')->set_output(json_encode($error));
                     }
                 } else {
+                    if (file_exists(getwdir() . '/uploads/' . $upload_data['file_name'])) {
+                        unlink(getwdir() . '/uploads/' . $upload_data['file_name']);
+                    }
                     $error['error'] = 'file insert error';
-                    $this->output->set_status_header(500, 'Server down');
+                    $this->output->set_status_header(500, 'Server Down');
                     $this->output->set_content_type('application/json')->set_output(json_encode($error));
                 }
             } else {
-                $this->output->set_status_header(500, 'Server down');
-                $this->output->set_content_type('application/json')->set_output(json_encode($this->upload->display_error()));
+                $this->output->set_status_header(409, 'File upload error');
+                $this->output->set_content_type('application/json')->set_output(json_encode($this->upload->display_errors()));
             }
-        } else {
-            unset($_POST['fileId']);
-            unset($_POST['file_name']);
-            unset($_POST['file_type']);
+        }
+    }
 
-            if ($this->testimonial->edit($_POST, $id)) {
-            $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
+    public function update($id)
+    {
+        $post_data = $this->input->post();
+
+
+        $this->form_validation->set_rules('name', 'Name', 'required');
+        if ($this->form_validation->run() == FALSE) {
+            $this->output->set_status_header(400, 'Validation error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
+        } else {
+            if (isset($_FILES['photo'])) {
+                $config['upload_path'] = './uploads/';
+                $config['allowed_types'] = 'gif|jpg|png';
+                $config['max_size'] = 2800000;
+                $config['file_name'] = 'T_' . rand();
+                $this->upload->initialize($config);
+
+                if ($this->upload->do_upload('photo')) {
+                    $upload_data = $this->upload->data();
+                    $data['file_name'] = $upload_data['file_name'];
+                    $data['file_type'] = $upload_data['file_type'];
+
+                    $file_id = $this->file->add($data);
+                    if ($file_id) {
+                        $old_file_name = $post_data['file_name'];
+                        $old_file_id = $post_data['fileId'];
+
+                        unset($post_data['fileId']);
+                        unset($post_data['file_name']);
+                        unset($post_data['file_type']);
+
+                        $post_data['files_id'] = $file_id;
+
+                        if ($this->testimonial->edit($post_data, $id)) {
+
+                            /*Remove Old file and data from db*/
+                            if ($this->file->remove($old_file_id)) {
+                                if (file_exists(getwdir() . '/uploads/' . $old_file_name)){
+                                    /*delete image from folder*/
+                                    unlink(getcwd() . '/uploads/' . $old_file_name);
+                                }
+                            }
+                            $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data updated']));
+                        } else {
+                            if (file_exists(getwdir() . '/uploads/' . $data['file_name'])) {
+                                unlink(getwdir() . '/uploads/' . $data['file_name']);
+                            }
+                            $this->file->remove($file_id);
+                            $error['error'] = 'testimonial edit error';
+                            $this->output->set_status_header(500, 'Server Down.');
+                            $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                        }
+                    } else {
+                        /*delete uploaded file*/
+                        if (file_exists(getwdir() . '/uploads/' . $data['file_name'])) {
+                            unlink(getwdir() . '/uploads/' . $data['file_name']);
+                        }
+
+                        $error['error'] = 'file insert error';
+                        $this->output->set_status_header(500, 'Server down');
+                        $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                    }
+                } else {
+                    $this->output->set_status_header(409, 'File Upload error');
+                    $this->output->set_content_type('application/json')->set_output(json_encode($this->upload->display_error()));
+                }
             } else {
-                $error['error'] = 'testimonial edit error';
-                $this->output->set_status_header(500, 'Server down');
-                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                unset($post_data['fileId']);
+                unset($post_data['file_name']);
+                unset($post_data['file_type']);
+
+                if ($this->testimonial->edit($post_data, $id)) {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data Updated']));
+                } else {
+                    $error['error'] = 'testimonial edit error';
+                    $this->output->set_status_header(500, 'Server down');
+                    $this->output->set_content_type('application/json')->set_output(json_encode($error));
+                }
             }
         }
     }
