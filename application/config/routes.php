@@ -78,6 +78,7 @@ $route['admin/employee/delete/(:num)'] = 'Employees_Controller/delete/$1';
 $route['admin/testimonial'] = 'Testimonial_Controller';
 $route['admin/testimonial/add'] = 'Testimonial_Controller/store';
 $route['admin/testimonial/edit/(:num)'] = 'Testimonial_Controller/update/$1';
+$route['admin/testimonial/delete/(:num)'] = 'Testimonial_Controller/delete/$1';
 
 
 
