@@ -54,7 +54,7 @@ class Testimonial_Controller extends CI_Controller
                 if ($file_id) {
                     $post_data['files_id'] = $file_id;
                     if ($this->testimonial->add($post_data)) {
-                        $this->output->set_content_type('application/json')->set_output(json_encode($_POST));
+                        $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data added']));
                     } else {
                         if ($this->file->remove($file_id)) {
                             if (file_exists(getwdir() . '/uploads/' . $upload_data['file_name'])) {
