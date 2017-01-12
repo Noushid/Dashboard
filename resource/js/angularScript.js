@@ -178,24 +178,3 @@ app.directive('ngConfirmClick', [
     }
 ]);
 
-
-app.controller('MainCtrl', function($scope,$rootScope) {
-    $scope.base = 'http://bxslider.com';
-
-    $scope.images = [
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/1.JPG' },
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/2.JPG' },
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/6.JPG' },
-    ];
-});
-
-
-app.directive('carousel', [function () {
-    return {
-        restrict: 'A',
-        //transclude: true,
-        replace: false,
-        controller: 'HomeBlogController',
-        require: 'carousel'
-    };
-}]);

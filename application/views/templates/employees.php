@@ -151,7 +151,7 @@
                     <button type="button" class="btn btn-info" ng-click="showForm(employee)">
                         <i class="fa fa-pencil"></i>
                     </button>
-                    <button  type="button" class="btn btn-danger" ng-click="deleteEmployee(employee)">
+                    <button  type="button" class="btn btn-danger" confirmed-click="deleteEmployee(employee)" ng-confirm-click="Would you like to delete this item?!">
                         <i class="fa fa-trash-o"></i>
                     </button>
                 </div>

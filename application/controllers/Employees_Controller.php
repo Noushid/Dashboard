@@ -173,7 +173,9 @@ class Employees_Controller extends CI_Controller
         } else {
             if ($this->employee->remove($id)) {
                 if ($this->file->remove($file_id)) {
-                    unlink(getcwd() . '/public/uploads/' . $data['file_name']);
+                    if (file_exists(getwdir() . '/uploads/' . $data['file_name'])) {
+                        unlink(getwdir() . '/uploads/' . $data['file_name']);
+                    }
                     $data = 'Record Deleted!';
                     $this->output->set_content_type('application/json')->set_output(json_encode($data));
                 } else {

@@ -179,26 +179,6 @@ app.directive('ngConfirmClick', [
 ]);
 
 
-app.controller('MainCtrl', function($scope,$rootScope) {
-    $scope.base = 'http://bxslider.com';
-
-    $scope.images = [
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/1.JPG' },
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/2.JPG' },
-        {src: $rootScope.public_url + '/assets/img/portfolio/preview/6.JPG' },
-    ];
-});
-
-
-app.directive('carousel', [function () {
-    return {
-        restrict: 'A',
-        //transclude: true,
-        replace: false,
-        controller: 'HomeBlogController',
-        require: 'carousel'
-    };
-}]);
 /**
  * dirPagination - AngularJS module for paginating (almost) anything.
  *
@@ -1417,9 +1397,10 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     $scope.employees = [];
     $scope.curemploye = [];
     $scope.files = [];
-    $scope.showform = true;
+    $scope.showform = false;
     $scope.loading = false;
     $scope.message = {};
+    $scope.filespre = [];
 
 
     loademployee();
@@ -1509,61 +1490,50 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 headers: {'Content-Type': undefined, 'Process-Data': false}
             })
                 .success(function (data, status, headers) {
-                    console.log('test edit success');
-                    console.log(data);
-                    //$scope.newemployee = {};
-                    //$scope.showform = false;
+                    $scope.newemployee = {};
+                    $scope.showform = false;
                 })
                 .error(function (data, status, heders) {
-                    console.log('test add error');
                     console.log(data);
                 });
         }else {
-            console.log($scope.newemployee);
             var url = $rootScope.base_url + '/admin/employee/add';
-
-
             $http.post(url, fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined, 'Process-Data': false}
             })
                 .success(function (data, status, headers) {
-                    console.log('test add success');
                     console.log(data);
-                    //$scope.employees.push(data);
-                    //loademployee();
-                    //$scope.newemployee = {};
-                    //$scope.showform = false;
+                    $scope.employees.push(data);
+                    loademployee();
+                    $scope.newemployee = {};
+                    $scope.showform = false;
+                    $scope.filespre = [];
                 })
                 .error(function (data, status, heders) {
-                    console.log('test add error');
                     console.log(data);
                 });
-
         }
 
     };
 
     $scope.deleteEmployee = function (item) {
         console.log(item);
-        var conf = confirm('Do you want to delete this record?');
-        if (conf) {
-            var id = item['id'];
-            var url = $rootScope.base_url + '/admin/employee/delete/' + id;
-            var data = item;
-            action.post(data,url)
-                .success(function (data, status, headers) {
-                    console.log('deleted');
-                    var index = $scope.employees.indexOf(item);
-                    $scope.employees.splice(index, 1);
-                    alert(data);
-                    loademployee();
-                })
-                .error(function (data, status, headers) {
-                    console.log('delete error');
-                    console.log(data);
-                });
-        }
+        var id = item['id'];
+        var url = $rootScope.base_url + '/admin/employee/delete/' + id;
+        var data = item;
+        action.post(data,url)
+            .success(function (data, status, headers) {
+                console.log('deleted');
+                var index = $scope.employees.indexOf(item);
+                $scope.employees.splice(index, 1);
+                alert(data);
+                loademployee();
+            })
+            .error(function (data, status, headers) {
+                console.log('delete error');
+                console.log(data);
+            });
     };
 });
 /**
