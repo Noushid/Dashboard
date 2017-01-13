@@ -36,25 +36,30 @@ class Portfolio_Files_Model extends My_Model{
     {
         $this->db->from('portfolios');
         $query = $this->db->get();
-        $portfolio_files = $query->result();
-        foreach ($portfolio_files as $value) {
-            $this->db->from('portfolio_files');
-            $this->db->where('portfolios_id', $value->id);
-            $temp = $this->db->get();
+        if ($query->num_rows() > 0) {
+            $portfolio_files = $query->result();
+            foreach ($portfolio_files as $value) {
+                $this->db->from('portfolio_files');
+                $this->db->where('portfolios_id', $value->id);
+                $temp = $this->db->get();
 
-            foreach ($temp->result() as $val) {
-                $this->db->from('files');
-                $this->db->where('id', $val->files_id);
-                $files = $this->db->get();
+                foreach ($temp->result() as $val) {
+                    $this->db->from('files');
+                    $this->db->where('id', $val->files_id);
+                    $files = $this->db->get();
 
-                foreach ($files->result() as $file) {
-                    $val->file_name = $file->file_name;
-                    $val->file_type = $file->file_type;
+                    foreach ($files->result() as $file) {
+                        $val->file_name = $file->file_name;
+                        $val->file_type = $file->file_type;
+                    }
                 }
+                $value->files = $temp->result();
             }
-            $value->files = $temp->result();
+            return $portfolio_files;
+        } else {
+            return FALSE;
         }
-        return $portfolio_files;
+
     }
 
 

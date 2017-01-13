@@ -14,6 +14,8 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     $scope.error = [];
     $scope.showform = false;
 
+    $scope.numPerPage = 8;
+
 
     loadGallery();
     function loadGallery() {
@@ -55,6 +57,9 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
             fd.append('files[]', item);
         });
 
+        console.log(fd.getAll('name'));
+
+
         if ($scope.newgallery['id']) {
             console.log('edit');
 
@@ -88,7 +93,6 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
             console.log($scope.files.image);
             var url = $rootScope.base_url + '/admin/gallery/add';
 
-
             $http.post(url, fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-type': undefined, 'Process-Data': false}
@@ -99,8 +103,9 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                         $scope.show_error = true;
                         $scope.error = data['error'];
                     }
-                    loadGallery();
+
                     $scope.showform = false;
+                    loadGallery();
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];

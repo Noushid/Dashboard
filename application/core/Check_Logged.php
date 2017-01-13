@@ -14,9 +14,7 @@ class Check_Logged extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-
-        $this->load->helper(['form', 'url', 'security']);
-        $this->load->library(['session', 'form_validation']);
+        $this->load->library(['session', 'image_lib']);
 
         $this->logged = $this->session_check();
     }

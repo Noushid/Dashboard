@@ -6,8 +6,9 @@
  * Time: 4:46 PM
  */
 defined('BASEPATH') or exit('Direct script access not allowed');
+require_once(APPPATH.'core/Check_Logged.php');
 
-class Gallery_Controller extends CI_Controller
+class Gallery_Controller extends Check_Logged
 {
     function __construct()
     {
@@ -35,7 +36,7 @@ class Gallery_Controller extends CI_Controller
         $success = false;
         $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 2800000;
+        $config['max_size'] = 4000;
         $config['file_name'] = 'G_' . rand();
         $config['multi'] = 'ignore';
         $this->upload->initialize($config);
@@ -125,11 +126,13 @@ class Gallery_Controller extends CI_Controller
                 $this->output->set_content_type('application/json')->set_output(json_encode($upload_error));
             }
             if ($success == true) {
+                foreach ($upload_error as $key => $value) {
+                    $upload_error[$key] = substr($value, 0, strpos($value, ".", strpos($value, ".") + 1));
+                }
                 $data['msg'] = 'success';
                 if ($upload_error != null) {
                     $data['error'] = $upload_error;
                 }
-
                 $this->output->set_content_type('application/json')->set_output(json_encode($data));
             }
         }
@@ -141,7 +144,7 @@ class Gallery_Controller extends CI_Controller
         $success = FALSE;
         $config['upload_path'] = getwdir() . '/uploads/';
         $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = 2800000;
+        $config['max_size'] = 4000;
         $config['file_name'] = 'G_' . rand();
         $config['multi'] = 'ignore';
         $this->upload->initialize($config);

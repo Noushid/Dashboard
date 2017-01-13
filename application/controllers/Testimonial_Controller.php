@@ -6,8 +6,9 @@
  * Time: 1:33 PM
  */
 defined('BASEPATH') or exit('No direct script access allowed');
+require_once(APPPATH.'core/Check_Logged.php');
 
-class Testimonial_Controller extends CI_Controller
+class Testimonial_Controller extends Check_Logged
 {
     function __construct()
     {
@@ -17,6 +18,11 @@ class Testimonial_Controller extends CI_Controller
         $this->load->model('File_Model', 'file');
 
         $this->load->library('upload');
+
+        if ( ! $this->logged)
+        {
+            redirect(base_url('login'));
+        }
 
     }
 

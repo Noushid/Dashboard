@@ -6,8 +6,9 @@
  * Time: 2:34 PM
  */
 defined('BASEPATH') or exit('No direct script Access allowed');
+require_once(APPPATH.'core/Check_Logged.php');
 
-class Portfolio_Controller extends CI_Controller
+class Portfolio_Controller extends Check_Logged
 {
     function  __construct()
     {
@@ -17,6 +18,11 @@ class Portfolio_Controller extends CI_Controller
         $this->load->model('File_Model', 'file');
         $this->load->model('Portfolio_Files_model', 'portfolio_file');
         $this->load->library('upload');
+
+        if ( ! $this->logged)
+        {
+            redirect(base_url('login'));
+        }
 
     }
 

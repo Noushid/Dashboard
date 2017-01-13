@@ -6,8 +6,9 @@
  * Time: 3:20 PM
  */
 defined('BASEPATH') or exit('No direct script access allowed');
+require_once(APPPATH.'core/Check_Logged.php');
 
-class Employees_Controller extends CI_Controller
+class Employees_Controller extends Check_Logged
 {
     function __construct()
     {
@@ -16,12 +17,16 @@ class Employees_Controller extends CI_Controller
         $this->load->model('Employee_Model', 'employee');
         $this->load->model('File_Model', 'file');
         $this->load->library('upload');
+
+        if ( ! $this->logged)
+        {
+            redirect(base_url('login'));
+        }
     }
 
     public function index()
     {
         $this->load->view('templates/employees');
-
     }
 
     public function get_employees()

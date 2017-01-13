@@ -15,9 +15,7 @@ class Dashboard_Controller extends Check_Logged
     {
         parent::__construct();
 
-        $this->load->helper(['path']);
-        $this->load->helper(['form', 'url', 'captcha', 'string', 'html','menu']);
-        $this->load->library(['form_validation', 'encryption', 'table', 'image_lib']);
+        $this->load->library(['image_lib']);
         $this->load->model('User_Model', 'user');
 
         if ( ! $this->logged)
@@ -45,7 +43,7 @@ class Dashboard_Controller extends Check_Logged
 
     public function version()
     {
-        echo CI_VERSION;
+        phpinfo();
     }
 
 

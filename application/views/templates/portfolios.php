@@ -35,7 +35,7 @@
 
                     <label for="" class="control-label col-md-1">link</label>
                     <div class="col-md-4">
-                            <input type="text" class="form-control" name="link" ng-model="newportfolio.link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);"/>
+                            <input ng-disabled="newportfolio.type != 'portfolio'" type="text" class="form-control" name="link" ng-model="newportfolio.link" pattern="[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?" onblur="checkURL(this);"/>
                     </div>
                 </div>
                 <div class="form-group">
