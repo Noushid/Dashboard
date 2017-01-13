@@ -1163,6 +1163,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                 .success(function (data, status, headers) {
                     console.log('add succes');
                     console.log(data);
+                    console.log(data['error']);
                     if (data['error'] != undefined) {
                         $scope.show_error = true;
                         $scope.error = data['error'];
@@ -1175,7 +1176,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                 })
                 .error(function (data, status, headers) {
                     console.log('add error');
-                    console.log(data);
+
                     if (data['error'] != undefined) {
                         $scope.show_error = true;
                         $scope.error = data['error'];

@@ -199,8 +199,10 @@
         </dir-pagination-controls>
     </div>
 </div>
-<div class="row" ng-show="loading">
-    <div class="span4">
-        <img class="center-block" src="<?php echo base_url() . 'img/loading.gif' ?>" alt=""/>
+<div class="col-md-12" ng-show="loading">
+    <div class="row" >
+        <div class="span4">
+            <img class="center-block" src="<?php echo base_url() . 'img/loading.gif' ?>" alt=""/>
+        </div>
     </div>
 </div>

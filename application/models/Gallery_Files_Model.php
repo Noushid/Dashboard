@@ -17,6 +17,11 @@ class Gallery_Files_Model extends My_Model{
         parent::__construct();
     }
 
+    /**
+     * Return all galleries with their files ie,album model
+     *
+     */
+
     public function select($limit = null, $order = null)
     {
         $this->db->from('galleries');
@@ -72,6 +77,11 @@ class Gallery_Files_Model extends My_Model{
         return $this->truncate();
     }
 
+
+    /**
+     *return all gallery files
+     *
+     */
     public function select_all($limit = null, $order = null)
     {
         $this->db->from('galleries');

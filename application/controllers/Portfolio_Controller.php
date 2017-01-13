@@ -42,7 +42,6 @@ class Portfolio_Controller extends CI_Controller
         $error = [];
         $i = 0;
 
-
         $this->form_validation->set_rules('name', 'Name', 'required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -54,7 +53,9 @@ class Portfolio_Controller extends CI_Controller
             if ($portfolio_id) {
                 $desktop = $this->upload('desktop');
                 if ($desktop != FALSE) {
-                    $upload_error[] = $this->upload->display_errors();
+                    if (isset($this->upload->display_errors()[0]) != '') {
+                        $upload_error[] = $this->upload->display_errors();
+                    }
                     /*Multiple file upload*/
                     if (isset($desktop[0])) {
                         foreach ($desktop as $value) {
@@ -108,7 +109,9 @@ class Portfolio_Controller extends CI_Controller
                 }
                 $mobile = $this->upload('mobile');
                 if ($mobile != false) {
-                    $upload_error[] = $this->upload->display_errors();
+                    if (isset($this->upload->display_errors()[0]) != '') {
+                        $upload_error[] = $this->upload->display_errors();
+                    }
                     if (isset($mobile[0])) {
                         foreach ($mobile as $value) {
                             $file['file_name'] = $value['file_name'];
@@ -156,16 +159,16 @@ class Portfolio_Controller extends CI_Controller
                         }
                     }
                 } else {
-                    $upload_error[] = $this->upload->display_errors();
+                    var_dump($this->upload->display_errors());
+                    array_push($upload_error, $this->upload->display_errors());
                     $this->output->set_status_header(409, 'File upload error');
                 }
-
-
+                $error_merge = [];
                 if (!empty($error) and !empty($upload_error)) {
                     $error_merge['error'] = array_merge($error, $upload_error);
                 } elseif (!empty($error)) {
                     $error_merge['error'] = $error;
-                } else {
+                } elseif(!empty($upload_error)) {
                     $error_merge['error'] = $upload_error;
                 }
                 $this->output->set_content_type('application/json')->set_output(json_encode($error_merge));
