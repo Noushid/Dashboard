@@ -44,7 +44,7 @@ function dashboard_menu($current)
           <ul class="menu-left">
             <li>
               <div class="user-img">
-                <img class="img-responsive img-circle center-block" src="'.base_url('assets/img/logo/psybo.png').'" alt="User">
+                <img class="img-responsive img-circle center-block" src="' . public_url() . 'assets/img/logo/psybo.png" alt="User">
               </div>
               <div class="user-id text-center">
                 <span class="">Psybo Technologies</span>

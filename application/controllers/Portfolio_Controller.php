@@ -320,13 +320,15 @@ class Portfolio_Controller extends Check_Logged
                     }
                 }
 
+                $error_merge = [];
                 if (!empty($error) and !empty($upload_error)) {
                     $error_merge['error'] = array_merge($error, $upload_error);
                 } elseif (!empty($error)) {
                     $error_merge['error'] = $error;
-                } else {
+                } elseif(!empty($upload_error)) {
                     $error_merge['error'] = $upload_error;
                 }
+
                 $this->output->set_content_type('application/json')->set_output(json_encode($error_merge));
             } else {
                 $this->output->set_status_header(500, 'Server error');
@@ -394,8 +396,8 @@ class Portfolio_Controller extends Check_Logged
                 'error' => 'Image Can\'t delete at this time.try again',
                 'code' => 002
             ];
-//            $this->output->set_status_header(500, 'Server Error');
-//            $this->output->set_content_type('application/json')->set_output(json_encode($result));
+            $this->output->set_status_header(500, 'Server Error');
+            $this->output->set_content_type('application/json')->set_output(json_encode($result));
 
         }
     }

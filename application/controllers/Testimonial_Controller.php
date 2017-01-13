@@ -125,7 +125,7 @@ class Testimonial_Controller extends Check_Logged
                             if ($this->file->remove($old_file_id)) {
                                 if (file_exists(getwdir() . '/uploads/' . $old_file_name)){
                                     /*delete image from folder*/
-                                    unlink(getcwd() . '/uploads/' . $old_file_name);
+                                    unlink(getwdir() . '/uploads/' . $old_file_name);
                                 }
                             }
                             $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data updated']));
@@ -182,7 +182,9 @@ class Testimonial_Controller extends Check_Logged
         } else {
             if ($this->testimonial->remove($id)) {
                 if ($this->file->remove($file_id)) {
-                    unlink(getcwd() . '/uploads/' . $data['file_name']);
+                    if (file_exists(getwdir() . '/uploads/' . $data['file_name'])) {
+                        unlink(getwdir() . '/uploads/' . $data['file_name']);
+                    }
                     $data = 'Record Deleted!';
                     $this->output->set_content_type('application/json')->set_output(json_encode($data));
                 } else {

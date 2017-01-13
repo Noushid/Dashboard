@@ -126,7 +126,7 @@ class Employees_Controller extends Check_Logged
                         $post_data['files_id'] = $file_id;
                         if ($this->employee->edit($post_data, $id)) {
                             $this->file->remove($old_file_id);
-                            if (getwdir() . '/uploads/' . $old_file_name) {
+                            if (file_exists(getwdir() . '/uploads/' . $old_file_name)) {
                                 unlink(getwdir() . '/uploads/' . $old_file_name);
                             }
                             $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Data updated']));
