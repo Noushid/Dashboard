@@ -202,7 +202,7 @@
 <div class="col-md-12" ng-show="loading">
     <div class="row" >
         <div class="span4">
-            <img class="center-block" src="<?php echo base_url() . 'img/loading.gif' ?>" alt=""/>
+            <img class="center-block" src="<?php echo base_url() . 'assets/img/loading.gif' ?>" alt=""/>
         </div>
     </div>
 </div>

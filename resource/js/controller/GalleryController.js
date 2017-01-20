@@ -44,6 +44,8 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     $scope.newGallery = function () {
         $scope.newgallery = {};
         $scope.showform = true;
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     $scope.addGallery = function () {
