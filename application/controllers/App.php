@@ -52,7 +52,7 @@ class App extends CI_Controller
         $this->_truncate_db();
 
         // seed users
-//        $this->_seed_users($this->limit);
+        $this->_seed_users(1);
 
         // seed employee
         $this->_seed_employee($this->limit);
@@ -91,8 +91,8 @@ class App extends CI_Controller
             echo ".";
 
             $data = array(
-                'username' => $this->faker->unique()->userName, // get a unique nickname
-                'password' => 'awesomepassword', // run this via your password hashing function
+                'username' => 'admin', // get a unique nickname
+                'password' => hash('sha256','admin') // run this via your password hashing function
                 /*'firstname' => $this->faker->firstName,
                 'surname' => $this->faker->lastName,
                 'address' => $this->faker->streetAddress,
@@ -257,7 +257,7 @@ class App extends CI_Controller
 
     private function _truncate_db()
     {
-//        $this->user_model->trunc();
+        $this->user_model->trunc();
         $this->employee->trunc();
         $this->file->trunc();
         $this->gallery->trunc();
