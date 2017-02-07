@@ -33,8 +33,8 @@ type this command `npm install`
 step 3
 ------
 go to public directory and type this
- 'php index.php migrate'
- 'php index.php ap seed'
+ php index.php migrate
+ php index.php ap seed
 
 *********
 Resources
