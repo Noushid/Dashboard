@@ -32,7 +32,7 @@ type this command `npm install`
 
 step 3
 ------
-go to public directory and type this
+go to public directory and type this eg :Dashboard/public
  php index.php migrate
  
  php index.php ap seed
@@ -42,7 +42,5 @@ Resources
 *********
 
 -  `User Guide <https://codeigniter.com/docs>`_
--  `Community Forums <http://forum.codeigniter.com/>`_
--  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
--  `Community IRC <https://webchat.freenode.net/?channels=%23codeigniter>`_
+-  `Community Forums <http://forum.codeigniter.com/>`_ 
 
