@@ -44,3 +44,8 @@ Resources
 -  `User Guide <https://codeigniter.com/docs>`_
 -  `Community Forums <http://forum.codeigniter.com/>`_ 
 
+*********
+Default Credentials
+*********
+Username : admin
+Password : admin
