@@ -35,7 +35,7 @@ step 3
 go to public directory and type this eg :Dashboard/public
  php index.php migrate
  
- php index.php ap seed
+ php index.php app seed
 
 *********
 Resources
