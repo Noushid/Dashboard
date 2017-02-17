@@ -13,13 +13,7 @@
                     <label for="" class="control-label col-md-1">Date</label>
                     <div class="col-md-4">
                         <input type="text" class="form-control" datepicker-popup="dd-MM-yyyy" ng-model="newportfolio.date" close-text="Close" is-open="date.opened" ng-focus="date.opened=true"/>
-
-<!--                        <input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="fromDate"  is-open="frompicker" show-button-bar="false" show-weeks="false" readonly>-->
-<!--                            <span class="input-group-btn">-->
-<!--                                <button type="button" class="btn btn-default" ng-click="frompicker=true"><i class="fa fa-calendar"></i></button>-->
-<!--                            </span>-->
                     </div>
-
                 </div>
                 <div class="form-group">
                     <label for="" class="control-label col-md-1">Type</label>

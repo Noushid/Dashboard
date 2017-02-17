@@ -18,6 +18,10 @@ class Dashboard_Controller extends Check_Logged
         $this->load->library(['image_lib']);
         $this->load->model('User_Model', 'user');
 
+        /*
+         * Check loin and logout
+         * */
+
         if ( ! $this->logged)
         {
             // Allow some methods?
@@ -51,7 +55,18 @@ class Dashboard_Controller extends Check_Logged
 
 
 
+    public function index()
+    {
+        /*if ($this->logged === TRUE) {
+            redirect(base_url('dashboard'));
+        } else {
+            $data['currentPage'] = 'login';
+            $data['image'] = $this->_create_captcha();
+            $this->load->view('admin/login', $data);
+        }*/
 
+        $this->load->view('templates/dashboard');
+    }
 
     public function logout()
     {
@@ -90,17 +105,6 @@ class Dashboard_Controller extends Check_Logged
         }
     }
 
-    public function index()
-    {
-        /*if ($this->logged === TRUE) {
-            redirect(base_url('dashboard'));
-        } else {
-            $data['currentPage'] = 'login';
-            $data['image'] = $this->_create_captcha();
-            $this->load->view('admin/login', $data);
-        }*/
 
-        $this->load->view('templates/dashboard');
-    }
 
 }

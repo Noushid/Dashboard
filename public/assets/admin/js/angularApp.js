@@ -910,6 +910,8 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     $scope.newGallery = function () {
         $scope.newgallery = {};
         $scope.showform = true;
+        angular.element("input[type='file']").val(null);
+        $scope.filespre = [];
     };
 
     $scope.addGallery = function () {
@@ -1472,6 +1474,10 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 .success(function (data, status, headers) {
                     $scope.newemployee = {};
                     $scope.showform = false;
+                    $scope.employees.push(data);
+                    loademployee();
+                    $scope.newemployee = {};
+                    $scope.filespre = [];
                 })
                 .error(function (data, status, heders) {
                     console.log(data);

@@ -6,8 +6,10 @@
  * Time: 5:06 PM
  */
 
-function dashboard_menu($current)
+function dashboard_menu()
 {
+//    $current = $this->url->uri_segment(3);
+
     $menu = [
         'dashboard' => [
             'title' => 'dashboard',
@@ -36,7 +38,6 @@ function dashboard_menu($current)
         ]
     ];
 
-
     $html = '';
 
     $html = '<nav class="sidebar-left">
@@ -51,12 +52,7 @@ function dashboard_menu($current)
               </div>
             </li>';
     foreach ($menu as $key => $value) {
-        if ($key == $current) {
-            $html .= '<li><a href="' . base_url('admin/#'.$value['link']) . '" class="active">'.ucfirst($value['title']).' &nbsp;<i class="menu-icon fa '.$value['icon'].' pull-right"></i></a></li>';
-
-        } else {
             $html .= '<li><a href="' . base_url('admin/#'.$value['link']) . '" class="">'.ucfirst($value['title']).' &nbsp;<i class="menu-icon fa '.$value['icon'].' pull-right"></i></a></li>';
-        }
     }
 
     $html .='</ul>

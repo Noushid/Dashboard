@@ -34,7 +34,7 @@
 <body ng-app="myApp" ng-controller="adminController">
 <div class="page-wrapper" ng-class="{disabled: loading}">
     <div class="left-wrapper" >
-        <?php echo dashboard_menu('dashboard');?>
+        <?php echo dashboard_menu();?>
     </div>
     <nav class="top-wrapper">
         <div class="sidebar-top">
