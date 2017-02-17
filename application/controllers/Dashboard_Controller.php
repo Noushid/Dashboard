@@ -57,14 +57,6 @@ class Dashboard_Controller extends Check_Logged
 
     public function index()
     {
-        /*if ($this->logged === TRUE) {
-            redirect(base_url('dashboard'));
-        } else {
-            $data['currentPage'] = 'login';
-            $data['image'] = $this->_create_captcha();
-            $this->load->view('admin/login', $data);
-        }*/
-
         $this->load->view('templates/dashboard');
     }
 
@@ -105,6 +97,51 @@ class Dashboard_Controller extends Check_Logged
         }
     }
 
+    public function get_user()
+    {
+        $user = $this->session->logged_in;
+        $this->output->set_content_type('application/json')->set_output(json_encode($user));
+    }
+    public function profile()
+    {
+        $data['username'] = $this->session->logged_in['username'];
+        $this->load->view('templates/change_profile',$data);
+    }
+    public function edit_profile()
+    {
+        $this->form_validation->set_rules('username', 'Username', 'required');
+        $this->form_validation->set_rules('curpassword', 'Current password', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required');
+        $this->form_validation->set_rules('confirmpassword', 'Password', 'required|matches[password]');
+        if ($this->form_validation->run() === FALSE) {
+            $this->output->set_status_header(400, 'Validation error');
+            $this->output->set_content_type('application/json')->set_output(json_encode(validation_errors()));
+        } else {
+            $cur_user = $this->session->logged_in['username'];
+            $cur_pass = hash('sha256', $this->input->post('curpassword'));
 
+            $data['username'] = $this->input->post('username');
+            $data['password'] = hash('sha256', $this->input->post('password'));
+            $where = [
+                'username' => $cur_user,
+                'password' => $cur_pass,
+            ];
+            if ($result = $this->user->get($where)) {
+                $id = $result[0]->id;
+                if ($edit = $this->user->edit($data, $id)) {
+                    $login_data = [
+                        'username' => $data['username'],
+                        'logged' => TRUE
+                    ];
+                    $this->session->set_userdata('logged_in', $login_data);
+                    $this->output->set_content_type('application/json')->set_output(json_encode(['msg' => 'Username and password changed']));
+                }
+            }else{
+                $this->output->set_status_header(400, 'Validation error');
+                $error['msg'] = 'Current username and password did not match';
+                $this->output->set_content_type('application/json')->set_output(json_encode($error));
+            }
+        }
+    }
 
 }

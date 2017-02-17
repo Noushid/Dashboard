@@ -193,10 +193,9 @@
         </dir-pagination-controls>
     </div>
 </div>
-<div class="col-md-12" ng-show="loading">
-    <div class="row" >
-        <div class="span4">
-            <img class="center-block" src="<?php echo base_url() . 'assets/img/loading.gif' ?>" alt=""/>
-        </div>
+<div id="loading" ng-show="loading">
+    <div id="loading-image">
+        <img src="<?php echo public_url() . 'assets/admin/img/loading.gif' ?>" alt=""/>
+        <h4>Please wait...</h4>
     </div>
 </div>

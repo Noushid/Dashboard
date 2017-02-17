@@ -123,6 +123,9 @@
 		  <input type="text" ng-model="user.username" name="username" id="username" placeholder="username" >
 		  <input type="password" ng-model="user.password"  name="password" id="password" placeholder="Password">
             <button type="submit">Login</button>
+            <div class="success" ng-show="showerror">
+                {{error.error}}
+            </div>
 		</div>
     </form>
 </body>

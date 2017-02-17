@@ -26,14 +26,17 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
     function loadPortfolio() {
         $http.get($rootScope.base_url +'/admin/portfolio/get-all').then(function(response) {
+            $scope.loading = true;
             if (response.data) {
                 $scope.showtable = true;
                 $scope.portfolios = response.data;
                 console.log($scope.portfolios);
+                $scope.loading = false;
             }else{
                 console.log('No data found');
                 $scope.showtable = false;
                 $scope.message = 'No data Found';
+                $scope.loading = false;
             }
         })
     };
@@ -117,6 +120,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, headers) {
                     console.log('edit error');
@@ -129,6 +133,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 });
 
         }else {
@@ -153,6 +159,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 })
                 .error(function (data, status, headers) {
                     console.log('add error');
@@ -165,21 +173,26 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 });
         }
     };
 
     $scope.deletePortfolio = function (item) {
+        $scope.loading = true;
         var id = item['id'];
         $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
             .success(function (data, status, headers) {
                 console.log(data);
                 alert(data);
                 loadPortfolio();
+                $scope.loading = false;
             });
     };
 
     $scope.deleteImage = function(item) {
+        $scope.loading = true;
             var url = $rootScope.base_url + '/admin/portfolio/delete-image';
             var data = item;
             action.post(data, url)
@@ -187,9 +200,11 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     console.log('portfolio file deleted');
                     var index = $scope.item_files.indexOf(item);
                     $scope.item_files.splice(index, 1);
+                    $scope.loading = false;
                 })
                 .error(function (data,headers,status) {
                     console.log('portfolio file delete error');
+                    $scope.loading = false;
                 });
     };
     /*

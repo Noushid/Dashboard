@@ -49,13 +49,13 @@
                     <a href="#"><i class="fa fa-bell-o fa-lg"></i></a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="settings" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
+                    <a href="" class="dropdown-toggle" id="settings" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="settings">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
+                        <li><a href="<?php echo base_url('admin/#profile') ?>"">profile</a></li>
+<!--                        <li><a href="#">Another action</a></li>-->
+<!--                        <li><a href="#">Something else here</a></li>-->
+<!--                        <li role="separator" class="divider"></li>-->
+<!--                        <li><a href="#">Separated link</a></li>-->
                     </ul>
                 </li>
                 <li>

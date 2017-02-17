@@ -134,3 +134,4 @@ gulp.task('watch', function() {
 gulp.task('install', ['bower', 'icons', 'images', 'fonts', 'scripts', 'adminstyles', 'adminscript']);
 gulp.task('admin', ['adminstyles', 'adminscript']);
 gulp.task('default', ['scripts', 'mix', 'scripts', 'adminstyles', 'adminscript']);
+gulp.task('adminjs', ['scripts', 'mix']);

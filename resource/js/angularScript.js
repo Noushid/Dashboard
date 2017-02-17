@@ -5,9 +5,8 @@
 var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap','angularUtils.directives.dirPagination']);
 app.config(function ($routeProvider) {
     $routeProvider
-        //.when('/', {
-        //    templateUrl: ''
-        //})
+        .when('/', {
+        })
         .when('/employees',{
             templateUrl: 'employees',
             controller: 'employeeController'
@@ -23,6 +22,9 @@ app.config(function ($routeProvider) {
         .when('/gallery',{
             templateUrl: 'gallery',
             controller: 'GalleryController'
+        })
+        .when('/profile',{
+            templateUrl: 'change'
         })
 
 });

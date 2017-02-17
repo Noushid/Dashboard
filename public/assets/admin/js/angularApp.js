@@ -5,9 +5,8 @@
 var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap','angularUtils.directives.dirPagination']);
 app.config(function ($routeProvider) {
     $routeProvider
-        //.when('/', {
-        //    templateUrl: ''
-        //})
+        .when('/', {
+        })
         .when('/employees',{
             templateUrl: 'employees',
             controller: 'employeeController'
@@ -23,6 +22,9 @@ app.config(function ($routeProvider) {
         .when('/gallery',{
             templateUrl: 'gallery',
             controller: 'GalleryController'
+        })
+        .when('/profile',{
+            templateUrl: 'change'
         })
 
 });
@@ -831,14 +833,30 @@ app.controller('adminController', function ($scope, $location, $http, $rootScope
     var base_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
     $rootScope.base_url = base_url;
     $rootScope.public_url = $scope.baseUrl = $location.protocol() + "://" + location.host;
-    $scope.regex = RegExp('^((https?|ftp)://)?([a-z]+[.])?[a-z0-9-]+([.][a-z]{1,4}){1,2}(/.*[?].*)?$', 'i');
 
+    $scope.newuser = {};
+    $scope.formdisable = false;
     $scope.paginations = [5, 10, 20, 25];
     $scope.numPerPage = 5;
 
     $scope.format = 'yyyy/MM/dd';
     //$scope.date = new Date();
     $scope.user = {};
+    $scope.paginations = [5, 10, 20, 25];
+    $scope.numPerPage = 5;
+
+    load_user();
+
+    function load_user() {
+        var url = $rootScope.base_url + '/admin/user';
+        $http.get(url).then(function (response) {
+            if (response.data) {
+                $scope.user = response.data.username;
+                $scope.newuser.username = $scope.user;
+                console.log(response.data.username);
+            }
+        });
+    }
 
     $scope.login = function () {
         console.log('login');
@@ -858,9 +876,47 @@ app.controller('adminController', function ($scope, $location, $http, $rootScope
             .error(function (data, status, header) {
                 console.log('login error');
                 console.log(data);
+                $scope.error = data;
                 $scope.showerror = true;
             });
     };
+
+    $scope.changeProfile = function () {
+        $rootScope.loading = true;
+        var fd = new FormData();
+        angular.forEach($scope.newuser, function (item, key) {
+            fd.append(key, item);
+        });
+        var url = $rootScope.base_url + '/admin/change/submit';
+        $http.post(url, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined, 'Process-Data': false}
+        })
+            .success(function (data, status, headers) {
+                $rootScope.loading = false;
+                console.log('profile changed');
+                $scope.showmsg = true;
+                $scope.formdisable = true;
+            })
+            .error(function (data, status, headers) {
+                $rootScope.loading = false;
+                $scope.showerror = true;
+            });
+    };
+
+    $scope.reset = function () {
+        $scope.newuser = {};
+        load_user();
+        $scope.newuser.username = $scope.user;
+        $scope.showerror = false;
+        $scope.showmsg = false;
+        $scope.formdisable = false;
+    };
+
+    $scope.cancel = function () {
+        $window.location.href = '/admin/#';
+    };
+
 });
 
 
@@ -879,19 +935,23 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     $scope.show_error = false;
     $scope.error = [];
     $scope.showform = false;
+    $scope.loading = false;
 
     $scope.numPerPage = 8;
 
 
     loadGallery();
     function loadGallery() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/admin/gallery/get-all').then(function (response) {
             if (response.data) {
                 $scope.galleries = response.data;
                 console.log($scope.galleries);
+                $scope.loading = false;
             } else {
                 console.log('No data found');
                 $scope.message = 'No data found';
+                $scope.loading = false;
             }
         });
     }
@@ -915,6 +975,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.addGallery = function () {
+        $scope.loading = true;
         var fd = new FormData();
         //append posted to form data except files
         angular.forEach($scope.newgallery, function (item, key) {
@@ -949,10 +1010,12 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, hedears) {
                     console.log('edit error');
                     console.log(data);
+                    $scope.loading = false;
                 });
 
 
@@ -979,10 +1042,12 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                     $scope.filespre = [];
 
                     console.log($scope.error);
+                    $scope.loading = false;
                 })
                 .error(function (data, status, hedears) {
                     console.log('add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
     };
@@ -993,6 +1058,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.deleteImage= function (item) {
+        $scope.loading = true;
         console.log(item);
         var url = $rootScope.base_url + '/admin/gallery/delete-image';
         var data = item;
@@ -1003,24 +1069,29 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                 var index = $scope.item_files.indexOf(item);
                 $scope.item_files.splice(index, 1);
                 console.log($scope.item_files);
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete image error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 
     $scope.deleteGallery= function (item) {
+        $scope.loading = true;
         var url = $rootScope.base_url + '/admin/gallery/delete';
         action.post(item, url)
             .success(function (data, status, headers) {
                 console.log('gallery deleted');
                 var index = $scope.galleries.indexOf(item);
                 $scope.galleries.splice(index, 1);
+                $scope.loading = false;
             })
             .error(function (data,status,headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 
@@ -1053,14 +1124,17 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
 
     function loadPortfolio() {
         $http.get($rootScope.base_url +'/admin/portfolio/get-all').then(function(response) {
+            $scope.loading = true;
             if (response.data) {
                 $scope.showtable = true;
                 $scope.portfolios = response.data;
                 console.log($scope.portfolios);
+                $scope.loading = false;
             }else{
                 console.log('No data found');
                 $scope.showtable = false;
                 $scope.message = 'No data Found';
+                $scope.loading = false;
             }
         })
     };
@@ -1144,6 +1218,7 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, headers) {
                     console.log('edit error');
@@ -1156,6 +1231,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 });
 
         }else {
@@ -1180,6 +1257,8 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 })
                 .error(function (data, status, headers) {
                     console.log('add error');
@@ -1192,21 +1271,26 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
+
                 });
         }
     };
 
     $scope.deletePortfolio = function (item) {
+        $scope.loading = true;
         var id = item['id'];
         $http.delete($rootScope.base_url + '/admin/portfolio/delete/' + id)
             .success(function (data, status, headers) {
                 console.log(data);
                 alert(data);
                 loadPortfolio();
+                $scope.loading = false;
             });
     };
 
     $scope.deleteImage = function(item) {
+        $scope.loading = true;
             var url = $rootScope.base_url + '/admin/portfolio/delete-image';
             var data = item;
             action.post(data, url)
@@ -1214,9 +1298,11 @@ app.controller('portfolioController', function ($scope, $location, $http, $rootS
                     console.log('portfolio file deleted');
                     var index = $scope.item_files.indexOf(item);
                     $scope.item_files.splice(index, 1);
+                    $scope.loading = false;
                 })
                 .error(function (data,headers,status) {
                     console.log('portfolio file delete error');
+                    $scope.loading = false;
                 });
     };
     /*
@@ -1254,15 +1340,18 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     loadTestimonial();
 
     function loadTestimonial() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/Testimonial_Controller/get_all').then(function (response) {
             if (response.data) {
                 $scope.testimonials = response.data;
                 $scope.showtable = true;
                 console.log($scope.testimonials);
+                $scope.loading = false;
             } else {
                 console.log('No data Found');
                 $scope.showtable = false;
                 $scope.message = 'No data found';
+                $scope.loading = false;
             }
         });
     }
@@ -1288,6 +1377,7 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     };
 
     $scope.addTestimonial = function () {
+        $scope.loading = true;
         if ($scope.newtestimonial.link != undefined) {
             var string = $scope.newtestimonial.link;
             if (!~string.indexOf("http")) {
@@ -1322,10 +1412,12 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                     loadTestimonial();
                     $scope.newtestimonial = {};
                     $scope.showform = false;
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log('test add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }else {
             console.log('add');
@@ -1342,15 +1434,18 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                     loadTestimonial();
                     $scope.newtestimonial = {};
                     $scope.showform = false;
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log('test add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
     };
 
     $scope.deleteTestimonial = function (item) {
+        $scope.loading = true;
         var id = item['id'];
         var url = $rootScope.base_url + '/admin/testimonial/delete/' + id;
         var data = item;
@@ -1360,11 +1455,13 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                 var index = $scope.testimonials.indexOf(item);
                 $scope.testimonials.splice(index, 1);
                 alert(data);
-                loadTestimonial()
+                loadTestimonial();
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 
@@ -1388,14 +1485,17 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     loademployee();
 
     function loademployee() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/admin/employee').then(function (response) {
             if (response.data) {
                 $scope.employees = response.data;
                 $scope.showtable = true;
+                $scope.loading = false;
             }else {
                 console.log('No data found!');
                 $scope.showtable = false;
                 $scope.message = 'No Data Found';
+                $scope.loading = false;
             }
         });
     }
@@ -1421,6 +1521,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     };
 
     $scope.addEmployee = function () {
+        $scope.loading = true;
         if ($scope.newemployee.linkedin != undefined) {
             var string = $scope.newemployee.linkedin;
             if (!~string.indexOf("http")) {
@@ -1478,9 +1579,11 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                     loademployee();
                     $scope.newemployee = {};
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log(data);
+                    $scope.loading = false;
                 });
         }else {
             var url = $rootScope.base_url + '/admin/employee/add';
@@ -1495,15 +1598,18 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                     $scope.newemployee = {};
                     $scope.showform = false;
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
 
     };
 
     $scope.deleteEmployee = function (item) {
+        $scope.loading = true;
         console.log(item);
         var id = item['id'];
         var url = $rootScope.base_url + '/admin/employee/delete/' + id;
@@ -1515,10 +1621,12 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 $scope.employees.splice(index, 1);
                 alert(data);
                 loademployee();
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 });

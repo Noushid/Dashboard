@@ -16,14 +16,17 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     loademployee();
 
     function loademployee() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/admin/employee').then(function (response) {
             if (response.data) {
                 $scope.employees = response.data;
                 $scope.showtable = true;
+                $scope.loading = false;
             }else {
                 console.log('No data found!');
                 $scope.showtable = false;
                 $scope.message = 'No Data Found';
+                $scope.loading = false;
             }
         });
     }
@@ -49,6 +52,7 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
     };
 
     $scope.addEmployee = function () {
+        $scope.loading = true;
         if ($scope.newemployee.linkedin != undefined) {
             var string = $scope.newemployee.linkedin;
             if (!~string.indexOf("http")) {
@@ -106,9 +110,11 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                     loademployee();
                     $scope.newemployee = {};
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log(data);
+                    $scope.loading = false;
                 });
         }else {
             var url = $rootScope.base_url + '/admin/employee/add';
@@ -123,15 +129,18 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                     $scope.newemployee = {};
                     $scope.showform = false;
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
 
     };
 
     $scope.deleteEmployee = function (item) {
+        $scope.loading = true;
         console.log(item);
         var id = item['id'];
         var url = $rootScope.base_url + '/admin/employee/delete/' + id;
@@ -143,10 +152,12 @@ app.controller('employeeController', function ($scope, $location, $http, $rootSc
                 $scope.employees.splice(index, 1);
                 alert(data);
                 loademployee();
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 });

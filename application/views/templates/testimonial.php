@@ -116,8 +116,10 @@
         boundary-links="true" >
     </dir-pagination-controls>
 </div>
-<div class="row" ng-show="loading">
-    <div class="span4">
-        <img class="center-block" src="<?php echo base_url() . 'img/loading.gif' ?>" alt=""/>
+<div id="loading" ng-show="loading">
+    <div id="loading-image">
+        <img src="<?php echo public_url() . 'assets/admin/img/loading.gif' ?>" alt=""/>
+        <h4>Please wait...</h4>
     </div>
 </div>
+

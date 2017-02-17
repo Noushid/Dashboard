@@ -56,6 +56,9 @@ $route['admin'] = 'Dashboard_Controller';
 $route['login'] = 'Home/login';
 $route['logout'] = 'Dashboard_Controller/logout';
 $route['login/verify'] = 'Dashboard_Controller/verify';
+$route['admin/user'] = 'Dashboard_Controller/get_user';
+$route['admin/change'] = 'Dashboard_Controller/profile';
+$route['admin/change/submit'] = 'Dashboard_Controller/edit_profile';
 
 
 $route['admin/portfolio'] = 'Portfolio_Controller';//load template

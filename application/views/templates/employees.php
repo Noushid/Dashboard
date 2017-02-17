@@ -111,11 +111,8 @@
                <div class="form-group">
                    <label for="" class="control-label col-md-2">Show</label>
                    <div class="col-md-3">
-                       <select name="numPerPage" ng-model="numPerPage" class="form-control">
-                           <option value="5">5</option>
-                           <option value="10">10</option>
-                           <option value="20">20</option>
-                           <option value="30">30</option>
+                       <select name="numPerPage" ng-model="numPerPage" class="form-control"
+                           ng-options="num for num in paginations" {{num}}>
                        </select>
                    </div>
 
@@ -165,8 +162,9 @@
         boundary-links="true" >
     </dir-pagination-controls>
 </div>
-<div class="row" ng-show="loading">
-    <div class="span4">
-        <img class="center-block" src="<?php echo public_url() . 'img/loading.gif' ?>" alt=""/>
+<div id="loading" ng-show="loading">
+    <div id="loading-image">
+        <img src="<?php echo public_url() . 'assets/admin/img/loading.gif' ?>" alt=""/>
+        <h4>Please wait...</h4>
     </div>
 </div>

@@ -13,19 +13,23 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     $scope.show_error = false;
     $scope.error = [];
     $scope.showform = false;
+    $scope.loading = false;
 
     $scope.numPerPage = 8;
 
 
     loadGallery();
     function loadGallery() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/admin/gallery/get-all').then(function (response) {
             if (response.data) {
                 $scope.galleries = response.data;
                 console.log($scope.galleries);
+                $scope.loading = false;
             } else {
                 console.log('No data found');
                 $scope.message = 'No data found';
+                $scope.loading = false;
             }
         });
     }
@@ -49,6 +53,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.addGallery = function () {
+        $scope.loading = true;
         var fd = new FormData();
         //append posted to form data except files
         angular.forEach($scope.newgallery, function (item, key) {
@@ -83,10 +88,12 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                     angular.element("input[type='file']").val(null);
                     $scope.item_files = [];
                     $scope.filespre = [];
+                    $scope.loading = false;
                 })
                 .error(function (data, status, hedears) {
                     console.log('edit error');
                     console.log(data);
+                    $scope.loading = false;
                 });
 
 
@@ -113,10 +120,12 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                     $scope.filespre = [];
 
                     console.log($scope.error);
+                    $scope.loading = false;
                 })
                 .error(function (data, status, hedears) {
                     console.log('add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
     };
@@ -127,6 +136,7 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
     };
 
     $scope.deleteImage= function (item) {
+        $scope.loading = true;
         console.log(item);
         var url = $rootScope.base_url + '/admin/gallery/delete-image';
         var data = item;
@@ -137,24 +147,29 @@ app.controller('GalleryController', function ($scope, $rootScope, $http, action,
                 var index = $scope.item_files.indexOf(item);
                 $scope.item_files.splice(index, 1);
                 console.log($scope.item_files);
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete image error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 
     $scope.deleteGallery= function (item) {
+        $scope.loading = true;
         var url = $rootScope.base_url + '/admin/gallery/delete';
         action.post(item, url)
             .success(function (data, status, headers) {
                 console.log('gallery deleted');
                 var index = $scope.galleries.indexOf(item);
                 $scope.galleries.splice(index, 1);
+                $scope.loading = false;
             })
             .error(function (data,status,headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 

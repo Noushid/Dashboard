@@ -16,15 +16,18 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     loadTestimonial();
 
     function loadTestimonial() {
+        $scope.loading = true;
         $http.get($rootScope.base_url + '/Testimonial_Controller/get_all').then(function (response) {
             if (response.data) {
                 $scope.testimonials = response.data;
                 $scope.showtable = true;
                 console.log($scope.testimonials);
+                $scope.loading = false;
             } else {
                 console.log('No data Found');
                 $scope.showtable = false;
                 $scope.message = 'No data found';
+                $scope.loading = false;
             }
         });
     }
@@ -50,6 +53,7 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
     };
 
     $scope.addTestimonial = function () {
+        $scope.loading = true;
         if ($scope.newtestimonial.link != undefined) {
             var string = $scope.newtestimonial.link;
             if (!~string.indexOf("http")) {
@@ -84,10 +88,12 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                     loadTestimonial();
                     $scope.newtestimonial = {};
                     $scope.showform = false;
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log('test add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }else {
             console.log('add');
@@ -104,15 +110,18 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                     loadTestimonial();
                     $scope.newtestimonial = {};
                     $scope.showform = false;
+                    $scope.loading = false;
                 })
                 .error(function (data, status, heders) {
                     console.log('test add error');
                     console.log(data);
+                    $scope.loading = false;
                 });
         }
     };
 
     $scope.deleteTestimonial = function (item) {
+        $scope.loading = true;
         var id = item['id'];
         var url = $rootScope.base_url + '/admin/testimonial/delete/' + id;
         var data = item;
@@ -122,11 +131,13 @@ app.controller('testimonialController', function ($scope, $http, $rootScope, act
                 var index = $scope.testimonials.indexOf(item);
                 $scope.testimonials.splice(index, 1);
                 alert(data);
-                loadTestimonial()
+                loadTestimonial();
+                $scope.loading = false;
             })
             .error(function (data, status, headers) {
                 console.log('delete error');
                 console.log(data);
+                $scope.loading = false;
             });
     };
 

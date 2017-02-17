@@ -77,6 +77,11 @@ class App extends CI_Controller
 
     }
 
+    public function seedUser()
+    {
+        $this->_seed_users(1);
+    }
+
     /**
      * seed users
      *
