@@ -32,16 +32,34 @@ type this command `npm install`
 
 step 3
 ------
+<<<<<<< HEAD
 go to public directory and type this
  'php index.php migrate'
  'php index.php ap seed'
+=======
+go to public directory and type this eg :Dashboard/public
+ php index.php migrate
+ 
+ php index.php app seed
+>>>>>>> 142d3e4a7ba3569c7ff738f21a8d0b39ff44c4a4
 
 *********
 Resources
 *********
 
 -  `User Guide <https://codeigniter.com/docs>`_
+<<<<<<< HEAD
 -  `Community Forums <http://forum.codeigniter.com/>`_
 -  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
 -  `Community IRC <https://webchat.freenode.net/?channels=%23codeigniter>`_
 
+=======
+-  `Community Forums <http://forum.codeigniter.com/>`_ 
+
+*********
+Default Credentials
+*********
+Username : admin
+
+Password : admin
+>>>>>>> 142d3e4a7ba3569c7ff738f21a8d0b39ff44c4a4
