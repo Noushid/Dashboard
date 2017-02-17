@@ -1,0 +1,60 @@
+#custom-map {
+  width: 100%;
+  height: 400px;
+  margin-top: 60px;
+}
+
+.label {
+  box-sizing:border-box;
+  background-color: $body-bg;
+/*   box-shadow: 2px 2px 4px #333; */
+  border:5px solid $brand-primary;
+  height: 40px;
+  width: 40px;
+  border-radius: 50% 50% 50% 1px;
+  transform: rotate(-45deg);
+  -webkit-animation: pulse 2s ease 2s 2;
+  -moz-animation: pulse 2s ease 2s 2;
+  animation: pulse 2s ease 3s 2;
+}
+
+/* ANIMATIONS */
+@-webkit-keyframes pulse {
+ 40% {
+    -webkit-transform: scale(1.5) rotate(-45deg);
+    -moz-transform: scale(1.5) rotate(-45deg);
+    transform: scale(1.5) rotate(-45deg);
+  }
+
+  100% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    -moz-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+}
+@-moz-keyframes pulse {
+ 40% {
+    -webkit-transform: scale(1.5) rotate(-45deg);
+    -moz-transform: scale(1.5) rotate(-45deg);
+    transform: scale(1.5) rotate(-45deg);
+  }
+
+  100% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    -moz-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+}
+@keyframes pulse {
+  40% {
+    -webkit-transform: scale(1.5) rotate(-45deg);
+    -moz-transform: scale(1.5) rotate(-45deg);
+    transform: scale(1.5) rotate(-45deg);
+  }
+
+  100% {
+    -webkit-transform: scale(1) rotate(-45deg);
+    -moz-transform: scale(1) rotate(-45deg);
+    transform: scale(1) rotate(-45deg);
+  }
+}

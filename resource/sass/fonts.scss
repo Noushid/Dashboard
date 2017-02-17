@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'Dosis';
+  font-style: normal;
+  font-weight: 200;
+  src: local('Dosis Light'), local('Dosis-Light'), url('../fonts/Dosis-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Dosis';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Dosis'), local('Dosis'), url('../fonts/Dosis-Book.ttf') format('truetype');
+}
+
+// @font-face {
+//   font-family: 'Dosis';
+//   font-style: normal;
+//   font-weight: 600;
+//   src: local('Dosis Bold'), local('Dosis-Bold'), url('../fonts/Dosis-SemiBold.ttf') format('truetype');
+// }

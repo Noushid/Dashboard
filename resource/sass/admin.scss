@@ -1,0 +1,26 @@
+
+
+
+$hr-border:                   #e1e1e1 !default;
+$sidebar-left-bg: #36393f;
+// $sidebar-top-bg: #2f323b;
+$sidebar-top-bg: #efefef;
+$brand-primary:#02aa9c !default;
+
+
+@import "fonts";
+
+// Import bootstrap and fontawesome
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../bower_components/font-awesome/scss/font-awesome";
+// @import "../../bower_components/wow/css/libs/animate";
+
+// @import "hover/hover";
+@import "../plugins/hover/hover";
+// @import "toggle";
+// @import "map";
+@import "dashboard";
+
+
+//primary: #337AB7
+//secondary: #34495e

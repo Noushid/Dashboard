@@ -1,0 +1,33 @@
+.testimoni {
+	margin: 20px 0 30px;
+}
+.table#testimonial {
+	thead {
+		tr {
+			th {
+				&:first-child {
+				width: 200px;
+				// text-overflow: ellipsis;
+				}
+				&:nth-child(2) {
+					width: 200px;
+					// text-overflow: ellipsis;
+				}
+			}
+		}
+	}
+	tbody {
+		tr {
+			td {
+				&:first-child {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+				&:nth-child(2) {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,126 @@
+textarea { resize: none}
+
+.timer {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	// right: 0;
+	// float: right;
+	width: 70px;
+  font-size: 2.5em;
+  text-align: center;
+  background: #ccc;
+  time {
+	  color: hsl(0,0%,100%);
+	  font-size: 0.75em;
+	  font-weight: 100;
+	  height: 70px;
+	  line-height: 70px;
+	  text-align: center;
+	  user-select: none;
+	  z-index: 2;
+  }
+}
+#selectedFilesD img, #selectedFilesM img, #selectedFilesS img {
+  max-width: 200px;
+  max-height: 200px;
+  float: left;
+  margin-bottom:10px;
+}
+#userActions input{
+  width: auto;
+  margin: auto;
+}
+#selectFiles img {
+  max-width: 200px;
+  max-height: 200px;
+  float: left;
+  margin-bottom:10px;
+}
+
+// Calender and Clock Widget
+$size: 200px;
+$margin: 16px;
+$width: 2px;
+$color: #354B60;
+
+// @import url(https://fonts.googleapis.com/css?family=Dosis);
+
+#widget {
+  // width: $size;
+  height: $size + ($margin / 2);
+  &:before {
+    content: "";
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.25);
+    width: 100%;
+    height: 100%;
+    filter: blur(20px);
+  }
+}
+
+#outline {
+  position: relative;
+  width: ($size - ($margin * 2)) * 2;
+  height: $size - ($margin / 2);
+  margin: $margin;
+  border: $width solid $color;
+  border-radius: $width * 2;
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    border: $width solid $color;
+    border-radius: 100%;
+    width: $width * 10;
+    height: $width * 10;
+  }
+  &:before {
+    left: $width * 4;
+    top: -$width * 5;
+  }
+  &:after {
+    right: $width * 4;
+    top: -$width * 5;
+  }
+}
+.date, .time {
+  width: 50%;
+  float: left;
+}
+
+.date, .time {
+  text-align: center;
+  color: $color;
+  font-family: 'Dosis', sans-serif;
+}
+.time {
+  height: $size - ($margin / 2) - $width * 2;
+  background-color: #02afa1;
+  color: #fff;
+  #hour, #minut {
+    font-size: $size / 3;
+  }
+  #minut, #date {
+    margin-top: -0.4em;
+  }
+  #date {
+    font-size: $size / 8;
+    margin-top: -0.6em;
+  }
+}
+#day {
+  font-size: $size / 2.5;
+  margin-top: -0.2em;
+}
+#month {
+  font-size: $size / 6;
+  margin-top: 0.2em;
+}
+#week {
+  font-size: $size / 8;
+  margin-top: -0.5em;
+}
+
+//End Calender and Clock Widget

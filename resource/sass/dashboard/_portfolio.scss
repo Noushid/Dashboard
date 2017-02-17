@@ -1,0 +1,37 @@
+.view-portfolio, .team-view {
+	.page-header {
+		h3 {
+			margin: 0;
+		}
+	}
+}
+.view-portfolio {
+	.content {
+		margin: 20px 0;
+		// border-bottom: 1px solid $gray-lighter / 1.1;
+		.item {
+			margin: 10px 0;
+			span {
+				font-size: 20px;
+			}
+		}
+	}
+	.images {
+		margin: 10px 0;
+	}
+}
+#thistype {display: inline-block}
+
+.desktop-view {
+	margin: 10px 0;
+}
+.add-more {
+	margin: 20px 0;
+}
+.edit-portfolio {
+	margin: 20px 0 30px;
+}
+
+.add-portfolio .pname {
+	float: left;
+}

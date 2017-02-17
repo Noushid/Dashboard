@@ -1,0 +1,174 @@
+<header class="header" id="header">
+
+  <h2 id="header-h2" class="header__dev header__dev--open">
+    
+    <b class="dev__fe"><i>FE</i></b>
+    <span class="dev__slash">/</span>
+    <b class="dev__ux"><i>UX</i></b>
+    <b class="dev__developer">Developer</b>
+    
+  </h2>
+
+</header>
+
+
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700,300italic,400italic,700italic);
+$headerHeight: 90px;
+$angle: 22deg;
+$gap: 10px;
+$clip: 15px;
+$red: #A82336;
+body,
+html {
+  font-family: Lato;
+  padding: 0;
+  margin: 0;
+  // min-height: 100%;
+  // height: 100%;
+  color: #333;
+  // background-size: cover;
+  // background-position: center;
+}
+
+.header {
+  user-select: none;
+  cursor: default;
+  // height: 100%;
+  &__dev {
+    font-family: Lato, Arial, sans-serif;
+    text-shadow: 0 1px 1px rgba(42, 43, 61, 0.5);
+    font-size: 86px;
+    height: $headerHeight;
+    line-height: $headerHeight;
+    font-weight: 300;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    margin: -($headerHeight/2) 0 0;
+    transition: all 0.6s ease-out;
+    transition-delay: 0.5s;
+    z-index: 2;
+    @media screen and ( max-width: 1000px) {
+      transform: scale(0.9);
+    }
+    @media screen and ( max-width: 850px) {
+      transform: scale(0.65);
+    }
+    @media screen and ( max-width: 700px) {
+      transform: scale(0.5);
+    }
+  }
+}
+
+.dev {
+  &__slash {
+    color: $red;
+    font-weight: 300;
+    position: absolute;
+    top: -$gap/2;
+    left: $headerHeight - $gap*2;
+    margin-left: $gap/2;
+    transform: scale(1.6);
+    z-index: 5;
+  }
+  &__fe,
+  &__ux {
+    top: 50%;
+    margin-top: -$headerHeight;
+    position: absolute;
+    width: $headerHeight*2;
+    height: $headerHeight*2;
+    overflow: hidden;
+    transform: rotateZ($angle);
+    i {
+      font-style: normal;
+      top: 0;
+      left: 0;
+      position: absolute;
+      width: $headerHeight*2;
+      height: $headerHeight*2;
+      line-height: $headerHeight*2;
+      transform: rotateZ(-$angle);
+    }
+  }
+  &__fe {
+    text-align: right;
+    direction: rtl;
+    margin-left: -$headerHeight - $gap + 1px;
+    i {
+      text-indent: -$clip;
+    }
+  }
+  &__ux {
+    margin-left: $headerHeight + $gap;
+    i {
+      text-indent: -$clip;
+    }
+  }
+  &__developer {
+    font-weight: 300;
+    position: absolute;
+    top: 0;
+    left: $headerHeight*2.5;
+  }
+  &__fe,
+  &__ux,
+  &__fe i,
+  &__ux i,
+  &__developer,
+  &__slash {
+    transition: all 0.6s cubic-bezier(0.555, -0.375, 0.000, 1.615);
+  }
+}
+
+.header__dev--open {
+  .dev {
+    &__fe,
+    &__ux {
+      i {
+        text-indent: $clip;
+      }
+    }
+    &__developer {
+      transform: translateX( $clip*2);
+      opacity: 0.2;
+    }
+    &__slash {
+      transform: scale(1.6) rotateZ( -$angle);
+    }
+  }
+}
+
+.header__dev--slow {
+  .dev {
+    &__fe,
+    &__ux,
+    &__fe i,
+    &__ux i,
+    &__developer,
+    &__slash {
+      transition: all 1.2s cubic-bezier(0.555, -0.375, 0.000, 1.615);
+    }
+  }
+}
+
+// body {
+//   background-image: url(http://wallpoper.com/images/00/26/06/21/gaussian-blur_00260621.jpg );
+// }
+
+
+// look, click me!!
+
+$("#header-h2").on({
+  "click": function() {
+    $(".header__dev").toggleClass("header__dev--open");
+  }
+});
+
+setTimeout(function() {
+  $(".header__dev").addClass("header__dev--slow").removeClass("header__dev--open");
+}, 1000);
+
+setTimeout(function() {
+  $(".header__dev").removeClass("header__dev--slow");
+}, 2400);
