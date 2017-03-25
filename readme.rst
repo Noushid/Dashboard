@@ -17,7 +17,8 @@ issues, as well as missing features.
 ************
 Installation
 ************
-
+In Linux:-
+-----
 step 1
 ------
 clone the repo : https://github.com/Noushid/Dashboard.git
